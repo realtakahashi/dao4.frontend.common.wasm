@@ -149,3 +149,22 @@ export const getDaoBalance = async (daoAddress:string): Promise<number> => {
   return response;
 };
 
+export const getDaoName = async (daoAddress:string): Promise<string> => {
+  const contractConstract = SubDAOContractConstruct;
+  let response: string = "";
+  if (typeof window.ethereum !== "undefined" && daoAddress) {
+    const provider = new ethers.providers.Web3Provider(window.ethereum);
+    const signer = provider.getSigner();
+    const contract = new ethers.Contract(
+      daoAddress,
+      contractConstract.abi,
+      signer
+    );
+    response = await contract.daoName().catch((err: any) => {
+      console.log(err);
+      errorFunction(err);
+    });
+    console.log("### daoName Return: ", response);
+  }
+  return response;
+};
