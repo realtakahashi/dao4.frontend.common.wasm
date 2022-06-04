@@ -3,10 +3,10 @@ import {
   MemberInfo,
   MemberInfoPlus,
 } from "../types/MemberManagerType";
-import MemberManagerContractConstruct from "../../contracts/construct/MemberManager";
+import MemberManagerContractConstruct from "../contracts/construct/MemberManager";
 import { MemberFormData } from "../types/MemberManagerType";
 import { Contract, ethers } from "ethers";
-import { errorFunction } from "../../contracts/commonFunctions";
+import { errorFunction } from "../contracts/commonFunctions";
 
 export const getMemberList = async (daoAddress:string): Promise<Array<MemberInfoPlus>> => {
   const memberManagerAddress =
