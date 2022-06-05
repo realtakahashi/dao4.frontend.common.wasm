@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { doDonateSelectedDao } from "../../contracts/MasterDaoApi";
-import { TargetDaoInterface } from "../../types/MasterDaoType";
-import TargetDao from "../../components/TargetDao";
+import { TargetDaoInterface } from "../types/MasterDaoType";
+import TargetDao from "./TargetDao";
 import { doDonateMasterDao } from "../contracts/masterdao_api";
 
 const Donate = (props: TargetDaoInterface) => {
