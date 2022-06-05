@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { doDonateSelectedDao } from "../../contracts/MasterDaoApi";
+import { doDonateSelectedDao } from "../contracts/MasterDaoApi";
 import { TargetDaoInterface } from "../types/MasterDaoType";
 import TargetDao from "./TargetDao";
 import { doDonateMasterDao } from "../contracts/masterdao_api";

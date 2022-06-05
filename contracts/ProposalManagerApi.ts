@@ -1,7 +1,7 @@
 import { AddProposalFormData, ProposalInfo } from "../types/ProposalManagerType";
 import ProposalManagerContractConstruct from "./construct/ProposalManager";
 import { ethers } from "ethers";
-import { errorFunction } from "../../contracts/commonFunctions";
+import { errorFunction } from "../contracts/commonFunctions";
 
 export const getProposalList = async (daoAddress:string): Promise<
   Array<ProposalInfo>
