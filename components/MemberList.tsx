@@ -83,7 +83,7 @@ const MemberList = (props: ShowListSetting) => {
                         Name: {member.name}
                       </div>
                       {member.isElectionCommition == true && (
-                        <p className="text-orange-700 font-bold text-14px">
+                        <p className="text-green-700 font-bold text-14px">
                           Election Comission
                         </p>
                       )}
