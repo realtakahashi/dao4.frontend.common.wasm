@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { deleteMember } from "../contracts/MemberManagerApi";
+import { deleteMember }  from "../contracts/membermanager_api";
 import { MemberInfo } from "../types/MemberManagerType";
 
 interface DeleteMemberParameter {
@@ -8,10 +8,12 @@ interface DeleteMemberParameter {
 }
 
 const DeleteMember = (props: DeleteMemberParameter) => {
+  const memberManagerAddress = process.env.NEXT_PUBLIC_MEMBER_MANAGER_CONTRACT_ADDRESS ?? "";
   const [proposalId, setProposalId] = useState("0");
 
   const _deleteMember = async () => {
-    await deleteMember(props.memberInfo, Number(proposalId),props.daoAddress);
+
+    await deleteMember(props.memberInfo, Number(proposalId),memberManagerAddress,props.daoAddress);
   };
 
   return (

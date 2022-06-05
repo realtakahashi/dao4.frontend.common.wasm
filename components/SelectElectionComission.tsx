@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { _resetElectionComission } from "../contracts/MemberManagerApi";
+import { _resetElectionComission } from "../contracts/membermanager_api";
 import { ElectionComissionFormData } from "../types/MemberManagerType";
 
 interface SelectElectionComissionParameter {
@@ -7,6 +7,7 @@ interface SelectElectionComissionParameter {
 }
 
 const SelectElectionComission = (props:SelectElectionComissionParameter) => {
+  const memberManagerAddress = process.env.NEXT_PUBLIC_MEMBER_MANAGER_CONTRACT_ADDRESS ?? "";
   const [electionComissionValue, setElectionComissionValue] =
     useState<ElectionComissionFormData>({
       candidateEoa_one: "",
@@ -26,7 +27,7 @@ const SelectElectionComission = (props:SelectElectionComissionParameter) => {
   const _onSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
       console.log("## electionComissionValue",electionComissionValue)
     event.preventDefault();
-    await _resetElectionComission(electionComissionValue,props.daoAddress);
+    await _resetElectionComission(electionComissionValue,memberManagerAddress,props.daoAddress);
   };
 
   return (

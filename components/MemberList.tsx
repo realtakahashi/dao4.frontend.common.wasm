@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useEffect } from "react";
 import Link from "next/link";
 import { MemberInfo, MemberInfoPlus } from "../types/MemberManagerType";
-import { getMemberList } from "../contracts/MemberManagerApi";
+import { getMemberList } from "../contracts/membermanager_api";
 import DeleteMember from "./DeleteMember";
 
 interface ShowListSetting {
@@ -12,6 +12,7 @@ interface ShowListSetting {
 }
 
 const MemberList = (props: ShowListSetting) => {
+  const memberManagerAddress = process.env.NEXT_PUBLIC_MEMBER_MANAGER_CONTRACT_ADDRESS ?? "";
   const [memberList, setMemberList] = useState<Array<MemberInfoPlus>>();
   const [showDelete, setShowDelete] = useState(false);
   const [showList, setShowList] = useState(true);
@@ -26,7 +27,7 @@ const MemberList = (props: ShowListSetting) => {
   useEffect(() => {
     const _getMemberList = async () => {
       //console.log("## getSubDaoList call 1");
-      const result = await getMemberList(props.daoAddress);
+      const result = await getMemberList(memberManagerAddress,props.daoAddress);
       console.log("## memberList:",result);
       setMemberList(result);
     };

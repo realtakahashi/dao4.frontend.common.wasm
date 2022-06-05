@@ -1,12 +1,13 @@
 import { useState } from "react";
 import { MemberFormData } from "../types/MemberManagerType";
-import { addMember } from "../contracts/MemberManagerApi";
+import { addMember } from "../contracts/membermanager_api";
 
 interface AddMemberParameter {
   daoAddress:string
 }
 
 const AddMember = (props:AddMemberParameter) => {
+  const memberManagerAddress = process.env.NEXT_PUBLIC_MEMBER_MANAGER_CONTRACT_ADDRESS ?? "";
   const [addMemberValue, setAddMemberValue] = useState<MemberFormData>({
     name: "",
     memberAddress: "",
@@ -23,7 +24,7 @@ const AddMember = (props:AddMemberParameter) => {
   const _onSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     console.log("## _onSubmit 1");
     event.preventDefault();
-    await addMember(addMemberValue,props.daoAddress);
+    await addMember(addMemberValue,memberManagerAddress,props.daoAddress);
   };
 
   return (
