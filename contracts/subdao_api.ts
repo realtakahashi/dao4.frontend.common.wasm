@@ -144,7 +144,7 @@ export const getDaoBalance = async (daoAddress:string): Promise<number> => {
       console.log(err);
       errorFunction(err);
     });
-    console.log("### getProposalList Return: ", response);
+    //console.log("### getProposalList Return: ", response);
   }
   return response;
 };

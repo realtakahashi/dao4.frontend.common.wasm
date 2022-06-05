@@ -35,6 +35,7 @@ export const getMemberList = async (daoAddress:string): Promise<Array<MemberInfo
         errorFunction(err);
       });
 
+    console.log("## dao address:",daoAddress);  
     console.log("## result:", result);
     console.log("## response:", response);
     for (var i = 0; i < response.length; i++) {
@@ -42,6 +43,8 @@ export const getMemberList = async (daoAddress:string): Promise<Array<MemberInfo
         daoAddress,
         response[i].eoaAddress
       );
+      console.log("#### eoa address:",response[i].eoaAddress);
+      console.log("#### isElectionCommition:",isElectionCommition);
       result.push({
         eoaAddress: response[i].eoaAddress,
         memberId: response[i].memberId,
@@ -52,6 +55,7 @@ export const getMemberList = async (daoAddress:string): Promise<Array<MemberInfo
     }
   }
 
+  console.log("#### result:",result);
   return result;
 };
 

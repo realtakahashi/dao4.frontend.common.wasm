@@ -19,7 +19,7 @@ const DaoBalance = (props: DaoBalanceParameter) => {
     } else {
       ret = await getDaoBalance(props.daoAddress);
     }
-    console.log("### balance:", ret);
+    // console.log("### balance:", ret);
     if (typeof ret === "undefined") {
       ret = 0;
     }

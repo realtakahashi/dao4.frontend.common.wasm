@@ -27,7 +27,7 @@ const MemberList = (props: ShowListSetting) => {
     const _getMemberList = async () => {
       //console.log("## getSubDaoList call 1");
       const result = await getMemberList(props.daoAddress);
-      //console.log("## memberList:",result);
+      console.log("## memberList:",result);
       setMemberList(result);
     };
 
@@ -83,7 +83,7 @@ const MemberList = (props: ShowListSetting) => {
                         Name: {member.name}
                       </div>
                       {member.isElectionCommition == true && (
-                        <p className="text-green-700 font-bold text-14px">
+                        <p className="text-orange-700 font-bold text-14px">
                           Election Comission
                         </p>
                       )}
