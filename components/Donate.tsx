@@ -3,6 +3,8 @@ import { doDonateSelectedDao } from "../contracts/MasterDaoApi";
 import { TargetDaoInterface } from "../types/MasterDaoType";
 import TargetDao from "./TargetDao";
 import { doDonateMasterDao } from "../contracts/masterdao_api";
+import { TargetDaoKind } from "../types/MasterDaoType";
+import { doDonateSubDao } from "../contracts/subdao_api";
 
 const Donate = (props: TargetDaoInterface) => {
   const [donateAmount, setDonateAmount] = useState(0);
@@ -15,6 +17,10 @@ const Donate = (props: TargetDaoInterface) => {
   const _doDonateMasterDao =async () => {
     await doDonateMasterDao(donateAmount);
     
+  }
+
+  const _doDonateFromIndividials =async () => {
+    await doDonateSubDao(props.daoAddress,donateAmount)
   }
 
   return (
@@ -30,9 +36,9 @@ const Donate = (props: TargetDaoInterface) => {
           <TargetDao
             daoAddress={props.daoAddress}
             daoName={props.daoName}
-            isMasterDao={false}
+            targetDaoKind={TargetDaoKind.NONE}
           ></TargetDao>
-          {props.isMasterDao == false && (
+          {props.targetDaoKind == TargetDaoKind.TARGET_DAO_FROM_MASTER_DAO && (
             <tr>
               <th className="flex justify-end px-4 py-5 text-white text-24px">
                 Proposal Id:{" "}
@@ -60,7 +66,7 @@ const Donate = (props: TargetDaoInterface) => {
         </table>
       </div>
       <div className="p-3"></div>
-      {props.isMasterDao == true && (
+      {props.targetDaoKind == TargetDaoKind.MASTER_DAO && (
         <div className="flex justify-center">
           <button
             className="m-2 px-4 py-2  border-black border-2 bg-blue-200 rounded text-black  hover:bg-green-200"
@@ -70,11 +76,21 @@ const Donate = (props: TargetDaoInterface) => {
           </button>
         </div>
       )}
-      {props.isMasterDao == false && (
+      {props.targetDaoKind == TargetDaoKind.TARGET_DAO_FROM_MASTER_DAO && (
         <div className="flex justify-center">
           <button
             className="m-2 px-4 py-2  border-black border-2 bg-blue-200 rounded text-black  hover:bg-green-200"
             onClick={() => _doDonate()}
+          >
+            Execute
+          </button>
+        </div>
+      )}
+      {props.targetDaoKind == TargetDaoKind.TARGET_DAO_FROM_INDIVIDIALS && (
+        <div className="flex justify-center">
+          <button
+            className="m-2 px-4 py-2  border-black border-2 bg-blue-200 rounded text-black  hover:bg-green-200"
+            onClick={() => _doDonateFromIndividials()}
           >
             Execute
           </button>
