@@ -6,6 +6,7 @@ import detectEthereumProvider from "@metamask/detect-provider";
 import { errorFunction } from "./commonFunctions";
 import MemberManagerConstruct from "../contracts/construct/MemberManager";
 import SubDAOContractConstruct from "../contracts/construct/SubDAOContractConstruct";
+import { TokenInfo } from "@/types/Token";
 
 export const listSubDAO = async (
   masterDAOAddress: string
@@ -194,6 +195,38 @@ export const getDaoName = async (daoAddress:string): Promise<string> => {
       errorFunction(err);
     });
     console.log("### daoName Return: ", response);
+  }
+  return response;
+};
+
+export const getTokenList = async (
+  daoAddress: string
+): Promise<Array<TokenInfo>> => {
+  const contractConstract = SubDAOContractConstruct;
+  let response: TokenInfo[] = [];
+  const provider = await detectEthereumProvider({ mustBeMetaMask: true });
+  if (provider && window.ethereum?.isMetaMask) {
+    if (typeof window.ethereum !== "undefined" && daoAddress) {
+      const provider = new ethers.providers.Web3Provider(window.ethereum);
+      const signer = provider.getSigner();
+      const contract = new ethers.Contract(
+        daoAddress,
+        contractConstract.abi,
+        signer
+      );
+      await contract
+        .getTokenList()
+        .then((r: any) => {
+          console.log(r);
+          response = r;
+        })
+        .catch((err: any) => {
+          console.log(err);
+          errorFunction(err);
+        });
+    }
+  } else {
+    alert("Please instal metamask.");
   }
   return response;
 };
