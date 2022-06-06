@@ -14,3 +14,13 @@ export interface SubDAOData {
   rewardApproved: boolean;
   description: string;
 }
+
+export interface SubDAODataWithMemberFlg {
+  ownerAddress: string;
+  daoAddress: string;
+  daoName: string;
+  githubURL: string;
+  rewardApproved: boolean;
+  description: string;
+  isMember:boolean;
+}

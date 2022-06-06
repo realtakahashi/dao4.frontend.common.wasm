@@ -1,5 +1,5 @@
 import MasterDAOContractConstruct from "./construct/MasterDAO";
-import { SubDAOData, SubDAODeployFormData } from "../types/SubDaoType";
+import { SubDAOData, SubDAODataWithMemberFlg, SubDAODeployFormData } from "../types/SubDaoType";
 import Web3 from "web3";
 import { ethers } from "ethers";
 import detectEthereumProvider from "@metamask/detect-provider";
@@ -39,12 +39,31 @@ export const listSubDAO = async (
   return response;
 };
 
+export const getIsMember =async (memberManagerDAOAddress: string,daoAddress:string):Promise<boolean> => {
+  const contractConstract = MemberManagerConstruct;
+  let response: boolean = false;
+  const provider = await detectEthereumProvider({ mustBeMetaMask: true });
+  if (provider && window.ethereum?.isMetaMask) {
+    if (typeof window.ethereum !== "undefined" && memberManagerDAOAddress) {
+      const provider = new ethers.providers.Web3Provider(window.ethereum);
+      const signer = provider.getSigner();
+      const contract = new ethers.Contract(
+        memberManagerDAOAddress,
+        contractConstract.abi,
+        signer
+      );
+    const response = await contract.isMember(daoAddress, signer.getAddress());
+      }
+    }
+  return response;
+}
+
 export const getDaoListOfAffiliation = async (
   memberManagerDAOAddress: string,
   subDaoList: Array<SubDAOData>
-): Promise<Array<SubDAOData>> => {
+): Promise<Array<SubDAODataWithMemberFlg>> => {
   const contractConstract = MemberManagerConstruct;
-  let response: SubDAOData[] = [];
+  let response: SubDAODataWithMemberFlg[] = [];
   const provider = await detectEthereumProvider({ mustBeMetaMask: true });
   if (provider && window.ethereum?.isMetaMask) {
     if (typeof window.ethereum !== "undefined" && memberManagerDAOAddress) {
@@ -56,9 +75,19 @@ export const getDaoListOfAffiliation = async (
         signer
       );
       for (const item of subDaoList) {
-        if (await contract.isMember(item.daoAddress, signer.getAddress())) {
-          response.push(item);
+        let itemWithFlg:SubDAODataWithMemberFlg = {
+          ownerAddress:item.ownerAddress,
+          daoAddress:item.daoAddress,
+          daoName:item.daoName,
+          description:item.description,
+          githubURL:item.githubURL,
+          rewardApproved:item.rewardApproved,
+          isMember:false
         }
+        if (await contract.isMember(item.daoAddress, signer.getAddress())) {
+          itemWithFlg.isMember = true;
+        }
+        response.push(itemWithFlg);
       }
     }
   } else {
