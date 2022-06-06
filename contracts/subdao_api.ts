@@ -6,7 +6,7 @@ import detectEthereumProvider from "@metamask/detect-provider";
 import { errorFunction } from "./commonFunctions";
 import MemberManagerConstruct from "../contracts/construct/MemberManager";
 import SubDAOContractConstruct from "../contracts/construct/SubDAOContractConstruct";
-import { TokenInfo } from "@/types/Token";
+import { TokenInfo } from "@/dao4.frontend.common/types/Token";
 
 export const listSubDAO = async (
   masterDAOAddress: string
