@@ -176,7 +176,7 @@ export const getSalesStatus = async (tokenAddress:string):Promise<boolean> => {
   return res;
 };
 
-export const getPrice = async (tokenAddress:string):Promise<stting> => {
+export const getPrice = async (tokenAddress:string):Promise<string> => {
   const contractConstract = DaoErc20Contract;
   let res = 0;
   if (typeof window.ethereum !== "undefined" && tokenAddress) {
