@@ -6,7 +6,9 @@ import detectEthereumProvider from "@metamask/detect-provider";
 import { errorFunction } from "./commonFunctions";
 import MemberManagerConstruct from "../contracts/construct/MemberManager";
 import SubDAOContractConstruct from "../contracts/construct/SubDAOContractConstruct";
-import { TokenInfo } from "../types/Token";
+import { TokenInfo, TokenInfoWithName, TokenKind } from "../types/Token";
+import DaoErc20Contract from "./construct/DaoErc20";
+import DaoErc721Contract from "./construct/DaoErc721";
 
 export const listSubDAO = async (
   masterDAOAddress: string
@@ -230,3 +232,89 @@ export const getTokenList = async (
   }
   return response;
 };
+
+export const getTokenListWithName = async (tokenList:Array<TokenInfo>):Promise<Array<TokenInfoWithName>> => {
+  let response: TokenInfoWithName[] = [];
+  const erc20contractDefine = DaoErc20Contract;
+  const erc721contractDefine = DaoErc721Contract;
+  const provider = await detectEthereumProvider({ mustBeMetaMask: true });
+  if (provider && window.ethereum?.isMetaMask) {
+    if (typeof window.ethereum !== "undefined") {
+      const provider = new ethers.providers.Web3Provider(window.ethereum);
+      const signer = provider.getSigner();
+      for (var item of tokenList){
+        let commonContractDefine:any;
+        if (item.tokenKind == TokenKind.ERC20){
+          commonContractDefine = erc20contractDefine;
+        }
+        else{
+          commonContractDefine = erc721contractDefine;
+        }
+        const contract = new ethers.Contract(item.tokenAddress,commonContractDefine.abi,signer);
+        let tokenName = await contract.name()
+        .catch((err: any) => {
+          console.log(err);
+          errorFunction(err);
+        });
+        let tokenSymbol = await contract.symbol()
+        .catch((err: any) => {
+          console.log(err);
+          errorFunction(err);
+        });
+        const pushItem:TokenInfoWithName = {
+            tokenAddress: item.tokenAddress,
+            tokenKind: item.tokenKind,
+            tokenName: String(tokenName),
+            tokenSymbol: String(tokenSymbol),
+          }
+
+          response.push(pushItem);
+      }
+
+    }
+  } else {
+    alert("Please instal metamask.");
+  }
+
+
+  return response;
+}
+
+export const divide=async(proposalId:string,daoAddress:string,targetAddress:string,amount:number)=>{
+  const contractConstract = SubDAOContractConstruct;
+  if (typeof window.ethereum !== "undefined" && daoAddress) {
+    const provider = new ethers.providers.Web3Provider(window.ethereum);
+    const signer = provider.getSigner();
+    const contract = new ethers.Contract(
+      daoAddress,
+      contractConstract.abi,
+      signer
+    );
+    await contract
+      .divide(targetAddress,ethers.utils.parseEther(String(amount)),proposalId)
+      .catch((err: any) => {
+        console.log(err);
+        errorFunction(err);
+      });
+  }
+}
+
+export const addTokenToList=async(tokenKind:TokenKind,tokenAddress:string,daoAddress:string)=>{
+  console.log("daoAddress:",daoAddress);
+  const contractConstract = SubDAOContractConstruct;
+  if (typeof window.ethereum !== "undefined" && daoAddress) {
+    const provider = new ethers.providers.Web3Provider(window.ethereum);
+    const signer = provider.getSigner();
+    const contract = new ethers.Contract(
+      daoAddress,
+      contractConstract.abi,
+      signer
+    );
+    await contract
+      .addTokenToList(tokenKind,tokenAddress)
+      .catch((err: any) => {
+        console.log(err);
+        errorFunction(err);
+      });
+  }
+}
