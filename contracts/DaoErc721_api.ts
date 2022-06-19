@@ -33,8 +33,9 @@ export const deployDaoErc721 = async (
   return res;
 };
 
-export const buy = async (tokenAddress:string) => {
+export const buy = async (tokenAddress:string,setTokenId:(id:string) => void) => {
     const contractConstract = DaoErc721Contract;
+    const price = await getPrice(tokenAddress);
     if (typeof window.ethereum !== "undefined" && tokenAddress) {
       const provider = new ethers.providers.Web3Provider(window.ethereum);
       const signer = provider.getSigner();
@@ -44,7 +45,20 @@ export const buy = async (tokenAddress:string) => {
         signer
       );
       await contract
-        .buy()
+        .buy({value:price})
+        .then(() => {
+          const filters = contract.filters["Bought"];
+          if (filters !== undefined) {
+            provider.once("block", () => {
+              contract.on(filters(), (senderAddress, tokenID) => {
+                console.log(senderAddress, tokenID);
+                const id = parseInt(tokenID._hex,16);
+                setTokenId(id.toString());
+              });
+            });
+          }
+  
+        })
         .catch((err: any) => {
           console.log(err);
           errorFunction(err);
@@ -176,5 +190,26 @@ export const buy = async (tokenAddress:string) => {
   
     return res;
   };
+
+  export const getSalesStatus = async (tokenAddress:string):Promise<boolean> => {
+    const contractConstract = DaoErc721Contract;
+    let res = false;
+    if (typeof window.ethereum !== "undefined" && tokenAddress) {
+      const provider = new ethers.providers.Web3Provider(window.ethereum);
+      const signer = provider.getSigner();
+      const contract = new ethers.Contract(
+        tokenAddress,
+        contractConstract.abi,
+        signer
+      );
+      res = await contract
+        .onSale()
+        .catch((err: any) => {
+          console.log(err);
+          errorFunction(err);
+        });
+    }
   
+    return res;
+  };
   

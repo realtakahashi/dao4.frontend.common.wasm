@@ -2,6 +2,7 @@ import DaoErc20Contract from "./construct/DaoErc20";
 import { ethers } from "ethers";
 import { errorFunction } from "./commonFunctions";
 import { Erc20DeployData } from "../types/Token";
+import { BigNumber } from "ethers";
 
 export const deployDaoErc20=async(inputData:Erc20DeployData):Promise<string>=>{
     let res:string = "";
@@ -42,7 +43,7 @@ export const mint = async (priceEther:number,amount:number,tokenAddress:string) 
     const tmp = ethers.utils.parseEther(String(priceEther));
     console.log("priceEther convert",String(tmp))
     await contract
-      .mint(ethers.utils.parseEther(String(priceEther)),amount)
+      .mint(priceEther,amount)
       .catch((err: any) => {
         console.log(err);
         errorFunction(err);
@@ -52,6 +53,9 @@ export const mint = async (priceEther:number,amount:number,tokenAddress:string) 
 
 export const buy = async (tokenAddress:string,amount:number) => {
   const contractConstract = DaoErc20Contract;
+  const price = await getPrice(tokenAddress);
+  const conv_amount = ethers.utils.parseEther(String(amount));
+  const priceAmount = Number(price) * amount;
   if (typeof window.ethereum !== "undefined" && tokenAddress) {
     const provider = new ethers.providers.Web3Provider(window.ethereum);
     const signer = provider.getSigner();
@@ -60,8 +64,11 @@ export const buy = async (tokenAddress:string,amount:number) => {
       contractConstract.abi,
       signer
     );
+    console.log("### priceAmount:",priceAmount)
+    const value_price = ethers.utils.parseEther(String(priceAmount));
+    console.log("### value price:",value_price.toString())
     await contract
-      .buy(amount)
+      .buy(conv_amount, {value:ethers.utils.parseEther(String(priceAmount))})
       .catch((err: any) => {
         console.log(err);
         errorFunction(err);

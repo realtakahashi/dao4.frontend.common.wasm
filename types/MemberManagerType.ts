@@ -1,3 +1,5 @@
+import { Settings } from "http2";
+
 export interface MemberInfo {
   name: string;
   eoaAddress: string;
@@ -22,6 +24,15 @@ export interface MemberFormData {
   name: string;
   memberAddress: string;
   proposalId: Number;
+}
+
+export interface MemberFormDataForDao {
+  name: string;
+  memberAddress: string;
+  proposalId: Number;
+  targetDaoAddress:string;
+  tokenId:Number;
+  tokenAddress:string;
 }
 
 export interface ElectionComissionFormData {

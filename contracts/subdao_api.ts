@@ -318,3 +318,25 @@ export const addTokenToList=async(tokenKind:TokenKind,tokenAddress:string,daoAdd
       });
   }
 }
+
+export const getMemberNFTAddress=async(daoAddress:string):Promise<string>=>{
+  console.log("daoAddress:",daoAddress);
+  const contractConstract = SubDAOContractConstruct;
+  let ret = "";
+  if (typeof window.ethereum !== "undefined" && daoAddress) {
+    const provider = new ethers.providers.Web3Provider(window.ethereum);
+    const signer = provider.getSigner();
+    const contract = new ethers.Contract(
+      daoAddress,
+      contractConstract.abi,
+      signer
+    );
+    ret = await contract
+      .getMemberNFTAddress()
+      .catch((err: any) => {
+        console.log(err);
+        errorFunction(err);
+      });
+  }
+  return ret;
+}

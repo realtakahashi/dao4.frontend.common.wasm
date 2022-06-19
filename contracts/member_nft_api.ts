@@ -99,7 +99,7 @@ export const checkNFTMinted = async (
     let id = "";
     let nId = await contract.ownedTokenId(signerAddress);
     if (nId != 0) {
-      alert("You are already minted.Your Token Id is:" + nId);
+//      alert("You are already minted.Your Token Id is:" + nId);
       id = String(nId);
     }
     return id;
