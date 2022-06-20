@@ -84,6 +84,7 @@ export const mintMemberNFT = async (
       console.log("tokenId hex", ret.events[0].args.tokenId);
       console.log("tokenid:", String(Number(ret.events[0].args.tokenId)));
       id = Number(ret.events[0].args.tokenId);
+      setTokenId(id.toString());
       alert("Your Token Id is :" + id);
     }
   }
