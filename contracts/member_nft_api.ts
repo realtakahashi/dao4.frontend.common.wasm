@@ -4,12 +4,13 @@ import MemberERC721ContractConstruct from "../contracts/construct/MemberERC721Co
 import { MemberNFTDeployFormData } from "../types/MemberNftType";
 import detectEthereumProvider from "@metamask/detect-provider";
 import { errorFunction } from "./commonFunctions";
+import { getContractAddress } from "ethers/lib/utils";
 
 const DEPOSIT_TOKEN_BALANCE = "2";
 
 export const deployMemberNFT = async (
   inputData: MemberNFTDeployFormData,
-  setNftAddress:(value: string) => void,
+  setNftAddress: (value: string) => void
 ): Promise<string> => {
   let memberNFTTokenAddress = "";
   if (typeof window.ethereum !== "undefined") {
@@ -20,7 +21,7 @@ export const deployMemberNFT = async (
       MemberERC721ContractConstruct.bytecode,
       signer
     );
-    const result:any = await factory
+    const result: any = await factory
       .deploy(inputData.name, inputData.symbol, inputData.tokenURI)
       // .then((res: any) => {
       //   memberNFTTokenAddress = res.address;
@@ -31,17 +32,17 @@ export const deployMemberNFT = async (
       });
     memberNFTTokenAddress = result.address;
   }
-  console.log("### memberNFTTokenAddress:",memberNFTTokenAddress);
+  console.log("### memberNFTTokenAddress:", memberNFTTokenAddress);
   setNftAddress(memberNFTTokenAddress);
   return memberNFTTokenAddress;
 };
 
 export const mintMemberNFT = async (
   memberNFTTokenAddress: string,
-  setTokenId:(id:string) => void
+  setTokenId: (id: string) => void
 ): Promise<string> => {
   let id: Number = 0;
-  console.log('memberNFT address: ', memberNFTTokenAddress)
+  console.log("memberNFT address: ", memberNFTTokenAddress);
   if (
     typeof window.ethereum !== "undefined" &&
     typeof memberNFTTokenAddress !== "undefined"
@@ -55,28 +56,36 @@ export const mintMemberNFT = async (
       signer
     );
 
-    await contract
+    const tx = await contract
       .original_mint(signerAddress, {
         value: Web3.utils.toWei(DEPOSIT_TOKEN_BALANCE),
       })
-      .then((d: any) => {
-        //console.log(d);
-        const filters = contract.filters["IssuedMemberToken"];
-        if (filters !== undefined) {
-          provider.once("block", () => {
-            contract.on(filters(), (senderAddress, tokenID) => {
-              console.log(senderAddress, tokenID);
-              id = parseInt(tokenID._hex,16);
-              setTokenId(id.toString());
-              //console.log(id);
-              alert("Your Token Id is :"+ id);
-            });
-          });
-        }
-      })
+      // .then((d: any) => {
+      //   console.log("#### contract.events:" ,contract.events)
+      //   const filters = contract.filters["IssuedMemberToken"];
+      //   if (filters !== undefined) {
+      //     provider.once("block", () => {
+      //       contract.on(filters(), (senderAddress, tokenID) => {
+      //         console.log(senderAddress, tokenID);
+      //         id = parseInt(tokenID._hex,16);
+      //         setTokenId(id.toString());
+      //         //console.log(id);
+      //         alert("Your Token Id is :"+ id);
+      //       });
+      //     });
+      //   }
+      // })
       .catch((err: any) => {
         errorFunction(err);
       });
+    if (tx !== undefined) {
+      const ret = await tx.wait();
+      console.log("ret.events:", ret.events);
+      console.log("tokenId hex", ret.events[0].args.tokenId);
+      console.log("tokenid:", String(Number(ret.events[0].args.tokenId)));
+      id = Number(ret.events[0].args.tokenId);
+      alert("Your Token Id is :" + id);
+    }
   }
   return id.toString();
 };
@@ -99,7 +108,7 @@ export const checkNFTMinted = async (
     let id = "";
     let nId = await contract.ownedTokenId(signerAddress);
     if (nId != 0) {
-//      alert("You are already minted.Your Token Id is:" + nId);
+      //      alert("You are already minted.Your Token Id is:" + nId);
       id = String(nId);
     }
     return id;
