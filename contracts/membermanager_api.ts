@@ -97,6 +97,10 @@ export const addFirstMember = async (
 ) => {
   const contractConstract = MemberManagerContractConstruct;
 
+  console.log("######## daoAddress:", daoAddress);
+  console.log("######## _memberFormData.ownerName:", _memberFormData.ownerName);
+  console.log("######## _memberFormData.tokenId", _memberFormData.tokenId);
+
   if (typeof window.ethereum !== "undefined" && memberManagerAddress) {
     const provider = new ethers.providers.Web3Provider(window.ethereum);
     const signer = provider.getSigner();
