@@ -9,6 +9,7 @@ import SubDAOContractConstruct from "../contracts/construct/SubDAOContractConstr
 import { TokenInfo, TokenInfoWithName, TokenKind } from "../types/Token";
 import DaoErc20Contract from "./construct/DaoErc20";
 import DaoErc721Contract from "./construct/DaoErc721";
+import GovernaceTokenConstract from "./construct/GonvernanceToken";
 
 export const listSubDAO = async (
   masterDAOAddress: string
@@ -237,6 +238,7 @@ export const getTokenListWithName = async (tokenList:Array<TokenInfo>):Promise<A
   let response: TokenInfoWithName[] = [];
   const erc20contractDefine = DaoErc20Contract;
   const erc721contractDefine = DaoErc721Contract;
+  const GovernaceTokenDefine = GovernaceTokenConstract;
   const provider = await detectEthereumProvider({ mustBeMetaMask: true });
   if (provider && window.ethereum?.isMetaMask) {
     if (typeof window.ethereum !== "undefined") {
@@ -247,8 +249,11 @@ export const getTokenListWithName = async (tokenList:Array<TokenInfo>):Promise<A
         if (item.tokenKind == TokenKind.ERC20){
           commonContractDefine = erc20contractDefine;
         }
-        else{
+        else if (item.tokenKind == TokenKind.ERC721){
           commonContractDefine = erc721contractDefine;
+        }
+        else {
+          commonContractDefine = GovernaceTokenConstract;
         }
         const contract = new ethers.Contract(item.tokenAddress,commonContractDefine.abi,signer);
         let tokenName = await contract.name()

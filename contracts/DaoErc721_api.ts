@@ -44,25 +44,35 @@ export const buy = async (tokenAddress:string,setTokenId:(id:string) => void) =>
         contractConstract.abi,
         signer
       );
-      await contract
+      const tx = await contract
         .buy({value:price})
-        .then(() => {
-          const filters = contract.filters["Bought"];
-          if (filters !== undefined) {
-            provider.once("block", () => {
-              contract.on(filters(), (senderAddress, tokenID) => {
-                console.log(senderAddress, tokenID);
-                const id = parseInt(tokenID._hex,16);
-                setTokenId(id.toString());
-              });
-            });
-          }
+        // .then(() => {
+        //   const filters = contract.filters["Bought"];
+        //   if (filters !== undefined) {
+        //     provider.once("block", () => {
+        //       contract.on(filters(), (senderAddress, tokenID) => {
+        //         console.log(senderAddress, tokenID);
+        //         const id = parseInt(tokenID._hex,16);
+        //         setTokenId(id.toString());
+        //       });
+        //     });
+        //   }
   
-        })
+        // })
         .catch((err: any) => {
           console.log(err);
           errorFunction(err);
         });
+        if (tx !== undefined) {
+          const ret = await tx.wait();
+          console.log("ret.events:", ret.events);
+          console.log("tokenId hex", ret.events[0].args.tokenId);
+          console.log("tokenid:", String(Number(ret.events[0].args.tokenId)));
+          const id = Number(ret.events[0].args.tokenId);
+          setTokenId(id.toString());
+          alert("Your Token Id is :" + id);
+        }
+    
     }
   };
   

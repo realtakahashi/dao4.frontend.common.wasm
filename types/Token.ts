@@ -1,6 +1,7 @@
 export const enum TokenKind {
   ERC20,
   ERC721,
+  GOVERNANCE,
   None,
 }
 
@@ -10,6 +11,12 @@ export interface TokenInfo {
 }
 
 export interface Erc20DeployData {
+  tokenName: string;
+  tokenSymbol: string;
+  daoAddress: string;
+}
+
+export interface GovernanceDeployData {
   tokenName: string;
   tokenSymbol: string;
   daoAddress: string;
@@ -33,4 +40,9 @@ export interface TokenInfoWithName {
 export interface MintInfo {
   price:number;
   amount:number;
+}
+
+export interface TransferInfo {
+  amount:number;
+  to:string;
 }
