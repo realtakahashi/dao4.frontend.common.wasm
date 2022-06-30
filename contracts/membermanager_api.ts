@@ -93,7 +93,8 @@ export const checkElectionComission = async (
 export const addFirstMember = async (
   _memberFormData: FirstMemberData,
   memberManagerAddress: string,
-  daoAddress: string
+  daoAddress: string,
+  setFinished:(value:boolean) => void
 ) => {
   const contractConstract = MemberManagerContractConstruct;
 
@@ -109,7 +110,7 @@ export const addFirstMember = async (
       contractConstract.abi,
       signer
     );
-    await contract
+    const tx = await contract
       .addFirstMember(
         daoAddress,
         _memberFormData.ownerName,
@@ -119,6 +120,8 @@ export const addFirstMember = async (
         console.log(err);
         errorFunction(err);
       });
+    const ret = tx.wait();
+    setFinished(true);
   }
 };
 
@@ -157,10 +160,10 @@ export const addMember = async (
 
 export const addMemberForDao = async (
   memberManagerAddress: string,
-  param: MemberFormDataForDao
+  param: MemberFormDataForDao,
+  setFinished:(value:boolean) => void
 ) => {
   const memberContractConstract = MemberManagerContractConstruct;
-  const subDaoContractConstract = SubDAOContractConstruct;
   if (typeof window.ethereum !== "undefined" && param.targetDaoAddress) {
     console.log("## addmember 2");
     const provider = new ethers.providers.Web3Provider(window.ethereum);
@@ -176,11 +179,18 @@ export const addMemberForDao = async (
       return;
     }
 
-    await memberContract
+    console.log("## memberManagerAddress:",memberManagerAddress);
+    console.log("## param.targetDaoAddress:",param.targetDaoAddress);
+    console.log("## param.name:",param.name);
+    console.log("## signer.getAddress:",signer.getAddress());
+    console.log("## param.proposalId:",param.proposalId);
+    console.log("## param.tokenId:",param.tokenId);
+
+    const tx = await memberContract
       .addMember(
         param.targetDaoAddress,
         param.name,
-        signer.getAddress,
+        signer.getAddress(),
         param.proposalId,
         param.tokenId
       )
@@ -188,6 +198,8 @@ export const addMemberForDao = async (
         console.log(err);
         errorFunction(err);
       });
+    const ret = await tx.wait();
+    setFinished(true);
   }
 };
 

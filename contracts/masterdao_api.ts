@@ -8,7 +8,8 @@ import detectEthereumProvider from "@metamask/detect-provider";
 export const registerSubDAO = async (
   subDAOContractAddess: string,
   inputData: SubDAODeployFormData,
-  masterDAOContractAddress: string
+  masterDAOContractAddress: string,
+  setFinished:(value:boolean) => void
 ) => {
   console.log("### subDAOContractAddess:", subDAOContractAddess);
   console.log("### SubDAODeployFormData:", inputData);
@@ -22,20 +23,20 @@ export const registerSubDAO = async (
       contractConstract.abi,
       signer
     );
-    await contract
+    const tx = await contract
       .registerDAO(
         subDAOContractAddess,
         inputData.name,
         inputData.githubUrl,
         inputData.description
       )
-      .then((r: any) => {
-        return;
-      })
       .catch((err: any) => {
         errorFunction(err);
         return;
       });
+
+      const ret = await tx.wait();
+      setFinished(true);
   }
   return;
 };

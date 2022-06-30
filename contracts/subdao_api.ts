@@ -104,7 +104,8 @@ export const deploySubDAO = async (
   inputData: SubDAODeployFormData,
   memberManagerContractAddress: string,
   proposalManagerContractAddress: string,
-  setDaoAddress: (address: string) => void
+  setDaoAddress: (address: string) => void,
+  setFinished: (value:boolean) => void
 ): Promise<string> => {
   let subDAOContractAddess = "";
   const contractConstract = SubDAOContractConstruct;
@@ -130,13 +131,12 @@ export const deploySubDAO = async (
         proposalManagerContractAddress,
         inputData.memberNFTAddress
       )
-      // .then((res: any) => {
-      //   subDAOContractAddess = res.address
-      // })
       .catch((err: any) => {
         errorFunction(err);
       });
     subDAOContractAddess = result.address;
+    const ret = await result.deployed();
+    setFinished(true);
   }
   console.log("### subDAOContractAddess:", subDAOContractAddess);
   setDaoAddress(subDAOContractAddess);
