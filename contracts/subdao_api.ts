@@ -1,5 +1,9 @@
 import MasterDAOContractConstruct from "./construct/MasterDAO";
-import { SubDAOData, SubDAODataWithMemberFlg, SubDAODeployFormData } from "../types/SubDaoType";
+import {
+  SubDAOData,
+  SubDAODataWithMemberFlg,
+  SubDAODeployFormData,
+} from "../types/SubDaoType";
 import Web3 from "web3";
 import { ethers } from "ethers";
 import detectEthereumProvider from "@metamask/detect-provider";
@@ -10,6 +14,7 @@ import { TokenInfo, TokenInfoWithName, TokenKind } from "../types/Token";
 import DaoErc20Contract from "./construct/DaoErc20";
 import DaoErc721Contract from "./construct/DaoErc721";
 import GovernaceTokenConstract from "./construct/GonvernanceToken";
+import { checkNFTMinted } from "./member_nft_api";
 
 export const listSubDAO = async (
   masterDAOAddress: string
@@ -43,7 +48,10 @@ export const listSubDAO = async (
   return response;
 };
 
-export const getIsMember =async (memberManagerDAOAddress: string,daoAddress:string):Promise<boolean> => {
+export const getIsMember = async (
+  memberManagerDAOAddress: string,
+  daoAddress: string
+): Promise<boolean> => {
   const contractConstract = MemberManagerConstruct;
   let response: boolean = false;
   const provider = await detectEthereumProvider({ mustBeMetaMask: true });
@@ -56,11 +64,11 @@ export const getIsMember =async (memberManagerDAOAddress: string,daoAddress:stri
         contractConstract.abi,
         signer
       );
-    const response = await contract.isMember(daoAddress, signer.getAddress());
-      }
+      const response = await contract.isMember(daoAddress, signer.getAddress());
     }
+  }
   return response;
-}
+};
 
 export const getDaoListOfAffiliation = async (
   memberManagerDAOAddress: string,
@@ -79,17 +87,20 @@ export const getDaoListOfAffiliation = async (
         signer
       );
       for (const item of subDaoList) {
-        let itemWithFlg:SubDAODataWithMemberFlg = {
-          ownerAddress:item.ownerAddress,
-          daoAddress:item.daoAddress,
-          daoName:item.daoName,
-          description:item.description,
-          githubURL:item.githubURL,
-          rewardApproved:item.rewardApproved,
-          isMember:false
-        }
+        let itemWithFlg: SubDAODataWithMemberFlg = {
+          ownerAddress: item.ownerAddress,
+          daoAddress: item.daoAddress,
+          daoName: item.daoName,
+          description: item.description,
+          githubURL: item.githubURL,
+          rewardApproved: item.rewardApproved,
+          isMember: false,
+        };
         if (await contract.isMember(item.daoAddress, signer.getAddress())) {
-          itemWithFlg.isMember = true;
+          const memberNftAddress = await getMemberNFTAddress(item.daoAddress);
+          if ((await checkNFTMinted(memberNftAddress)) != "") {
+            itemWithFlg.isMember = true;
+          }
         }
         response.push(itemWithFlg);
       }
@@ -105,7 +116,7 @@ export const deploySubDAO = async (
   memberManagerContractAddress: string,
   proposalManagerContractAddress: string,
   setDaoAddress: (address: string) => void,
-  setFinished: (value:boolean) => void
+  setFinished: (value: boolean) => void
 ): Promise<string> => {
   let subDAOContractAddess = "";
   const contractConstract = SubDAOContractConstruct;
@@ -143,7 +154,7 @@ export const deploySubDAO = async (
   return subDAOContractAddess;
 };
 
-export const doDonateSubDao = async (subDaoAddress:string,amount:number) => {
+export const doDonateSubDao = async (subDaoAddress: string, amount: number) => {
   const contractConstract = SubDAOContractConstruct;
   if (typeof window.ethereum !== "undefined" && subDaoAddress) {
     const provider = new ethers.providers.Web3Provider(window.ethereum);
@@ -154,7 +165,7 @@ export const doDonateSubDao = async (subDaoAddress:string,amount:number) => {
       signer
     );
     await contract
-      .donate({value:ethers.utils.parseEther(String(amount))})
+      .donate({ value: ethers.utils.parseEther(String(amount)) })
       .catch((err: any) => {
         console.log(err);
         errorFunction(err);
@@ -162,7 +173,7 @@ export const doDonateSubDao = async (subDaoAddress:string,amount:number) => {
   }
 };
 
-export const getDaoBalance = async (daoAddress:string): Promise<number> => {
+export const getDaoBalance = async (daoAddress: string): Promise<number> => {
   const contractConstract = SubDAOContractConstruct;
   let response: number = 0;
   if (typeof window.ethereum !== "undefined" && daoAddress) {
@@ -182,7 +193,7 @@ export const getDaoBalance = async (daoAddress:string): Promise<number> => {
   return response;
 };
 
-export const getDaoName = async (daoAddress:string): Promise<string> => {
+export const getDaoName = async (daoAddress: string): Promise<string> => {
   const contractConstract = SubDAOContractConstruct;
   let response: string = "";
   if (typeof window.ethereum !== "undefined" && daoAddress) {
@@ -234,7 +245,9 @@ export const getTokenList = async (
   return response;
 };
 
-export const getTokenListWithName = async (tokenList:Array<TokenInfo>):Promise<Array<TokenInfoWithName>> => {
+export const getTokenListWithName = async (
+  tokenList: Array<TokenInfo>
+): Promise<Array<TokenInfoWithName>> => {
   let response: TokenInfoWithName[] = [];
   const erc20contractDefine = DaoErc20Contract;
   const erc721contractDefine = DaoErc721Contract;
@@ -244,48 +257,51 @@ export const getTokenListWithName = async (tokenList:Array<TokenInfo>):Promise<A
     if (typeof window.ethereum !== "undefined") {
       const provider = new ethers.providers.Web3Provider(window.ethereum);
       const signer = provider.getSigner();
-      for (var item of tokenList){
-        let commonContractDefine:any;
-        if (item.tokenKind == TokenKind.ERC20){
+      for (var item of tokenList) {
+        let commonContractDefine: any;
+        if (item.tokenKind == TokenKind.ERC20) {
           commonContractDefine = erc20contractDefine;
-        }
-        else if (item.tokenKind == TokenKind.ERC721){
+        } else if (item.tokenKind == TokenKind.ERC721) {
           commonContractDefine = erc721contractDefine;
-        }
-        else {
+        } else {
           commonContractDefine = GovernaceTokenConstract;
         }
-        const contract = new ethers.Contract(item.tokenAddress,commonContractDefine.abi,signer);
-        let tokenName = await contract.name()
-        .catch((err: any) => {
+        const contract = new ethers.Contract(
+          item.tokenAddress,
+          commonContractDefine.abi,
+          signer
+        );
+        let tokenName = await contract.name().catch((err: any) => {
           console.log(err);
           errorFunction(err);
         });
-        let tokenSymbol = await contract.symbol()
-        .catch((err: any) => {
+        let tokenSymbol = await contract.symbol().catch((err: any) => {
           console.log(err);
           errorFunction(err);
         });
-        const pushItem:TokenInfoWithName = {
-            tokenAddress: item.tokenAddress,
-            tokenKind: item.tokenKind,
-            tokenName: String(tokenName),
-            tokenSymbol: String(tokenSymbol),
-          }
+        const pushItem: TokenInfoWithName = {
+          tokenAddress: item.tokenAddress,
+          tokenKind: item.tokenKind,
+          tokenName: String(tokenName),
+          tokenSymbol: String(tokenSymbol),
+        };
 
-          response.push(pushItem);
+        response.push(pushItem);
       }
-
     }
   } else {
     alert("Please instal metamask.");
   }
 
-
   return response;
-}
+};
 
-export const divide=async(proposalId:string,daoAddress:string,targetAddress:string,amount:number)=>{
+export const divide = async (
+  proposalId: string,
+  daoAddress: string,
+  targetAddress: string,
+  amount: number
+) => {
   const contractConstract = SubDAOContractConstruct;
   if (typeof window.ethereum !== "undefined" && daoAddress) {
     const provider = new ethers.providers.Web3Provider(window.ethereum);
@@ -296,16 +312,24 @@ export const divide=async(proposalId:string,daoAddress:string,targetAddress:stri
       signer
     );
     await contract
-      .divide(targetAddress,ethers.utils.parseEther(String(amount)),proposalId)
+      .divide(
+        targetAddress,
+        ethers.utils.parseEther(String(amount)),
+        proposalId
+      )
       .catch((err: any) => {
         console.log(err);
         errorFunction(err);
       });
   }
-}
+};
 
-export const addTokenToList=async(tokenKind:TokenKind,tokenAddress:string,daoAddress:string)=>{
-  console.log("daoAddress:",daoAddress);
+export const addTokenToList = async (
+  tokenKind: TokenKind,
+  tokenAddress: string,
+  daoAddress: string
+) => {
+  console.log("daoAddress:", daoAddress);
   const contractConstract = SubDAOContractConstruct;
   if (typeof window.ethereum !== "undefined" && daoAddress) {
     const provider = new ethers.providers.Web3Provider(window.ethereum);
@@ -315,17 +339,17 @@ export const addTokenToList=async(tokenKind:TokenKind,tokenAddress:string,daoAdd
       contractConstract.abi,
       signer
     );
-    await contract
-      .addTokenToList(tokenKind,tokenAddress)
-      .catch((err: any) => {
-        console.log(err);
-        errorFunction(err);
-      });
+    await contract.addTokenToList(tokenKind, tokenAddress).catch((err: any) => {
+      console.log(err);
+      errorFunction(err);
+    });
   }
-}
+};
 
-export const getMemberNFTAddress=async(daoAddress:string):Promise<string>=>{
-  console.log("daoAddress:",daoAddress);
+export const getMemberNFTAddress = async (
+  daoAddress: string
+): Promise<string> => {
+  console.log("daoAddress:", daoAddress);
   const contractConstract = SubDAOContractConstruct;
   let ret = "";
   if (typeof window.ethereum !== "undefined" && daoAddress) {
@@ -336,12 +360,10 @@ export const getMemberNFTAddress=async(daoAddress:string):Promise<string>=>{
       contractConstract.abi,
       signer
     );
-    ret = await contract
-      .getMemberNFTAddress()
-      .catch((err: any) => {
-        console.log(err);
-        errorFunction(err);
-      });
+    ret = await contract.getMemberNFTAddress().catch((err: any) => {
+      console.log(err);
+      errorFunction(err);
+    });
   }
   return ret;
-}
+};

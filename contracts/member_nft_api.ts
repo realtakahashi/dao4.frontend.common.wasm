@@ -108,3 +108,29 @@ export const checkNFTMinted = async (
   }
   return "";
 };
+
+export const burnMemberNft = async (
+  memberNFTTokenAddress: string,
+  tokenId:number
+  ) => {
+  if (
+    typeof window.ethereum !== "undefined" &&
+    typeof memberNFTTokenAddress !== "undefined"
+  ) {
+    const provider = new ethers.providers.Web3Provider(window.ethereum);
+    const signer = provider.getSigner();
+    const signerAddress = await signer.getAddress();
+    const contract = new ethers.Contract(
+      memberNFTTokenAddress,
+      MemberERC721ContractConstruct.abi,
+      signer
+    );
+
+    const tx = await contract
+      .burn(tokenId)
+      .catch((err: any) => {
+        errorFunction(err);
+      });
+  }
+};
+
