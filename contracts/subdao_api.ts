@@ -1,4 +1,3 @@
-import MasterDAOContractConstruct from "./construct/MasterDAO";
 import {
   SubDAOData,
   SubDAODataWithMemberFlg,
@@ -14,37 +13,82 @@ import { TokenInfo, TokenInfoWithName, TokenKind } from "../types/Token";
 import DaoErc20Contract from "./construct/DaoErc20";
 import DaoErc721Contract from "./construct/DaoErc721";
 import GovernaceTokenConstract from "./construct/GonvernanceToken";
-import { checkNFTMinted } from "./member_nft_api";
+import { ApiPromise, WsProvider } from "@polkadot/api";
+import { ContractPromise, CodePromise } from "@polkadot/api-contract";
+import type { InjectedAccountWithMeta } from "@polkadot/extension-inject/types";
+import daoManagerAbi from "../contracts/construct/DaoManager.json";
+import daoAbi from "../contracts/construct/Dao.json";
+import memberManagerAbi from "../contracts/construct/MemberManager.json";
+import daoContractWasm from "../contracts/construct/Dao_contract.json";
+
+const blockchainUrl = String(process.env.NEXT_PUBLIC_BLOCKCHAIN_URL) ?? "";
+const daoManagerAddress =
+  String(process.env.NEXT_PUBLIC_DAO_MANAGER_CONTRACT_ADDRESS) ?? "";
+const memberManagerAddress =
+  String(process.env.NEXT_PUBLIC_MEMBER_MANAGER_CONTRACT_ADDRESS) ?? "";
+// const gasLimit = -1;
+const gasLimit = 100000 * 1000000;
+const storageDepositLimit = null;
+
+export const listDAOAddress = async (
+  peformanceAddress: string
+): Promise<Array<string>> => {
+  const wsProvider = new WsProvider(blockchainUrl);
+  const api = await ApiPromise.create({ provider: wsProvider });
+
+  let response: string[] = [];
+
+  const daoManagerContract = new ContractPromise(
+    api,
+    daoManagerAbi,
+    daoManagerAddress
+  );
+  const { gasConsumed, result, output } =
+    await daoManagerContract.query.getDaoList(peformanceAddress, {
+      value: 0,
+      gasLimit: -1,
+    });
+  if (output !== undefined && output !== null) {
+    let response_json = output.toJSON();
+    let json_data = JSON.parse(JSON.stringify(response_json));
+    for (let i = 0; i < json_data.length; i++) {
+      let item = json_data[i];
+      response.push(item);
+    }
+  }
+  api.disconnect();
+  return response;
+};
 
 export const listSubDAO = async (
-  masterDAOAddress: string
+  peformanceAddress: string,
+  daoAddressList: string[]
 ): Promise<Array<SubDAOData>> => {
-  const contractConstract = MasterDAOContractConstruct;
+  const wsProvider = new WsProvider(blockchainUrl);
+  const api = await ApiPromise.create({ provider: wsProvider });
+
   let response: SubDAOData[] = [];
-  const provider = await detectEthereumProvider({ mustBeMetaMask: true });
-  if (provider && window.ethereum?.isMetaMask) {
-    if (typeof window.ethereum !== "undefined" && masterDAOAddress) {
-      const provider = new ethers.providers.Web3Provider(window.ethereum);
-      const signer = provider.getSigner();
-      const contract = new ethers.Contract(
-        masterDAOAddress,
-        contractConstract.abi,
-        signer
-      );
-      await contract
-        .getDaoList()
-        .then((r: any) => {
-          console.log(r);
-          response = r;
-        })
-        .catch((err: any) => {
-          console.log(err);
-          errorFunction(err);
-        });
+
+  for (let i = 0; i < daoAddressList.length; i++) {
+    const daoContract = new ContractPromise(api, daoAbi, daoAddressList[i]);
+    const { gasConsumed, result, output } =
+      await daoContract.query.getDaoInfo(peformanceAddress, {
+        value: 0,
+        gasLimit: -1,
+      });
+    if (output !== undefined && output !== null) {
+      let response_json = output.toJSON();
+      let json_data = JSON.parse(JSON.stringify(response_json));
+      let item: SubDAOData = {
+        daoName: json_data.daoName,
+        githubURL: json_data.githubUrl,
+        description: json_data.description,
+        daoAddress: daoAddressList[i],
+      };
+      response.push(item);
     }
-  } else {
-    alert("Please instal metamask.");
   }
+  api.disconnect();
   return response;
 };
 
@@ -71,87 +115,118 @@ export const getIsMember = async (
 };
 
 export const getDaoListOfAffiliation = async (
-  memberManagerDAOAddress: string,
+  peformanceAddress: string,
   subDaoList: Array<SubDAOData>
 ): Promise<Array<SubDAODataWithMemberFlg>> => {
-  const contractConstract = MemberManagerConstruct;
+  const wsProvider = new WsProvider(blockchainUrl);
+  const api = await ApiPromise.create({ provider: wsProvider });
+
   let response: SubDAODataWithMemberFlg[] = [];
-  const provider = await detectEthereumProvider({ mustBeMetaMask: true });
-  if (provider && window.ethereum?.isMetaMask) {
-    if (typeof window.ethereum !== "undefined" && memberManagerDAOAddress) {
-      const provider = new ethers.providers.Web3Provider(window.ethereum);
-      const signer = provider.getSigner();
-      const contract = new ethers.Contract(
-        memberManagerDAOAddress,
-        contractConstract.abi,
-        signer
+
+  for (const item of subDaoList) {
+    let itemWithFlg: SubDAODataWithMemberFlg = {
+      daoAddress: item.daoAddress,
+      daoName: item.daoName,
+      description: item.description,
+      githubURL: item.githubURL,
+      isMember: false,
+    };
+
+    const memberManagerContract = new ContractPromise(
+      api,
+      memberManagerAbi,
+      memberManagerAddress
+    );
+    const { gasConsumed, result, output } =
+      await memberManagerContract.query.isMember(
+        peformanceAddress,
+        {
+          value: 0,
+          gasLimit: -1,
+        },
+        item.daoAddress
       );
-      for (const item of subDaoList) {
-        let itemWithFlg: SubDAODataWithMemberFlg = {
-          ownerAddress: item.ownerAddress,
-          daoAddress: item.daoAddress,
-          daoName: item.daoName,
-          description: item.description,
-          githubURL: item.githubURL,
-          rewardApproved: item.rewardApproved,
-          isMember: false,
-        };
-        if (await contract.isMember(item.daoAddress, signer.getAddress())) {
-          const memberNftAddress = await getMemberNFTAddress(item.daoAddress);
-          if ((await checkNFTMinted(memberNftAddress)) != "") {
-            itemWithFlg.isMember = true;
-          }
-        }
-        response.push(itemWithFlg);
+
+    if (output !== undefined && output !== null) {
+      if (output.toHuman()?.toString() == "true") {
+        itemWithFlg.isMember = true;
+      } else {
+        itemWithFlg.isMember = false;
       }
+
+      response.push(itemWithFlg);
     }
-  } else {
-    alert("Please instal metamask.");
   }
+  api.disconnect();
   return response;
 };
 
 export const deploySubDAO = async (
+  performingAccount: InjectedAccountWithMeta,
   inputData: SubDAODeployFormData,
-  memberManagerContractAddress: string,
-  proposalManagerContractAddress: string,
   setDaoAddress: (address: string) => void,
+  setShowDaoAddress: (address: string) => void,
   setFinished: (value: boolean) => void
-): Promise<string> => {
+) => {
+  console.log("#### deploySubDAO pass 1");
+  const wsProvider = new WsProvider(blockchainUrl);
+  const api = await ApiPromise.create({ provider: wsProvider });
+  console.log("#### deploySubDAO pass 2");
+
+  console.log("### performingAccount: ",performingAccount);
+
   let subDAOContractAddess = "";
-  const contractConstract = SubDAOContractConstruct;
-  if (memberManagerContractAddress === "") {
-    throw new Error("memberManagerContractAddress is required");
+  const { web3FromSource } = await import("@polkadot/extension-dapp");
+  const contractWasm = daoContractWasm.source.wasm;
+  const contract = new CodePromise(api, daoAbi, contractWasm);
+  const injector = await web3FromSource(performingAccount.meta.source);
+  const tx = contract.tx.new({ gasLimit, storageDepositLimit }, daoManagerAddress, inputData.name, inputData.githubUrl, inputData.description);
+  console.log("#### deploySubDAO pass 3");
+  const unsub = await tx.signAndSend(
+    performingAccount.address,
+    { signer: injector.signer },
+    ({ contract, status }) => {
+      if (status.isInBlock || status.isFinalized) {
+        console.log("#### deploySubDAO pass 4");
+        subDAOContractAddess = contract.address.toString();
+        console.log("### subDAOContractAddess: ",subDAOContractAddess);
+        setDaoAddress(subDAOContractAddess);
+        setShowDaoAddress(subDAOContractAddess);
+        setFinished(true);
+        unsub();
+        api.disconnect();
+      }
+      else {
+        console.log("## status: ",status.toHuman()?.toString());
+      }
+    }
+  );
+};
+
+export const registerToDaoManager = async (
+  performingAccount: InjectedAccountWithMeta,
+  daoAddress: string,
+  setFinished:(value:boolean) => void,
+) => {
+  const { web3FromSource } = await import("@polkadot/extension-dapp");
+  const wsProvider = new WsProvider(blockchainUrl);
+  const api = await ApiPromise.create({ provider: wsProvider });
+
+  const contract = new ContractPromise(api, daoManagerAbi, daoManagerAddress);
+  const injector = await web3FromSource(performingAccount.meta.source);
+  const tx = await contract.tx.addDao(
+    { value: 0, gasLimit: -1 },
+    daoAddress
+  );
+  if (injector !== undefined) {
+    const unsub = await tx.signAndSend(performingAccount.address, { signer: injector.signer }, (result) => {
+      if (result.status.isFinalized) {
+        setFinished(true);
+        unsub();
+        api.disconnect();
+      }
+    });
   }
-  if (proposalManagerContractAddress === "") {
-    throw new Error("proposalManagerContractAddress is required");
-  }
-  if (typeof window.ethereum !== "undefined") {
-    const provider = new ethers.providers.Web3Provider(window.ethereum);
-    const signer = provider.getSigner();
-    const factory = new ethers.ContractFactory(
-      contractConstract.abi,
-      contractConstract.bytecode,
-      signer
-    );
-    const result: any = await factory
-      .deploy(
-        inputData.name,
-        inputData.githubUrl,
-        memberManagerContractAddress,
-        proposalManagerContractAddress,
-        inputData.memberNFTAddress
-      )
-      .catch((err: any) => {
-        errorFunction(err);
-      });
-    subDAOContractAddess = result.address;
-    const ret = await result.deployed();
-    setFinished(true);
-  }
-  console.log("### subDAOContractAddess:", subDAOContractAddess);
-  setDaoAddress(subDAOContractAddess);
-  return subDAOContractAddess;
 };
 
 export const doDonateSubDao = async (subDaoAddress: string, amount: number) => {

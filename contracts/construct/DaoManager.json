@@ -1,0 +1,573 @@
+{
+  "source": {
+    "hash": "0xce4924112f8bfbbe5668ac32f816ec77d9ab0e678fe9aa101fe9d9315919be45",
+    "language": "ink! 3.3.1",
+    "compiler": "rustc 1.63.0-nightly"
+  },
+  "contract": {
+    "name": "dao_manager",
+    "version": "0.1.0",
+    "authors": [
+      "[your_name] <[your_email]>"
+    ]
+  },
+  "V3": {
+    "spec": {
+      "constructors": [
+        {
+          "args": [
+            {
+              "label": "proposal_manager_account_id",
+              "type": {
+                "displayName": [
+                  "AccountId"
+                ],
+                "type": 0
+              }
+            }
+          ],
+          "docs": [],
+          "label": "new",
+          "payable": false,
+          "selector": "0x9bae9d5e"
+        }
+      ],
+      "docs": [],
+      "events": [],
+      "messages": [
+        {
+          "args": [
+            {
+              "label": "dao_account_id",
+              "type": {
+                "displayName": [
+                  "AccountId"
+                ],
+                "type": 0
+              }
+            }
+          ],
+          "docs": [],
+          "label": "add_dao",
+          "mutates": true,
+          "payable": false,
+          "returnType": {
+            "displayName": [
+              "Result"
+            ],
+            "type": 10
+          },
+          "selector": "0x9a0ab46f"
+        },
+        {
+          "args": [],
+          "docs": [],
+          "label": "get_dao_list",
+          "mutates": false,
+          "payable": false,
+          "returnType": {
+            "displayName": [
+              "Vec"
+            ],
+            "type": 13
+          },
+          "selector": "0x330665d7"
+        },
+        {
+          "args": [
+            {
+              "label": "dao_account_id",
+              "type": {
+                "displayName": [
+                  "AccountId"
+                ],
+                "type": 0
+              }
+            },
+            {
+              "label": "csv_data",
+              "type": {
+                "displayName": [
+                  "String"
+                ],
+                "type": 14
+              }
+            }
+          ],
+          "docs": [
+            " add dao token",
+            " * This function can be called by proposal manager.",
+            " * csv data is \"token_address,token_type\""
+          ],
+          "label": "add_dao_token",
+          "mutates": true,
+          "payable": false,
+          "returnType": {
+            "displayName": [
+              "Result"
+            ],
+            "type": 10
+          },
+          "selector": "0x795c8be5"
+        },
+        {
+          "args": [
+            {
+              "label": "dao_account_id",
+              "type": {
+                "displayName": [
+                  "AccountId"
+                ],
+                "type": 0
+              }
+            },
+            {
+              "label": "csv_data",
+              "type": {
+                "displayName": [
+                  "String"
+                ],
+                "type": 14
+              }
+            }
+          ],
+          "docs": [
+            " change token sales status",
+            " * This function can be called by proposal manager.",
+            " * csv data: \"token_address,is_start(\"0\" or \"1\")\""
+          ],
+          "label": "change_token_sales_status",
+          "mutates": true,
+          "payable": false,
+          "returnType": {
+            "displayName": [
+              "Result"
+            ],
+            "type": 10
+          },
+          "selector": "0x25e2e405"
+        },
+        {
+          "args": [
+            {
+              "label": "dao_account_id",
+              "type": {
+                "displayName": [
+                  "AccountId"
+                ],
+                "type": 0
+              }
+            },
+            {
+              "label": "csv_data",
+              "type": {
+                "displayName": [
+                  "String"
+                ],
+                "type": 14
+              }
+            }
+          ],
+          "docs": [
+            " withdraw token proceeds",
+            " * This function can be called by proposal manager.",
+            " * csv_data: \"token_address\""
+          ],
+          "label": "withdraw_token_proceeds",
+          "mutates": true,
+          "payable": false,
+          "returnType": {
+            "displayName": [
+              "Result"
+            ],
+            "type": 10
+          },
+          "selector": "0x6eb3ead4"
+        },
+        {
+          "args": [
+            {
+              "label": "dao_account_id",
+              "type": {
+                "displayName": [
+                  "AccountId"
+                ],
+                "type": 0
+              }
+            },
+            {
+              "label": "csv_data",
+              "type": {
+                "displayName": [
+                  "String"
+                ],
+                "type": 14
+              }
+            }
+          ],
+          "docs": [
+            " distribute governance token",
+            " * This function can be called by proposal manager.",
+            " * csv_data : \"token_address,list_of_reciever(\"reciver_data1(reciver_eoa#amount)?reciver_data2?...\")\""
+          ],
+          "label": "distribute_governance_token",
+          "mutates": true,
+          "payable": false,
+          "returnType": {
+            "displayName": [
+              "Result"
+            ],
+            "type": 10
+          },
+          "selector": "0xdb4e3a28"
+        },
+        {
+          "args": [
+            {
+              "label": "dao_account_id",
+              "type": {
+                "displayName": [
+                  "AccountId"
+                ],
+                "type": 0
+              }
+            },
+            {
+              "label": "csv_data",
+              "type": {
+                "displayName": [
+                  "String"
+                ],
+                "type": 14
+              }
+            }
+          ],
+          "docs": [
+            " distribute dao treasury",
+            " * This function can be called by proposal manager.",
+            " * csv_data: \"reciver_address,amount\""
+          ],
+          "label": "distribute_dao_treasury",
+          "mutates": true,
+          "payable": false,
+          "returnType": {
+            "displayName": [
+              "Result"
+            ],
+            "type": 10
+          },
+          "selector": "0x41608f04"
+        }
+      ]
+    },
+    "storage": {
+      "struct": {
+        "fields": [
+          {
+            "layout": {
+              "cell": {
+                "key": "0x0000000000000000000000000000000000000000000000000000000000000000",
+                "ty": 0
+              }
+            },
+            "name": "proposal_manager_account_id"
+          },
+          {
+            "layout": {
+              "cell": {
+                "key": "0x0100000000000000000000000000000000000000000000000000000000000000",
+                "ty": 3
+              }
+            },
+            "name": "dao_list_for_id"
+          },
+          {
+            "layout": {
+              "cell": {
+                "key": "0x0200000000000000000000000000000000000000000000000000000000000000",
+                "ty": 7
+              }
+            },
+            "name": "dao_list_for_address"
+          },
+          {
+            "layout": {
+              "cell": {
+                "key": "0x0300000000000000000000000000000000000000000000000000000000000000",
+                "ty": 4
+              }
+            },
+            "name": "next_id"
+          }
+        ]
+      }
+    },
+    "types": [
+      {
+        "id": 0,
+        "type": {
+          "def": {
+            "composite": {
+              "fields": [
+                {
+                  "type": 1,
+                  "typeName": "[u8; 32]"
+                }
+              ]
+            }
+          },
+          "path": [
+            "ink_env",
+            "types",
+            "AccountId"
+          ]
+        }
+      },
+      {
+        "id": 1,
+        "type": {
+          "def": {
+            "array": {
+              "len": 32,
+              "type": 2
+            }
+          }
+        }
+      },
+      {
+        "id": 2,
+        "type": {
+          "def": {
+            "primitive": "u8"
+          }
+        }
+      },
+      {
+        "id": 3,
+        "type": {
+          "def": {
+            "composite": {
+              "fields": [
+                {
+                  "type": 5
+                }
+              ]
+            }
+          },
+          "params": [
+            {
+              "name": "K",
+              "type": 4
+            },
+            {
+              "name": "V",
+              "type": 0
+            }
+          ],
+          "path": [
+            "openbrush_lang",
+            "storage",
+            "mapping",
+            "Mapping"
+          ]
+        }
+      },
+      {
+        "id": 4,
+        "type": {
+          "def": {
+            "primitive": "u128"
+          }
+        }
+      },
+      {
+        "id": 5,
+        "type": {
+          "def": {
+            "sequence": {
+              "type": 6
+            }
+          }
+        }
+      },
+      {
+        "id": 6,
+        "type": {
+          "def": {
+            "tuple": [
+              4,
+              0
+            ]
+          }
+        }
+      },
+      {
+        "id": 7,
+        "type": {
+          "def": {
+            "composite": {
+              "fields": [
+                {
+                  "type": 8
+                }
+              ]
+            }
+          },
+          "params": [
+            {
+              "name": "K",
+              "type": 0
+            },
+            {
+              "name": "V",
+              "type": 4
+            }
+          ],
+          "path": [
+            "openbrush_lang",
+            "storage",
+            "mapping",
+            "Mapping"
+          ]
+        }
+      },
+      {
+        "id": 8,
+        "type": {
+          "def": {
+            "sequence": {
+              "type": 9
+            }
+          }
+        }
+      },
+      {
+        "id": 9,
+        "type": {
+          "def": {
+            "tuple": [
+              0,
+              4
+            ]
+          }
+        }
+      },
+      {
+        "id": 10,
+        "type": {
+          "def": {
+            "variant": {
+              "variants": [
+                {
+                  "fields": [
+                    {
+                      "type": 11
+                    }
+                  ],
+                  "index": 0,
+                  "name": "Ok"
+                },
+                {
+                  "fields": [
+                    {
+                      "type": 12
+                    }
+                  ],
+                  "index": 1,
+                  "name": "Err"
+                }
+              ]
+            }
+          },
+          "params": [
+            {
+              "name": "T",
+              "type": 11
+            },
+            {
+              "name": "E",
+              "type": 12
+            }
+          ],
+          "path": [
+            "Result"
+          ]
+        }
+      },
+      {
+        "id": 11,
+        "type": {
+          "def": {
+            "tuple": []
+          }
+        }
+      },
+      {
+        "id": 12,
+        "type": {
+          "def": {
+            "variant": {
+              "variants": [
+                {
+                  "index": 0,
+                  "name": "TheDaoDoesNotExist"
+                },
+                {
+                  "index": 1,
+                  "name": "AddingTokenIsFailure"
+                },
+                {
+                  "index": 2,
+                  "name": "ThisFunctionCanBeCalledFromProposalManager"
+                },
+                {
+                  "index": 3,
+                  "name": "ChangingSokenSalesStatusIsFailure"
+                },
+                {
+                  "index": 4,
+                  "name": "WithdrawingTokenProceedsIsFailure"
+                },
+                {
+                  "index": 5,
+                  "name": "DistributingGovernanceTokenIsFailure"
+                },
+                {
+                  "index": 6,
+                  "name": "DistributingDaoTreasuryIsFailure"
+                },
+                {
+                  "index": 7,
+                  "name": "InvalidCsvData"
+                }
+              ]
+            }
+          },
+          "path": [
+            "dao_manager",
+            "dao_manager",
+            "Error"
+          ]
+        }
+      },
+      {
+        "id": 13,
+        "type": {
+          "def": {
+            "sequence": {
+              "type": 0
+            }
+          }
+        }
+      },
+      {
+        "id": 14,
+        "type": {
+          "def": {
+            "primitive": "str"
+          }
+        }
+      }
+    ]
+  }
+}

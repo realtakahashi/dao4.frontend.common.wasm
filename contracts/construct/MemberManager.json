@@ -1,0 +1,1028 @@
+{
+    "source": {
+      "hash": "0xa4cec1fd1a1ec8579c9c0cb909205f4f433cdd7840b5ec87222088921d73231f",
+      "language": "ink! 3.3.1",
+      "compiler": "rustc 1.63.0-nightly"
+    },
+    "contract": {
+      "name": "member_manager",
+      "version": "0.1.0",
+      "authors": [
+        "[your_name] <[your_email]>"
+      ]
+    },
+    "V3": {
+      "spec": {
+        "constructors": [
+          {
+            "args": [],
+            "docs": [
+              "Constructor"
+            ],
+            "label": "new",
+            "payable": false,
+            "selector": "0x9bae9d5e"
+          }
+        ],
+        "docs": [],
+        "events": [],
+        "messages": [
+          {
+            "args": [
+              {
+                "label": "_proposal_manager_address",
+                "type": {
+                  "displayName": [
+                    "AccountId"
+                  ],
+                  "type": 0
+                }
+              }
+            ],
+            "docs": [
+              " set proposal manager address"
+            ],
+            "label": "set_propsal_manager_adress",
+            "mutates": true,
+            "payable": false,
+            "returnType": {
+              "displayName": [
+                "ResultOwner"
+              ],
+              "type": 19
+            },
+            "selector": "0x468c96ee"
+          },
+          {
+            "args": [
+              {
+                "label": "_dao_address",
+                "type": {
+                  "displayName": [
+                    "AccountId"
+                  ],
+                  "type": 0
+                }
+              },
+              {
+                "label": "_member_address",
+                "type": {
+                  "displayName": [
+                    "AccountId"
+                  ],
+                  "type": 0
+                }
+              },
+              {
+                "label": "_name",
+                "type": {
+                  "displayName": [
+                    "String"
+                  ],
+                  "type": 8
+                }
+              },
+              {
+                "label": "_token_id",
+                "type": {
+                  "displayName": [
+                    "u16"
+                  ],
+                  "type": 4
+                }
+              }
+            ],
+            "docs": [
+              " add first member."
+            ],
+            "label": "add_first_member",
+            "mutates": true,
+            "payable": false,
+            "returnType": {
+              "displayName": [
+                "ResultTransaction"
+              ],
+              "type": 21
+            },
+            "selector": "0xd7a919d0"
+          },
+          {
+            "args": [
+              {
+                "label": "_dao_address",
+                "type": {
+                  "displayName": [
+                    "AccountId"
+                  ],
+                  "type": 0
+                }
+              },
+              {
+                "label": "_csv_data",
+                "type": {
+                  "displayName": [
+                    "String"
+                  ],
+                  "type": 8
+                }
+              }
+            ],
+            "docs": [
+              " add a member"
+            ],
+            "label": "add_member",
+            "mutates": true,
+            "payable": false,
+            "returnType": {
+              "displayName": [
+                "ResultTransaction"
+              ],
+              "type": 21
+            },
+            "selector": "0xd2b51e74"
+          },
+          {
+            "args": [
+              {
+                "label": "_dao_address",
+                "type": {
+                  "displayName": [
+                    "AccountId"
+                  ],
+                  "type": 0
+                }
+              },
+              {
+                "label": "_csv_data",
+                "type": {
+                  "displayName": [
+                    "String"
+                  ],
+                  "type": 8
+                }
+              }
+            ],
+            "docs": [
+              " delete the member"
+            ],
+            "label": "delete_member",
+            "mutates": true,
+            "payable": false,
+            "returnType": {
+              "displayName": [
+                "ResultTransaction"
+              ],
+              "type": 21
+            },
+            "selector": "0x39a97ce6"
+          },
+          {
+            "args": [
+              {
+                "label": "_dao_address",
+                "type": {
+                  "displayName": [
+                    "AccountId"
+                  ],
+                  "type": 0
+                }
+              },
+              {
+                "label": "_csv_data",
+                "type": {
+                  "displayName": [
+                    "String"
+                  ],
+                  "type": 8
+                }
+              }
+            ],
+            "docs": [
+              " change electoral commissioner"
+            ],
+            "label": "change_electoral_commissioner",
+            "mutates": true,
+            "payable": false,
+            "returnType": {
+              "displayName": [
+                "ResultTransaction"
+              ],
+              "type": 21
+            },
+            "selector": "0x3487127b"
+          },
+          {
+            "args": [
+              {
+                "label": "_dao_address",
+                "type": {
+                  "displayName": [
+                    "AccountId"
+                  ],
+                  "type": 0
+                }
+              }
+            ],
+            "docs": [
+              " get member list."
+            ],
+            "label": "get_member_list",
+            "mutates": false,
+            "payable": false,
+            "returnType": {
+              "displayName": [
+                "Vec"
+              ],
+              "type": 23
+            },
+            "selector": "0xe447d7c7"
+          },
+          {
+            "args": [
+              {
+                "label": "_dao_address",
+                "type": {
+                  "displayName": [
+                    "AccountId"
+                  ],
+                  "type": 0
+                }
+              }
+            ],
+            "docs": [
+              " get electoral commissioner list"
+            ],
+            "label": "get_electoral_commissioner_list",
+            "mutates": false,
+            "payable": false,
+            "returnType": {
+              "displayName": [
+                "Vec"
+              ],
+              "type": 23
+            },
+            "selector": "0x0c5b77b7"
+          },
+          {
+            "args": [
+              {
+                "label": "dao_address",
+                "type": {
+                  "displayName": [
+                    "AccountId"
+                  ],
+                  "type": 0
+                }
+              }
+            ],
+            "docs": [
+              " check the caller is the member of dao"
+            ],
+            "label": "is_Member",
+            "mutates": false,
+            "payable": false,
+            "returnType": {
+              "displayName": [
+                "bool"
+              ],
+              "type": 9
+            },
+            "selector": "0x3c4c73bb"
+          },
+          {
+            "args": [
+              {
+                "label": "caller",
+                "type": {
+                  "displayName": [
+                    "AccountId"
+                  ],
+                  "type": 0
+                }
+              },
+              {
+                "label": "_dao_address",
+                "type": {
+                  "displayName": [
+                    "AccountId"
+                  ],
+                  "type": 0
+                }
+              }
+            ],
+            "docs": [
+              " modifier of only member"
+            ],
+            "label": "modifier_only_member",
+            "mutates": false,
+            "payable": false,
+            "returnType": {
+              "displayName": [
+                "bool"
+              ],
+              "type": 9
+            },
+            "selector": "0xc835b7cc"
+          },
+          {
+            "args": [
+              {
+                "label": "caller",
+                "type": {
+                  "displayName": [
+                    "AccountId"
+                  ],
+                  "type": 0
+                }
+              },
+              {
+                "label": "_dao_address",
+                "type": {
+                  "displayName": [
+                    "AccountId"
+                  ],
+                  "type": 0
+                }
+              }
+            ],
+            "docs": [
+              " modifier of only electoral commissioner"
+            ],
+            "label": "modifier_only_electoral_commissioner",
+            "mutates": false,
+            "payable": false,
+            "returnType": {
+              "displayName": [
+                "bool"
+              ],
+              "type": 9
+            },
+            "selector": "0x6489ae07"
+          },
+          {
+            "args": [
+              {
+                "label": "new_owner",
+                "type": {
+                  "displayName": [
+                    "ownable_external",
+                    "TransferOwnershipInput1"
+                  ],
+                  "type": 0
+                }
+              }
+            ],
+            "docs": [
+              " Transfers ownership of the contract to a `new_owner`.",
+              " Can only be called by the current owner.",
+              "",
+              " On success a `OwnershipTransferred` event is emitted.",
+              "",
+              " # Errors",
+              "",
+              " Panics with `CallerIsNotOwner` error if caller is not owner.",
+              "",
+              " Panics with `NewOwnerIsZero` error if new owner's address is zero."
+            ],
+            "label": "Ownable::transfer_ownership",
+            "mutates": true,
+            "payable": false,
+            "returnType": {
+              "displayName": [
+                "ownable_external",
+                "TransferOwnershipOutput"
+              ],
+              "type": 19
+            },
+            "selector": "0x11f43efd"
+          },
+          {
+            "args": [],
+            "docs": [
+              " Returns the address of the current owner."
+            ],
+            "label": "Ownable::owner",
+            "mutates": false,
+            "payable": false,
+            "returnType": {
+              "displayName": [
+                "ownable_external",
+                "OwnerOutput"
+              ],
+              "type": 0
+            },
+            "selector": "0x4fa43c8c"
+          },
+          {
+            "args": [],
+            "docs": [
+              " Leaves the contract without owner. It will not be possible to call",
+              " owner's functions anymore. Can only be called by the current owner.",
+              "",
+              " NOTE: Renouncing ownership will leave the contract without an owner,",
+              " thereby removing any functionality that is only available to the owner.",
+              "",
+              " On success a `OwnershipTransferred` event is emitted.",
+              "",
+              " # Errors",
+              "",
+              " Panics with `CallerIsNotOwner` error if caller is not owner"
+            ],
+            "label": "Ownable::renounce_ownership",
+            "mutates": true,
+            "payable": false,
+            "returnType": {
+              "displayName": [
+                "ownable_external",
+                "RenounceOwnershipOutput"
+              ],
+              "type": 19
+            },
+            "selector": "0x5e228753"
+          }
+        ]
+      },
+      "storage": {
+        "struct": {
+          "fields": [
+            {
+              "layout": {
+                "struct": {
+                  "fields": [
+                    {
+                      "layout": {
+                        "cell": {
+                          "key": "0xb36ee29c00000000000000000000000000000000000000000000000000000000",
+                          "ty": 0
+                        }
+                      },
+                      "name": "owner"
+                    },
+                    {
+                      "layout": {
+                        "enum": {
+                          "dispatchKey": "0xb46ee29c00000000000000000000000000000000000000000000000000000000",
+                          "variants": {
+                            "0": {
+                              "fields": [
+                                {
+                                  "layout": {
+                                    "cell": {
+                                      "key": "0xb56ee29c00000000000000000000000000000000000000000000000000000000",
+                                      "ty": 3
+                                    }
+                                  },
+                                  "name": null
+                                }
+                              ]
+                            },
+                            "1": {
+                              "fields": []
+                            }
+                          }
+                        }
+                      },
+                      "name": "_reserved"
+                    }
+                  ]
+                }
+              },
+              "name": "ownable"
+            },
+            {
+              "layout": {
+                "cell": {
+                  "key": "0x0000000000000000000000000000000000000000000000000000000000000000",
+                  "ty": 4
+                }
+              },
+              "name": "next_commissioner_no"
+            },
+            {
+              "layout": {
+                "cell": {
+                  "key": "0x0100000000000000000000000000000000000000000000000000000000000000",
+                  "ty": 4
+                }
+              },
+              "name": "next_member_id"
+            },
+            {
+              "layout": {
+                "cell": {
+                  "key": "0x0200000000000000000000000000000000000000000000000000000000000000",
+                  "ty": 0
+                }
+              },
+              "name": "proposal_manager_address"
+            },
+            {
+              "layout": {
+                "cell": {
+                  "key": "0x0300000000000000000000000000000000000000000000000000000000000000",
+                  "ty": 0
+                }
+              },
+              "name": "owner"
+            },
+            {
+              "layout": {
+                "cell": {
+                  "key": "0x0400000000000000000000000000000000000000000000000000000000000000",
+                  "ty": 5
+                }
+              },
+              "name": "member_infoes"
+            },
+            {
+              "layout": {
+                "cell": {
+                  "key": "0x0500000000000000000000000000000000000000000000000000000000000000",
+                  "ty": 12
+                }
+              },
+              "name": "member_infoes_from_id"
+            },
+            {
+              "layout": {
+                "cell": {
+                  "key": "0x0600000000000000000000000000000000000000000000000000000000000000",
+                  "ty": 16
+                }
+              },
+              "name": "electoral_commissioner"
+            }
+          ]
+        }
+      },
+      "types": [
+        {
+          "id": 0,
+          "type": {
+            "def": {
+              "composite": {
+                "fields": [
+                  {
+                    "type": 1,
+                    "typeName": "[u8; 32]"
+                  }
+                ]
+              }
+            },
+            "path": [
+              "ink_env",
+              "types",
+              "AccountId"
+            ]
+          }
+        },
+        {
+          "id": 1,
+          "type": {
+            "def": {
+              "array": {
+                "len": 32,
+                "type": 2
+              }
+            }
+          }
+        },
+        {
+          "id": 2,
+          "type": {
+            "def": {
+              "primitive": "u8"
+            }
+          }
+        },
+        {
+          "id": 3,
+          "type": {
+            "def": {
+              "tuple": []
+            }
+          }
+        },
+        {
+          "id": 4,
+          "type": {
+            "def": {
+              "primitive": "u16"
+            }
+          }
+        },
+        {
+          "id": 5,
+          "type": {
+            "def": {
+              "composite": {
+                "fields": [
+                  {
+                    "type": 10
+                  }
+                ]
+              }
+            },
+            "params": [
+              {
+                "name": "K",
+                "type": 6
+              },
+              {
+                "name": "V",
+                "type": 7
+              }
+            ],
+            "path": [
+              "openbrush_lang",
+              "storage",
+              "mapping",
+              "Mapping"
+            ]
+          }
+        },
+        {
+          "id": 6,
+          "type": {
+            "def": {
+              "tuple": [
+                0,
+                0
+              ]
+            }
+          }
+        },
+        {
+          "id": 7,
+          "type": {
+            "def": {
+              "composite": {
+                "fields": [
+                  {
+                    "name": "name",
+                    "type": 8,
+                    "typeName": "String"
+                  },
+                  {
+                    "name": "member_address",
+                    "type": 0,
+                    "typeName": "AccountId"
+                  },
+                  {
+                    "name": "member_id",
+                    "type": 4,
+                    "typeName": "u16"
+                  },
+                  {
+                    "name": "token_id",
+                    "type": 4,
+                    "typeName": "u16"
+                  },
+                  {
+                    "name": "is_electoral_commissioner",
+                    "type": 9,
+                    "typeName": "bool"
+                  }
+                ]
+              }
+            },
+            "path": [
+              "member_manager",
+              "member_manager",
+              "MemberInfo"
+            ]
+          }
+        },
+        {
+          "id": 8,
+          "type": {
+            "def": {
+              "primitive": "str"
+            }
+          }
+        },
+        {
+          "id": 9,
+          "type": {
+            "def": {
+              "primitive": "bool"
+            }
+          }
+        },
+        {
+          "id": 10,
+          "type": {
+            "def": {
+              "sequence": {
+                "type": 11
+              }
+            }
+          }
+        },
+        {
+          "id": 11,
+          "type": {
+            "def": {
+              "tuple": [
+                6,
+                7
+              ]
+            }
+          }
+        },
+        {
+          "id": 12,
+          "type": {
+            "def": {
+              "composite": {
+                "fields": [
+                  {
+                    "type": 14
+                  }
+                ]
+              }
+            },
+            "params": [
+              {
+                "name": "K",
+                "type": 13
+              },
+              {
+                "name": "V",
+                "type": 7
+              }
+            ],
+            "path": [
+              "openbrush_lang",
+              "storage",
+              "mapping",
+              "Mapping"
+            ]
+          }
+        },
+        {
+          "id": 13,
+          "type": {
+            "def": {
+              "tuple": [
+                0,
+                4
+              ]
+            }
+          }
+        },
+        {
+          "id": 14,
+          "type": {
+            "def": {
+              "sequence": {
+                "type": 15
+              }
+            }
+          }
+        },
+        {
+          "id": 15,
+          "type": {
+            "def": {
+              "tuple": [
+                13,
+                7
+              ]
+            }
+          }
+        },
+        {
+          "id": 16,
+          "type": {
+            "def": {
+              "composite": {
+                "fields": [
+                  {
+                    "type": 17
+                  }
+                ]
+              }
+            },
+            "params": [
+              {
+                "name": "K",
+                "type": 13
+              },
+              {
+                "name": "V",
+                "type": 0
+              }
+            ],
+            "path": [
+              "openbrush_lang",
+              "storage",
+              "mapping",
+              "Mapping"
+            ]
+          }
+        },
+        {
+          "id": 17,
+          "type": {
+            "def": {
+              "sequence": {
+                "type": 18
+              }
+            }
+          }
+        },
+        {
+          "id": 18,
+          "type": {
+            "def": {
+              "tuple": [
+                13,
+                0
+              ]
+            }
+          }
+        },
+        {
+          "id": 19,
+          "type": {
+            "def": {
+              "variant": {
+                "variants": [
+                  {
+                    "fields": [
+                      {
+                        "type": 3
+                      }
+                    ],
+                    "index": 0,
+                    "name": "Ok"
+                  },
+                  {
+                    "fields": [
+                      {
+                        "type": 20
+                      }
+                    ],
+                    "index": 1,
+                    "name": "Err"
+                  }
+                ]
+              }
+            },
+            "params": [
+              {
+                "name": "T",
+                "type": 3
+              },
+              {
+                "name": "E",
+                "type": 20
+              }
+            ],
+            "path": [
+              "Result"
+            ]
+          }
+        },
+        {
+          "id": 20,
+          "type": {
+            "def": {
+              "variant": {
+                "variants": [
+                  {
+                    "index": 0,
+                    "name": "CallerIsNotOwner"
+                  },
+                  {
+                    "index": 1,
+                    "name": "NewOwnerIsZero"
+                  }
+                ]
+              }
+            },
+            "path": [
+              "openbrush_contracts",
+              "traits",
+              "errors",
+              "ownable",
+              "OwnableError"
+            ]
+          }
+        },
+        {
+          "id": 21,
+          "type": {
+            "def": {
+              "variant": {
+                "variants": [
+                  {
+                    "fields": [
+                      {
+                        "type": 3
+                      }
+                    ],
+                    "index": 0,
+                    "name": "Ok"
+                  },
+                  {
+                    "fields": [
+                      {
+                        "type": 22
+                      }
+                    ],
+                    "index": 1,
+                    "name": "Err"
+                  }
+                ]
+              }
+            },
+            "params": [
+              {
+                "name": "T",
+                "type": 3
+              },
+              {
+                "name": "E",
+                "type": 22
+              }
+            ],
+            "path": [
+              "Result"
+            ]
+          }
+        },
+        {
+          "id": 22,
+          "type": {
+            "def": {
+              "variant": {
+                "variants": [
+                  {
+                    "index": 0,
+                    "name": "NotFirstMember"
+                  },
+                  {
+                    "index": 1,
+                    "name": "MemberDoesNotExist"
+                  },
+                  {
+                    "index": 2,
+                    "name": "MemberAlreadyExists"
+                  },
+                  {
+                    "index": 3,
+                    "name": "ElectoralCommissionerDataMismatch"
+                  },
+                  {
+                    "index": 4,
+                    "name": "OnlyMemberDoes"
+                  },
+                  {
+                    "index": 5,
+                    "name": "OnlyElectoralCommissioner"
+                  },
+                  {
+                    "index": 6,
+                    "name": "OnlyFromProposalManagerAddress"
+                  },
+                  {
+                    "index": 7,
+                    "name": "CsvConvertFailure"
+                  },
+                  {
+                    "index": 8,
+                    "name": "InvalidElectoralCommissionerCount"
+                  },
+                  {
+                    "index": 9,
+                    "name": "InvalidDeleteMemberCount"
+                  },
+                  {
+                    "index": 10,
+                    "name": "AtLeastOneElectionCommissioner"
+                  }
+                ]
+              }
+            },
+            "path": [
+              "member_manager",
+              "member_manager",
+              "Error"
+            ]
+          }
+        },
+        {
+          "id": 23,
+          "type": {
+            "def": {
+              "sequence": {
+                "type": 7
+              }
+            }
+          }
+        }
+      ]
+    }
+  }

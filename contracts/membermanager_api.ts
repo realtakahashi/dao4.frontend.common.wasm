@@ -13,6 +13,17 @@ import { errorFunction } from "./commonFunctions";
 import { checkNFTMinted } from "./member_nft_api";
 import SubDAOContractConstruct from "./construct/SubDAOContractConstruct";
 
+import { ApiPromise, WsProvider } from "@polkadot/api";
+import { ContractPromise } from "@polkadot/api-contract";
+import type { InjectedAccountWithMeta } from "@polkadot/extension-inject/types";
+import memberManagerAbi from "../contracts/construct/MemberManager.json";
+
+const blockchainUrl = String(process.env.NEXT_PUBLIC_BLOCKCHAIN_URL) ?? "";
+const memberManagerAddress =
+  String(process.env.NEXT_PUBLIC_MEMBER_MANAGER_CONTRACT_ADDRESS) ?? "";
+const gasLimit = -1;
+const storageDepositLimit = null;
+
 export const getMemberList = async (
   memberManagerAddress: string,
   daoAddress: string
@@ -91,39 +102,71 @@ export const checkElectionComission = async (
 };
 
 export const addFirstMember = async (
+  performingAccount: InjectedAccountWithMeta,
   _memberFormData: FirstMemberData,
-  memberManagerAddress: string,
   daoAddress: string,
   setFinished:(value:boolean) => void
 ) => {
-  const contractConstract = MemberManagerContractConstruct;
+  const { web3FromSource } = await import("@polkadot/extension-dapp");
+  const wsProvider = new WsProvider(blockchainUrl);
+  const api = await ApiPromise.create({ provider: wsProvider });
 
-  console.log("######## daoAddress:", daoAddress);
-  console.log("######## _memberFormData.ownerName:", _memberFormData.ownerName);
-  console.log("######## _memberFormData.tokenId", _memberFormData.tokenId);
-
-  if (typeof window.ethereum !== "undefined" && memberManagerAddress) {
-    const provider = new ethers.providers.Web3Provider(window.ethereum);
-    const signer = provider.getSigner();
-    const contract = new ethers.Contract(
-      memberManagerAddress,
-      contractConstract.abi,
-      signer
-    );
-    const tx = await contract
-      .addFirstMember(
-        daoAddress,
-        _memberFormData.ownerName,
-        _memberFormData.tokenId
-      )
-      .catch((err: any) => {
-        console.log(err);
-        errorFunction(err);
-      });
-    const ret = tx.wait();
-    setFinished(true);
+  const contract = new ContractPromise(api, memberManagerAbi, memberManagerAddress);
+  const injector = await web3FromSource(performingAccount.meta.source);
+  const tx = await contract.tx.addFirstMember(
+    { value: 0, gasLimit: -1 },
+    daoAddress,
+    performingAccount.address,
+    _memberFormData.ownerName,
+    0
+  );
+  if (injector !== undefined) {
+    const unsub = await tx.signAndSend(performingAccount.address, { signer: injector.signer }, (result) => {
+      if (result.status.isFinalized) {
+        setFinished(true);
+        unsub();
+        api.disconnect();
+      }
+    });
   }
+
 };
+
+
+// export const addFirstMember = async (
+//   _memberFormData: FirstMemberData,
+//   memberManagerAddress: string,
+//   daoAddress: string,
+//   setFinished:(value:boolean) => void
+// ) => {
+//   const contractConstract = MemberManagerContractConstruct;
+
+//   console.log("######## daoAddress:", daoAddress);
+//   console.log("######## _memberFormData.ownerName:", _memberFormData.ownerName);
+//   console.log("######## _memberFormData.tokenId", _memberFormData.tokenId);
+
+//   if (typeof window.ethereum !== "undefined" && memberManagerAddress) {
+//     const provider = new ethers.providers.Web3Provider(window.ethereum);
+//     const signer = provider.getSigner();
+//     const contract = new ethers.Contract(
+//       memberManagerAddress,
+//       contractConstract.abi,
+//       signer
+//     );
+//     const tx = await contract
+//       .addFirstMember(
+//         daoAddress,
+//         _memberFormData.ownerName,
+//         _memberFormData.tokenId
+//       )
+//       .catch((err: any) => {
+//         console.log(err);
+//         errorFunction(err);
+//       });
+//     const ret = tx.wait();
+//     setFinished(true);
+//   }
+// };
 
 export const addMember = async (
   _memberFormData: MemberFormData,
