@@ -8,14 +8,21 @@ export interface ApproveDaoData {
   doReward: boolean;
 }
 
+export interface AddProposalData {
+  proposalKind: number;
+  title: string;
+  outline: string;
+  detail: string;
+  githubURL: string;
+}
+
 export interface AddProposalFormData {
   proposalKind: number;
   title: string;
   outline: string;
   detail: string;
   githubURL: string;
-  relatedId: string;
-  relatedAddress: string;
+  csvData: string;
 }
 
 export interface ProposalInfo {

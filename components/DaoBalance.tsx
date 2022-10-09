@@ -1,8 +1,9 @@
 import { useState } from "react";
 import { useEffect } from "react";
 import { ethers } from "ethers";
-import { getMasterDaoBalance } from "../contracts/masterdao_api";
+//import { getMasterDaoBalance } from "../contracts/masterdao_api";
 import { getDaoBalance } from "../contracts/subdao_api";
+import { get_account_info, get_selected_address } from "../contracts/get_account_info_api";
 
 interface DaoBalanceParameter {
   daoAddress: string;
@@ -13,11 +14,12 @@ const DaoBalance = (props: DaoBalanceParameter) => {
   const [showBalance, setShowBalance] = useState(0);
 
   const _getBalance = async () => {
+    const selectedAccount = await get_account_info(get_selected_address());
     let ret: number = 0;
     if (props.isMasterDao) {
-      ret = await getMasterDaoBalance();
+//      ret = await getMasterDaoBalance();
     } else {
-      ret = await getDaoBalance(props.daoAddress);
+      ret = await getDaoBalance(selectedAccount.address, props.daoAddress);
     }
     // console.log("### balance:", ret);
     if (typeof ret === "undefined") {

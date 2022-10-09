@@ -20,10 +20,14 @@ export interface FirstMemberData {
   tokenId: Number;
 }
 
-export interface MemberFormData {
-  name: string;
-  memberAddress: string;
-  proposalId: Number;
+export interface ProposalData4AddingMember {
+  name:string;
+  memberAddress:string;
+  proposalKind: number,
+  title: string,
+  outline: string,
+  githubURL: string,
+  detail: string,
 }
 
 export interface MemberFormDataForDao {
@@ -35,9 +39,12 @@ export interface MemberFormDataForDao {
   tokenAddress:string;
 }
 
-export interface ElectionComissionFormData {
+export interface PropsalData4ElectionComission {
   candidateEoa_one: string;
   candidateEoa_two: string;
-  relatedProposalId_one: Number;
-  relatedProposalId_two: Number;
+  proposalKind: number,
+  title: string,
+  outline: string,
+  githubURL: string,
+  detail: string,
 }

@@ -71,11 +71,13 @@ export const listSubDAO = async (
 
   for (let i = 0; i < daoAddressList.length; i++) {
     const daoContract = new ContractPromise(api, daoAbi, daoAddressList[i]);
-    const { gasConsumed, result, output } =
-      await daoContract.query.getDaoInfo(peformanceAddress, {
+    const { gasConsumed, result, output } = await daoContract.query.getDaoInfo(
+      peformanceAddress,
+      {
         value: 0,
         gasLimit: -1,
-      });
+      }
+    );
     if (output !== undefined && output !== null) {
       let response_json = output.toJSON();
       let json_data = JSON.parse(JSON.stringify(response_json));
@@ -173,14 +175,20 @@ export const deploySubDAO = async (
   const api = await ApiPromise.create({ provider: wsProvider });
   console.log("#### deploySubDAO pass 2");
 
-  console.log("### performingAccount: ",performingAccount);
+  console.log("### performingAccount: ", performingAccount);
 
   let subDAOContractAddess = "";
   const { web3FromSource } = await import("@polkadot/extension-dapp");
   const contractWasm = daoContractWasm.source.wasm;
   const contract = new CodePromise(api, daoAbi, contractWasm);
   const injector = await web3FromSource(performingAccount.meta.source);
-  const tx = contract.tx.new({ gasLimit, storageDepositLimit }, daoManagerAddress, inputData.name, inputData.githubUrl, inputData.description);
+  const tx = contract.tx.new(
+    { gasLimit, storageDepositLimit },
+    daoManagerAddress,
+    inputData.name,
+    inputData.githubUrl,
+    inputData.description
+  );
   console.log("#### deploySubDAO pass 3");
   const unsub = await tx.signAndSend(
     performingAccount.address,
@@ -189,15 +197,14 @@ export const deploySubDAO = async (
       if (status.isInBlock || status.isFinalized) {
         console.log("#### deploySubDAO pass 4");
         subDAOContractAddess = contract.address.toString();
-        console.log("### subDAOContractAddess: ",subDAOContractAddess);
+        console.log("### subDAOContractAddess: ", subDAOContractAddess);
         setDaoAddress(subDAOContractAddess);
         setShowDaoAddress(subDAOContractAddess);
         setFinished(true);
         unsub();
         api.disconnect();
-      }
-      else {
-        console.log("## status: ",status.toHuman()?.toString());
+      } else {
+        console.log("## status: ", status.toHuman()?.toString());
       }
     }
   );
@@ -206,7 +213,7 @@ export const deploySubDAO = async (
 export const registerToDaoManager = async (
   performingAccount: InjectedAccountWithMeta,
   daoAddress: string,
-  setFinished:(value:boolean) => void,
+  setFinished: (value: boolean) => void
 ) => {
   const { web3FromSource } = await import("@polkadot/extension-dapp");
   const wsProvider = new WsProvider(blockchainUrl);
@@ -214,18 +221,19 @@ export const registerToDaoManager = async (
 
   const contract = new ContractPromise(api, daoManagerAbi, daoManagerAddress);
   const injector = await web3FromSource(performingAccount.meta.source);
-  const tx = await contract.tx.addDao(
-    { value: 0, gasLimit: -1 },
-    daoAddress
-  );
+  const tx = await contract.tx.addDao({ value: 0, gasLimit: -1 }, daoAddress);
   if (injector !== undefined) {
-    const unsub = await tx.signAndSend(performingAccount.address, { signer: injector.signer }, (result) => {
-      if (result.status.isFinalized) {
-        setFinished(true);
-        unsub();
-        api.disconnect();
+    const unsub = await tx.signAndSend(
+      performingAccount.address,
+      { signer: injector.signer },
+      (result) => {
+        if (result.status.isFinalized) {
+          setFinished(true);
+          unsub();
+          api.disconnect();
+        }
       }
-    });
+    );
   }
 };
 
@@ -248,44 +256,48 @@ export const doDonateSubDao = async (subDaoAddress: string, amount: number) => {
   }
 };
 
-export const getDaoBalance = async (daoAddress: string): Promise<number> => {
-  const contractConstract = SubDAOContractConstruct;
+export const getDaoBalance = async (peformanceAddress: string, daoAddress: string): Promise<number> => {
   let response: number = 0;
-  if (typeof window.ethereum !== "undefined" && daoAddress) {
-    const provider = new ethers.providers.Web3Provider(window.ethereum);
-    const signer = provider.getSigner();
-    const contract = new ethers.Contract(
-      daoAddress,
-      contractConstract.abi,
-      signer
-    );
-    response = await contract.getContractBalance().catch((err: any) => {
-      console.log(err);
-      errorFunction(err);
-    });
-    //console.log("### getProposalList Return: ", response);
+  const wsProvider = new WsProvider(blockchainUrl);
+  const api = await ApiPromise.create({ provider: wsProvider });
+  const daoContract = new ContractPromise(api, daoAbi, daoAddress);
+  const { gasConsumed, result, output } = await daoContract.query.getContractBalance(
+    peformanceAddress,
+    {
+      value: 0,
+      gasLimit: -1,
+    }
+  );
+  if (output !== undefined && output !== null) {
+    response = Number(output.toHuman()?.toString());
   }
+  api.disconnect();
+
   return response;
 };
 
-export const getDaoName = async (daoAddress: string): Promise<string> => {
-  const contractConstract = SubDAOContractConstruct;
-  let response: string = "";
-  if (typeof window.ethereum !== "undefined" && daoAddress) {
-    const provider = new ethers.providers.Web3Provider(window.ethereum);
-    const signer = provider.getSigner();
-    const contract = new ethers.Contract(
-      daoAddress,
-      contractConstract.abi,
-      signer
-    );
-    response = await contract.daoName().catch((err: any) => {
-      console.log(err);
-      errorFunction(err);
-    });
-    console.log("### daoName Return: ", response);
+export const getDaoName = async (
+  peformanceAddress: string,
+  daoAddress: string
+): Promise<string> => {
+  let res = "";
+  const wsProvider = new WsProvider(blockchainUrl);
+  const api = await ApiPromise.create({ provider: wsProvider });
+  const daoContract = new ContractPromise(api, daoAbi, daoAddress);
+  const { gasConsumed, result, output } = await daoContract.query.getDaoInfo(
+    peformanceAddress,
+    {
+      value: 0,
+      gasLimit: -1,
+    }
+  );
+  if (output !== undefined && output !== null) {
+    let response_json = output.toJSON();
+    let json_data = JSON.parse(JSON.stringify(response_json));
+    res = json_data.daoName;
   }
-  return response;
+  api.disconnect();
+  return res;
 };
 
 export const getTokenList = async (

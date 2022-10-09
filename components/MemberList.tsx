@@ -4,6 +4,7 @@ import Link from "next/link";
 import { MemberInfo, MemberInfoPlus } from "../types/MemberManagerType";
 import { getMemberList } from "../contracts/membermanager_api";
 import DeleteMember from "./DeleteMember";
+import { get_selected_address } from "../contracts/get_account_info_api";
 
 interface ShowListSetting {
   setShowMemberButton: (flg: boolean) => void;
@@ -12,7 +13,6 @@ interface ShowListSetting {
 }
 
 const MemberList = (props: ShowListSetting) => {
-  const memberManagerAddress = process.env.NEXT_PUBLIC_MEMBER_MANAGER_CONTRACT_ADDRESS ?? "";
   const [memberList, setMemberList] = useState<Array<MemberInfoPlus>>();
   const [showDelete, setShowDelete] = useState(false);
   const [showList, setShowList] = useState(true);
@@ -26,8 +26,8 @@ const MemberList = (props: ShowListSetting) => {
 
   useEffect(() => {
     const _getMemberList = async () => {
-      //console.log("## getSubDaoList call 1");
-      const result = await getMemberList(memberManagerAddress,props.daoAddress);
+      const selectedAddress = get_selected_address();
+      const result = await getMemberList(selectedAddress,props.daoAddress);
       console.log("## memberList:",result);
       setMemberList(result);
     };
@@ -75,7 +75,7 @@ const MemberList = (props: ShowListSetting) => {
             ? memberList.map((member) => {
                 return (
                   <div key={member.name}>
-                  {member.memberId!=0 &&(
+                  {member.name!="" &&(
                     
                 <div
                     className="m-5  max-w-sm rounded overflow-hidden shadow-lg bg-black border-4 border-white">
@@ -84,12 +84,12 @@ const MemberList = (props: ShowListSetting) => {
                         Name: {member.name}
                       </div>
                       {member.isElectionCommition == true && (
-                        <p className="text-green-700 font-bold text-14px">
+                        <p className="text-orange-400 font-bold text-14px">
                           Election Comission
                         </p>
                       )}
                       <p className="p-3 text-white text-base">
-                        Member Id: {String(member.memberId)}
+                        Member Id: {member.memberId}
                       </p>
                       <p className="text-gray-400 text-12px">
                         {member.eoaAddress}

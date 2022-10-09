@@ -13,8 +13,6 @@ const SubmitProposal = (props:SubmitProposalParameter) => {
     outline: "",
     detail: "",
     githubURL: "",
-    relatedId: "",
-    relatedAddress: "",
   });
 
   const onChangeInput = (event: React.ChangeEvent<HTMLInputElement>) => {

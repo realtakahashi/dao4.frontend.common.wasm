@@ -1,12 +1,12 @@
 import {
-  ElectionComissionFormData,
   FirstMemberData,
   MemberFormDataForDao,
   MemberInfo,
   MemberInfoPlus,
+  ProposalData4AddingMember,
+  PropsalData4ElectionComission,
 } from "../types/MemberManagerType";
 import MemberManagerContractConstruct from "./construct/MemberManager";
-import { MemberFormData } from "../types/MemberManagerType";
 import { ethers } from "ethers";
 import detectEthereumProvider from "@metamask/detect-provider";
 import { errorFunction } from "./commonFunctions";
@@ -17,60 +17,52 @@ import { ApiPromise, WsProvider } from "@polkadot/api";
 import { ContractPromise } from "@polkadot/api-contract";
 import type { InjectedAccountWithMeta } from "@polkadot/extension-inject/types";
 import memberManagerAbi from "../contracts/construct/MemberManager.json";
+import { addProposal } from "./ProposalManagerApi";
+import { AddProposalData, AddProposalFormData } from "../types/ProposalManagerType";
 
 const blockchainUrl = String(process.env.NEXT_PUBLIC_BLOCKCHAIN_URL) ?? "";
 const memberManagerAddress =
   String(process.env.NEXT_PUBLIC_MEMBER_MANAGER_CONTRACT_ADDRESS) ?? "";
-const gasLimit = -1;
+  const proposalManagerAddress =
+  String(process.env.NEXT_PUBLIC_PROPOSAL_MANAGER_CONTRACT_ADDRESS) ?? "";
+const gasLimit = 100000 * 1000000;
 const storageDepositLimit = null;
 
-export const getMemberList = async (
-  memberManagerAddress: string,
-  daoAddress: string
-): Promise<Array<MemberInfoPlus>> => {
-  const contractConstract = MemberManagerContractConstruct;
-  //console.log("memberManager Address:",memberManagerAddress);
+export const getMemberList =async (peformanceAddress:string, daoAddress:string): Promise<Array<MemberInfoPlus>> => {
+  const wsProvider = new WsProvider(blockchainUrl);
+  const api = await ApiPromise.create({ provider: wsProvider });
 
-  let response: MemberInfo[] = [];
-  let result: MemberInfoPlus[] = [];
-  if (typeof window.ethereum !== "undefined" && memberManagerAddress) {
-    const provider = new ethers.providers.Web3Provider(window.ethereum);
-    const signer = provider.getSigner();
-    const contract = new ethers.Contract(
-      memberManagerAddress,
-      contractConstract.abi,
-      signer
-    );
-    await contract
-      .getMemberList(daoAddress)
-      .then((r: any) => {
-        //console.log(r);
-        response = r;
-      })
-      .catch((err: any) => {
-        console.log(err);
-        errorFunction(err);
-      });
+  let response: MemberInfoPlus[] = [];
 
-    console.log("## result:", result);
-    console.log("## response:", response);
-    for (var i = 0; i < response.length; i++) {
-      const isElectionCommition = await contract.isElectionComission(
-        daoAddress,
-        response[i].eoaAddress
-      );
-      result.push({
-        eoaAddress: response[i].eoaAddress,
-        memberId: response[i].memberId,
-        name: response[i].name,
-        tokenId: response[i].tokenId,
-        isElectionCommition: isElectionCommition,
-      });
+  const contract = new ContractPromise(
+    api,
+    memberManagerAbi,
+    memberManagerAddress
+  );
+  const { gasConsumed, result, output } =
+    await contract.query.getMemberList(peformanceAddress, {
+      value: 0,
+      gasLimit: -1,
+    },
+    daoAddress);
+  if (output !== undefined && output !== null) {
+    let response_json = output.toJSON();
+    let json_data = JSON.parse(JSON.stringify(response_json));
+    for (let i = 0; i < json_data.length; i++) {
+      let item: MemberInfoPlus = {
+        name: json_data[i].name,
+        eoaAddress:json_data[i].memberAddress,
+        memberId:Number(json_data[i].memberId),
+        tokenId:0,
+        isElectionCommition:Boolean(json_data[i].isElectoralCommissioner),
+      };
+      response.push(item); 
     }
   }
+  api.disconnect();
+  return response;
+}
 
-  return result;
-};
 
 export const checkElectionComission = async (
   memberManagerAddress: string,
@@ -132,74 +124,22 @@ export const addFirstMember = async (
 
 };
 
-
-// export const addFirstMember = async (
-//   _memberFormData: FirstMemberData,
-//   memberManagerAddress: string,
-//   daoAddress: string,
-//   setFinished:(value:boolean) => void
-// ) => {
-//   const contractConstract = MemberManagerContractConstruct;
-
-//   console.log("######## daoAddress:", daoAddress);
-//   console.log("######## _memberFormData.ownerName:", _memberFormData.ownerName);
-//   console.log("######## _memberFormData.tokenId", _memberFormData.tokenId);
-
-//   if (typeof window.ethereum !== "undefined" && memberManagerAddress) {
-//     const provider = new ethers.providers.Web3Provider(window.ethereum);
-//     const signer = provider.getSigner();
-//     const contract = new ethers.Contract(
-//       memberManagerAddress,
-//       contractConstract.abi,
-//       signer
-//     );
-//     const tx = await contract
-//       .addFirstMember(
-//         daoAddress,
-//         _memberFormData.ownerName,
-//         _memberFormData.tokenId
-//       )
-//       .catch((err: any) => {
-//         console.log(err);
-//         errorFunction(err);
-//       });
-//     const ret = tx.wait();
-//     setFinished(true);
-//   }
-// };
-
-export const addMember = async (
-  _memberFormData: MemberFormData,
-  memberManagerAddress: string,
-  daoAddress: string
+export const propose4AddingTheMember =async (
+  performingAccount:InjectedAccountWithMeta,
+  proposalData: ProposalData4AddingMember,
+  daoAddress: string,
 ) => {
-  const contractConstract = MemberManagerContractConstruct;
-
-  console.log("## addmember 1");
-
-  if (typeof window.ethereum !== "undefined" && memberManagerAddress) {
-    console.log("## addmember 2");
-    const provider = new ethers.providers.Web3Provider(window.ethereum);
-    const signer = provider.getSigner();
-    const contract = new ethers.Contract(
-      memberManagerAddress,
-      contractConstract.abi,
-      signer
-    );
-    await contract
-      .addMember(
-        daoAddress,
-        _memberFormData.name,
-        _memberFormData.memberAddress,
-        _memberFormData.proposalId,
-        "0"
-      )
-      .catch((err: any) => {
-        console.log(err);
-        errorFunction(err);
-      });
-  }
-};
+  const csvData = proposalData.name + "," + proposalData.memberAddress;
+  const proposalParameter:AddProposalFormData ={
+    proposalKind:proposalData.proposalKind,
+    title:proposalData.title,
+    outline:proposalData.outline,
+    githubURL:proposalData.githubURL,
+    detail:proposalData.detail,
+    csvData:csvData,
+  };
+  await addProposal(performingAccount,proposalParameter,daoAddress);  
+}
 
 export const addMemberForDao = async (
   memberManagerAddress: string,
@@ -246,76 +186,38 @@ export const addMemberForDao = async (
   }
 };
 
-export const _resetElectionComission = async (
-  _electionComissionData: ElectionComissionFormData,
-  memberManagerAddress: string,
+export const Proposal4ResetElectionComission = async (
+  performingAccount:InjectedAccountWithMeta,
+  proposalData: PropsalData4ElectionComission,
   daoAddress: string
 ) => {
-  const contractConstract = MemberManagerContractConstruct;
-
-  if (typeof window.ethereum !== "undefined" && memberManagerAddress) {
-    const provider = new ethers.providers.Web3Provider(window.ethereum);
-    const signer = provider.getSigner();
-    const contract = new ethers.Contract(
-      memberManagerAddress,
-      contractConstract.abi,
-      signer
-    );
-
-    console.log("## _electionComissionData", _electionComissionData);
-    let _candidateEoaTwo = "";
-    let _relatedProposalId_two = 0;
-    if (_electionComissionData.candidateEoa_two != "") {
-      console.log("## not Space");
-      _candidateEoaTwo = _electionComissionData.candidateEoa_two;
-      _relatedProposalId_two = Number(
-        _electionComissionData.relatedProposalId_two
-      );
-    } else {
-      console.log("##  Space");
-      _candidateEoaTwo = "0x0000000000000000000000000000000000000000";
-      _relatedProposalId_two = 0;
-    }
-
-    await contract
-      .resetElectionCommision(
-        daoAddress,
-        _electionComissionData.candidateEoa_one,
-        _candidateEoaTwo,
-        _electionComissionData.relatedProposalId_one,
-        _relatedProposalId_two
-      )
-      .catch((err: any) => {
-        console.log(err);
-        errorFunction(err);
-      });
-  }
+  const csvData = proposalData.candidateEoa_one + "," + proposalData.candidateEoa_two;
+  const proposalParameter:AddProposalFormData ={
+    proposalKind:proposalData.proposalKind,
+    title:proposalData.title,
+    outline:proposalData.outline,
+    githubURL:proposalData.githubURL,
+    detail:proposalData.detail,
+    csvData:csvData,
+  };
+  await addProposal(performingAccount,proposalParameter,daoAddress);  
 };
 
-export const deleteMember = async (
-  _memberInfoData: MemberInfo,
-  _proposalId: number,
-  memberManagerAddress: string,
-  daoAddress: string
+export const propose4DeletingTheMember =async (
+  performingAccount:InjectedAccountWithMeta,
+  memberInfoData: MemberInfo,
+  proposalData: AddProposalData,
+  daoAddress: string,
 ) => {
-  const contractConstract = MemberManagerContractConstruct;
-
-  console.log("## masterDAOAddress:", daoAddress);
-  console.log("## memberinfo:", _memberInfoData);
-  console.log("## proposalId:", _proposalId);
-  if (typeof window.ethereum !== "undefined" && memberManagerAddress) {
-    const provider = new ethers.providers.Web3Provider(window.ethereum);
-    const signer = provider.getSigner();
-    const contract = new ethers.Contract(
-      memberManagerAddress,
-      contractConstract.abi,
-      signer
-    );
-    await contract
-      .deleteMember(daoAddress, _memberInfoData.eoaAddress, _proposalId)
-      .catch((err: any) => {
-        console.log(err);
-        errorFunction(err);
-      });
-  }
+  const csvData = memberInfoData.eoaAddress;
+  const proposalParameter:AddProposalFormData ={
+    proposalKind:proposalData.proposalKind,
+    title:proposalData.title,
+    outline:proposalData.outline,
+    githubURL:proposalData.githubURL,
+    detail:proposalData.detail,
+    csvData:csvData,
+  };
+  await addProposal(performingAccount,proposalParameter,daoAddress);  
 };
+
