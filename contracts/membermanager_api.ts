@@ -65,31 +65,35 @@ export const getMemberList =async (peformanceAddress:string, daoAddress:string):
 
 
 export const checkElectionComission = async (
-  memberManagerAddress: string,
+  peformanceAddress: string,
   daoAddress: string
 ): Promise<boolean> => {
-  const contractConstract = MemberManagerContractConstruct;
-
   let response: boolean = false;
-  if (typeof window.ethereum !== "undefined" && memberManagerAddress) {
-    console.log("## addmember 2");
-    const provider = new ethers.providers.Web3Provider(window.ethereum);
-    const signer = provider.getSigner();
-    const contract = new ethers.Contract(
-      memberManagerAddress,
-      contractConstract.abi,
-      signer
+  const wsProvider = new WsProvider(blockchainUrl);
+  const api = await ApiPromise.create({ provider: wsProvider });
+  const memberManagerContract = new ContractPromise(
+    api,
+    memberManagerAbi,
+    memberManagerAddress
+  );
+  const { gasConsumed, result, output } =
+    await memberManagerContract.query.isElectoralCommissioner(
+      peformanceAddress,
+      {
+        value: 0,
+        gasLimit: -1,
+      },
+      daoAddress
     );
-    await contract
-      .isElectionComission(daoAddress, signer.getAddress())
-      .then((r: any) => {
-        response = r;
-      })
-      .catch((err: any) => {
-        console.log(err);
-        errorFunction(err);
-      });
-  }
+
+  if (output !== undefined && output !== null) {
+    if (output.toHuman()?.toString() == "true") {
+      response = true;
+    } else {
+      response = false;
+    }
+  };
+  api.disconnect();
   return response;
 };
 

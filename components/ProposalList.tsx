@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { useState } from "react";
 import { useEffect } from "react";
+import { get_selected_address } from "../contracts/get_account_info_api";
 import { checkElectionComission } from "../contracts/membermanager_api";
 import { getProposalList } from "../contracts/ProposalManagerApi";
 import {
@@ -37,9 +38,9 @@ const ProposalList = (props: ProposalListProps) => {
     details: "",
     githubURL: "",
     proposalId: "",
-    relatedId: "",
-    relatedAddress: "",
     proposalStatus: 0,
+    proposer:"",
+    csvData:"",
   });
 
   const _setShowAndSetTargetProposal = (
@@ -83,14 +84,15 @@ const ProposalList = (props: ProposalListProps) => {
   };
 
   const _getProposalList = async () => {
-    //console.log("## getSubDaoList call 1");
-    const result = await getProposalList(props.daoAddress);
+    const selected_address = get_selected_address();
+    const result = await getProposalList(selected_address, props.daoAddress);
     //console.log("## memberList:",result);
     setProposalList(result);
   };
 
   const _checkElectionComission = async () => {
-    setIsElectionComission(await checkElectionComission(memberManagerAddress,props.daoAddress));
+    const selected_address = get_selected_address();
+    setIsElectionComission(await checkElectionComission(selected_address,props.daoAddress));
   };
 
   useEffect(() => {

@@ -21,7 +21,7 @@ const ProposalParts = (props: ProposalProps) => {
       </p>
       <p className="p-1 text-white text-base">{props.targetProposal.details}</p>
       <p className="p-1 text-white text-11px">
-        Realted Address: {props.targetProposal.relatedAddress}
+        Detail Data: {props.targetProposal.csvData}
       </p>
     </div>
   );

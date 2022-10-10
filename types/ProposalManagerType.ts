@@ -27,14 +27,14 @@ export interface AddProposalFormData {
 
 export interface ProposalInfo {
   proposalKind: number;
+  proposalId: string;
+  proposer: string;
   title: string;
   outline: string;
   details: string;
-  githubURL: string;
-  proposalId: string;
-  relatedId: string;
-  relatedAddress: string;
   proposalStatus: number;
+  githubURL: string;
+  csvData: string,
 }
 
 export const PROPOSAL_KIND = [

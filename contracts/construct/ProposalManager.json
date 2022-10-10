@@ -1,1166 +1,1166 @@
 {
-    "source": {
-      "hash": "0x6e0b199cf4e14f492622315b47fb92c417a3746c738ec3c04af6c00a8d6cd982",
-      "language": "ink! 3.3.1",
-      "compiler": "rustc 1.63.0-nightly"
-    },
-    "contract": {
-      "name": "proposal_manager",
-      "version": "0.1.0",
-      "authors": [
-        "[your_name] <[your_email]>"
+  "source": {
+    "hash": "0xd750655171fb33a453e29fb73be53be139a3bd16896d3ef2b175de4a9dd26d23",
+    "language": "ink! 3.3.1",
+    "compiler": "rustc 1.63.0-nightly"
+  },
+  "contract": {
+    "name": "proposal_manager",
+    "version": "0.1.0",
+    "authors": [
+      "[your_name] <[your_email]>"
+    ]
+  },
+  "V3": {
+    "spec": {
+      "constructors": [
+        {
+          "args": [
+            {
+              "label": "_member_manager",
+              "type": {
+                "displayName": [
+                  "MemberManagerRef"
+                ],
+                "type": 24
+              }
+            },
+            {
+              "label": "dao_manager",
+              "type": {
+                "displayName": [
+                  "DaoManagerRef"
+                ],
+                "type": 26
+              }
+            }
+          ],
+          "docs": [
+            "Constructor that initializes the `bool` value to the given `init_value`."
+          ],
+          "label": "new",
+          "payable": false,
+          "selector": "0x9bae9d5e"
+        }
+      ],
+      "docs": [],
+      "events": [],
+      "messages": [
+        {
+          "args": [
+            {
+              "label": "_proposal_type",
+              "type": {
+                "displayName": [
+                  "ProposalType"
+                ],
+                "type": 11
+              }
+            },
+            {
+              "label": "_dao_address",
+              "type": {
+                "displayName": [
+                  "AccountId"
+                ],
+                "type": 0
+              }
+            },
+            {
+              "label": "_title",
+              "type": {
+                "displayName": [
+                  "String"
+                ],
+                "type": 12
+              }
+            },
+            {
+              "label": "_outline",
+              "type": {
+                "displayName": [
+                  "String"
+                ],
+                "type": 12
+              }
+            },
+            {
+              "label": "_details",
+              "type": {
+                "displayName": [
+                  "String"
+                ],
+                "type": 12
+              }
+            },
+            {
+              "label": "_csv_data",
+              "type": {
+                "displayName": [
+                  "String"
+                ],
+                "type": 12
+              }
+            }
+          ],
+          "docs": [
+            " add_proposal"
+          ],
+          "label": "add_proposal",
+          "mutates": true,
+          "payable": false,
+          "returnType": {
+            "displayName": [
+              "Result"
+            ],
+            "type": 28
+          },
+          "selector": "0xcd3f131d"
+        },
+        {
+          "args": [
+            {
+              "label": "_dao_address",
+              "type": {
+                "displayName": [
+                  "AccountId"
+                ],
+                "type": 0
+              }
+            }
+          ],
+          "docs": [
+            " get proposal list."
+          ],
+          "label": "get_proposal_list",
+          "mutates": false,
+          "payable": false,
+          "returnType": {
+            "displayName": [
+              "Vec"
+            ],
+            "type": 31
+          },
+          "selector": "0xb068d06b"
+        },
+        {
+          "args": [
+            {
+              "label": "_dao_address",
+              "type": {
+                "displayName": [
+                  "AccountId"
+                ],
+                "type": 0
+              }
+            },
+            {
+              "label": "_proposal_id",
+              "type": {
+                "displayName": [
+                  "u128"
+                ],
+                "type": 3
+              }
+            },
+            {
+              "label": "_yes_or_no",
+              "type": {
+                "displayName": [
+                  "YesOrNoWithTheProposal"
+                ],
+                "type": 32
+              }
+            }
+          ],
+          "docs": [
+            " vote for the proposal."
+          ],
+          "label": "vote_for_the_proposal",
+          "mutates": true,
+          "payable": false,
+          "returnType": {
+            "displayName": [
+              "Result"
+            ],
+            "type": 28
+          },
+          "selector": "0xdb7c18f4"
+        },
+        {
+          "args": [
+            {
+              "label": "_dao_address",
+              "type": {
+                "displayName": [
+                  "AccountId"
+                ],
+                "type": 0
+              }
+            },
+            {
+              "label": "_proposal_id",
+              "type": {
+                "displayName": [
+                  "u128"
+                ],
+                "type": 3
+              }
+            }
+          ],
+          "docs": [
+            " get voting result"
+          ],
+          "label": "get_voted_result",
+          "mutates": false,
+          "payable": false,
+          "returnType": {
+            "displayName": [
+              "Option"
+            ],
+            "type": 33
+          },
+          "selector": "0x0fb20008"
+        },
+        {
+          "args": [
+            {
+              "label": "_dao_address",
+              "type": {
+                "displayName": [
+                  "AccountId"
+                ],
+                "type": 0
+              }
+            },
+            {
+              "label": "_proposal_id",
+              "type": {
+                "displayName": [
+                  "u128"
+                ],
+                "type": 3
+              }
+            },
+            {
+              "label": "_status",
+              "type": {
+                "displayName": [
+                  "ProposalStatus"
+                ],
+                "type": 13
+              }
+            }
+          ],
+          "docs": [
+            " change the proposal status"
+          ],
+          "label": "change_proposal_status",
+          "mutates": true,
+          "payable": false,
+          "returnType": {
+            "displayName": [
+              "Result"
+            ],
+            "type": 28
+          },
+          "selector": "0x2871339c"
+        },
+        {
+          "args": [
+            {
+              "label": "_dao_address",
+              "type": {
+                "displayName": [
+                  "AccountId"
+                ],
+                "type": 0
+              }
+            },
+            {
+              "label": "_proposal_id",
+              "type": {
+                "displayName": [
+                  "u128"
+                ],
+                "type": 3
+              }
+            }
+          ],
+          "docs": [
+            " execute the proposal"
+          ],
+          "label": "execute_proposal",
+          "mutates": true,
+          "payable": false,
+          "returnType": {
+            "displayName": [
+              "Result"
+            ],
+            "type": 28
+          },
+          "selector": "0xde5bbbbc"
+        }
       ]
     },
-    "V3": {
-      "spec": {
-        "constructors": [
+    "storage": {
+      "struct": {
+        "fields": [
           {
-            "args": [
-              {
-                "label": "_member_manager",
-                "type": {
-                  "displayName": [
-                    "MemberManagerRef"
-                  ],
-                  "type": 24
-                }
-              },
-              {
-                "label": "dao_manager",
-                "type": {
-                  "displayName": [
-                    "DaoManagerRef"
-                  ],
-                  "type": 26
-                }
+            "layout": {
+              "struct": {
+                "fields": [
+                  {
+                    "layout": {
+                      "struct": {
+                        "fields": [
+                          {
+                            "layout": {
+                              "cell": {
+                                "key": "0x0000000000000000000000000000000000000000000000000000000000000000",
+                                "ty": 0
+                              }
+                            },
+                            "name": "account_id"
+                          }
+                        ]
+                      }
+                    },
+                    "name": "inner"
+                  }
+                ]
               }
-            ],
-            "docs": [
-              "Constructor that initializes the `bool` value to the given `init_value`."
-            ],
-            "label": "new",
-            "payable": false,
-            "selector": "0x9bae9d5e"
-          }
-        ],
-        "docs": [],
-        "events": [],
-        "messages": [
-          {
-            "args": [
-              {
-                "label": "_proposal_type",
-                "type": {
-                  "displayName": [
-                    "ProposalType"
-                  ],
-                  "type": 11
-                }
-              },
-              {
-                "label": "_dao_address",
-                "type": {
-                  "displayName": [
-                    "AccountId"
-                  ],
-                  "type": 0
-                }
-              },
-              {
-                "label": "_title",
-                "type": {
-                  "displayName": [
-                    "String"
-                  ],
-                  "type": 12
-                }
-              },
-              {
-                "label": "_outline",
-                "type": {
-                  "displayName": [
-                    "String"
-                  ],
-                  "type": 12
-                }
-              },
-              {
-                "label": "_detail",
-                "type": {
-                  "displayName": [
-                    "String"
-                  ],
-                  "type": 12
-                }
-              },
-              {
-                "label": "_csv_data",
-                "type": {
-                  "displayName": [
-                    "String"
-                  ],
-                  "type": 12
-                }
-              }
-            ],
-            "docs": [
-              " add_proposal"
-            ],
-            "label": "add_proposal",
-            "mutates": true,
-            "payable": false,
-            "returnType": {
-              "displayName": [
-                "Result"
-              ],
-              "type": 28
             },
-            "selector": "0xcd3f131d"
+            "name": "member_manager"
           },
           {
-            "args": [
-              {
-                "label": "_dao_address",
-                "type": {
-                  "displayName": [
-                    "AccountId"
-                  ],
-                  "type": 0
-                }
+            "layout": {
+              "struct": {
+                "fields": [
+                  {
+                    "layout": {
+                      "struct": {
+                        "fields": [
+                          {
+                            "layout": {
+                              "cell": {
+                                "key": "0x0100000000000000000000000000000000000000000000000000000000000000",
+                                "ty": 0
+                              }
+                            },
+                            "name": "account_id"
+                          }
+                        ]
+                      }
+                    },
+                    "name": "inner"
+                  }
+                ]
               }
-            ],
-            "docs": [
-              " get proposal list."
-            ],
-            "label": "get_proposal_list",
-            "mutates": false,
-            "payable": false,
-            "returnType": {
-              "displayName": [
-                "Vec"
-              ],
-              "type": 31
             },
-            "selector": "0xb068d06b"
+            "name": "dao_manager"
           },
           {
-            "args": [
-              {
-                "label": "_dao_address",
-                "type": {
-                  "displayName": [
-                    "AccountId"
-                  ],
-                  "type": 0
-                }
-              },
-              {
-                "label": "_proposal_id",
-                "type": {
-                  "displayName": [
-                    "u128"
-                  ],
-                  "type": 3
-                }
-              },
-              {
-                "label": "_yes_or_no",
-                "type": {
-                  "displayName": [
-                    "YesOrNoWithTheProposal"
-                  ],
-                  "type": 32
-                }
+            "layout": {
+              "cell": {
+                "key": "0x0200000000000000000000000000000000000000000000000000000000000000",
+                "ty": 3
               }
-            ],
-            "docs": [
-              " vote for the proposal."
-            ],
-            "label": "vote_for_the_proposal",
-            "mutates": true,
-            "payable": false,
-            "returnType": {
-              "displayName": [
-                "Result"
-              ],
-              "type": 28
             },
-            "selector": "0xdb7c18f4"
+            "name": "next_proposal_id"
           },
           {
-            "args": [
-              {
-                "label": "_dao_address",
-                "type": {
-                  "displayName": [
-                    "AccountId"
-                  ],
-                  "type": 0
-                }
-              },
-              {
-                "label": "_proposal_id",
-                "type": {
-                  "displayName": [
-                    "u128"
-                  ],
-                  "type": 3
-                }
+            "layout": {
+              "cell": {
+                "key": "0x0300000000000000000000000000000000000000000000000000000000000000",
+                "ty": 4
               }
-            ],
-            "docs": [
-              " get voting result"
-            ],
-            "label": "get_voted_result",
-            "mutates": false,
-            "payable": false,
-            "returnType": {
-              "displayName": [
-                "Option"
-              ],
-              "type": 33
             },
-            "selector": "0x0fb20008"
+            "name": "count_of_tenure"
           },
           {
-            "args": [
-              {
-                "label": "_dao_address",
-                "type": {
-                  "displayName": [
-                    "AccountId"
-                  ],
-                  "type": 0
-                }
-              },
-              {
-                "label": "_proposal_id",
-                "type": {
-                  "displayName": [
-                    "u128"
-                  ],
-                  "type": 3
-                }
-              },
-              {
-                "label": "_status",
-                "type": {
-                  "displayName": [
-                    "ProposalStatus"
-                  ],
-                  "type": 13
-                }
+            "layout": {
+              "cell": {
+                "key": "0x0400000000000000000000000000000000000000000000000000000000000000",
+                "ty": 8
               }
-            ],
-            "docs": [
-              " change the proposal status"
-            ],
-            "label": "change_proposal_status",
-            "mutates": true,
-            "payable": false,
-            "returnType": {
-              "displayName": [
-                "Result"
-              ],
-              "type": 28
             },
-            "selector": "0x2871339c"
+            "name": "proposal_infoes"
           },
           {
-            "args": [
-              {
-                "label": "_dao_address",
-                "type": {
-                  "displayName": [
-                    "AccountId"
-                  ],
-                  "type": 0
-                }
-              },
-              {
-                "label": "_proposal_id",
-                "type": {
-                  "displayName": [
-                    "u128"
-                  ],
-                  "type": 3
-                }
+            "layout": {
+              "cell": {
+                "key": "0x0500000000000000000000000000000000000000000000000000000000000000",
+                "ty": 16
               }
-            ],
-            "docs": [
-              " execute the proposal"
-            ],
-            "label": "execute_proposal",
-            "mutates": true,
-            "payable": false,
-            "returnType": {
-              "displayName": [
-                "Result"
-              ],
-              "type": 28
             },
-            "selector": "0xde5bbbbc"
+            "name": "voting_results"
+          },
+          {
+            "layout": {
+              "cell": {
+                "key": "0x0600000000000000000000000000000000000000000000000000000000000000",
+                "ty": 20
+              }
+            },
+            "name": "voted_people"
           }
         ]
-      },
-      "storage": {
-        "struct": {
-          "fields": [
-            {
-              "layout": {
-                "struct": {
-                  "fields": [
-                    {
-                      "layout": {
-                        "struct": {
-                          "fields": [
-                            {
-                              "layout": {
-                                "cell": {
-                                  "key": "0x0000000000000000000000000000000000000000000000000000000000000000",
-                                  "ty": 0
-                                }
-                              },
-                              "name": "account_id"
-                            }
-                          ]
-                        }
-                      },
-                      "name": "inner"
-                    }
-                  ]
+      }
+    },
+    "types": [
+      {
+        "id": 0,
+        "type": {
+          "def": {
+            "composite": {
+              "fields": [
+                {
+                  "type": 1,
+                  "typeName": "[u8; 32]"
                 }
-              },
-              "name": "member_manager"
-            },
-            {
-              "layout": {
-                "struct": {
-                  "fields": [
-                    {
-                      "layout": {
-                        "struct": {
-                          "fields": [
-                            {
-                              "layout": {
-                                "cell": {
-                                  "key": "0x0100000000000000000000000000000000000000000000000000000000000000",
-                                  "ty": 0
-                                }
-                              },
-                              "name": "account_id"
-                            }
-                          ]
-                        }
-                      },
-                      "name": "inner"
-                    }
-                  ]
-                }
-              },
-              "name": "dao_manager"
-            },
-            {
-              "layout": {
-                "cell": {
-                  "key": "0x0200000000000000000000000000000000000000000000000000000000000000",
-                  "ty": 3
-                }
-              },
-              "name": "next_proposal_id"
-            },
-            {
-              "layout": {
-                "cell": {
-                  "key": "0x0300000000000000000000000000000000000000000000000000000000000000",
-                  "ty": 4
-                }
-              },
-              "name": "count_of_tenure"
-            },
-            {
-              "layout": {
-                "cell": {
-                  "key": "0x0400000000000000000000000000000000000000000000000000000000000000",
-                  "ty": 8
-                }
-              },
-              "name": "proposal_infoes"
-            },
-            {
-              "layout": {
-                "cell": {
-                  "key": "0x0500000000000000000000000000000000000000000000000000000000000000",
-                  "ty": 16
-                }
-              },
-              "name": "voting_results"
-            },
-            {
-              "layout": {
-                "cell": {
-                  "key": "0x0600000000000000000000000000000000000000000000000000000000000000",
-                  "ty": 20
-                }
-              },
-              "name": "voted_people"
+              ]
             }
+          },
+          "path": [
+            "ink_env",
+            "types",
+            "AccountId"
           ]
         }
       },
-      "types": [
-        {
-          "id": 0,
-          "type": {
-            "def": {
-              "composite": {
-                "fields": [
-                  {
-                    "type": 1,
-                    "typeName": "[u8; 32]"
-                  }
-                ]
-              }
-            },
-            "path": [
-              "ink_env",
-              "types",
-              "AccountId"
-            ]
-          }
-        },
-        {
-          "id": 1,
-          "type": {
-            "def": {
-              "array": {
-                "len": 32,
-                "type": 2
-              }
+      {
+        "id": 1,
+        "type": {
+          "def": {
+            "array": {
+              "len": 32,
+              "type": 2
             }
           }
-        },
-        {
-          "id": 2,
-          "type": {
-            "def": {
-              "primitive": "u8"
-            }
+        }
+      },
+      {
+        "id": 2,
+        "type": {
+          "def": {
+            "primitive": "u8"
           }
-        },
-        {
-          "id": 3,
-          "type": {
-            "def": {
-              "primitive": "u128"
-            }
+        }
+      },
+      {
+        "id": 3,
+        "type": {
+          "def": {
+            "primitive": "u128"
           }
-        },
-        {
-          "id": 4,
-          "type": {
-            "def": {
-              "composite": {
-                "fields": [
-                  {
-                    "type": 6
-                  }
-                ]
-              }
-            },
-            "params": [
-              {
-                "name": "K",
-                "type": 0
-              },
-              {
-                "name": "V",
-                "type": 5
-              }
-            ],
-            "path": [
-              "openbrush_lang",
-              "storage",
-              "mapping",
-              "Mapping"
-            ]
-          }
-        },
-        {
-          "id": 5,
-          "type": {
-            "def": {
-              "primitive": "u16"
-            }
-          }
-        },
-        {
-          "id": 6,
-          "type": {
-            "def": {
-              "sequence": {
-                "type": 7
-              }
-            }
-          }
-        },
-        {
-          "id": 7,
-          "type": {
-            "def": {
-              "tuple": [
-                0,
-                5
+        }
+      },
+      {
+        "id": 4,
+        "type": {
+          "def": {
+            "composite": {
+              "fields": [
+                {
+                  "type": 6
+                }
               ]
             }
-          }
-        },
-        {
-          "id": 8,
-          "type": {
-            "def": {
-              "composite": {
-                "fields": [
-                  {
-                    "type": 14
-                  }
-                ]
-              }
+          },
+          "params": [
+            {
+              "name": "K",
+              "type": 0
             },
-            "params": [
-              {
-                "name": "K",
-                "type": 9
-              },
-              {
-                "name": "V",
-                "type": 10
-              }
-            ],
-            "path": [
-              "openbrush_lang",
-              "storage",
-              "mapping",
-              "Mapping"
-            ]
+            {
+              "name": "V",
+              "type": 5
+            }
+          ],
+          "path": [
+            "openbrush_lang",
+            "storage",
+            "mapping",
+            "Mapping"
+          ]
+        }
+      },
+      {
+        "id": 5,
+        "type": {
+          "def": {
+            "primitive": "u16"
           }
-        },
-        {
-          "id": 9,
-          "type": {
-            "def": {
-              "tuple": [
-                0,
-                3
-              ]
+        }
+      },
+      {
+        "id": 6,
+        "type": {
+          "def": {
+            "sequence": {
+              "type": 7
             }
           }
-        },
-        {
-          "id": 10,
-          "type": {
-            "def": {
-              "composite": {
-                "fields": [
-                  {
-                    "name": "proposal_type",
-                    "type": 11,
-                    "typeName": "ProposalType"
-                  },
-                  {
-                    "name": "proposal_id",
-                    "type": 3,
-                    "typeName": "u128"
-                  },
-                  {
-                    "name": "proposer",
-                    "type": 0,
-                    "typeName": "AccountId"
-                  },
-                  {
-                    "name": "title",
-                    "type": 12,
-                    "typeName": "String"
-                  },
-                  {
-                    "name": "outline",
-                    "type": 12,
-                    "typeName": "String"
-                  },
-                  {
-                    "name": "detail",
-                    "type": 12,
-                    "typeName": "String"
-                  },
-                  {
-                    "name": "status",
-                    "type": 13,
-                    "typeName": "ProposalStatus"
-                  },
-                  {
-                    "name": "csv_data",
-                    "type": 12,
-                    "typeName": "String"
-                  }
-                ]
-              }
-            },
-            "path": [
-              "proposal_manager",
-              "proposal_manager",
-              "ProposalInfo"
-            ]
-          }
-        },
-        {
-          "id": 11,
-          "type": {
-            "def": {
-              "variant": {
-                "variants": [
-                  {
-                    "index": 0,
-                    "name": "AddMember"
-                  },
-                  {
-                    "index": 1,
-                    "name": "DeleteMember"
-                  },
-                  {
-                    "index": 2,
-                    "name": "ChangeElectoralCommissioner"
-                  },
-                  {
-                    "index": 3,
-                    "name": "UseDaoTresury"
-                  },
-                  {
-                    "index": 4,
-                    "name": "IssueToken"
-                  },
-                  {
-                    "index": 5,
-                    "name": "ChangeStatusOfTokenSale"
-                  },
-                  {
-                    "index": 6,
-                    "name": "WithdrawTokenSales"
-                  },
-                  {
-                    "index": 7,
-                    "name": "DistributeGovernanceToken"
-                  }
-                ]
-              }
-            },
-            "path": [
-              "proposal_manager",
-              "proposal_manager",
-              "ProposalType"
-            ]
-          }
-        },
-        {
-          "id": 12,
-          "type": {
-            "def": {
-              "primitive": "str"
-            }
-          }
-        },
-        {
-          "id": 13,
-          "type": {
-            "def": {
-              "variant": {
-                "variants": [
-                  {
-                    "index": 0,
-                    "name": "None"
-                  },
-                  {
-                    "index": 1,
-                    "name": "Proposed"
-                  },
-                  {
-                    "index": 2,
-                    "name": "Voting"
-                  },
-                  {
-                    "index": 3,
-                    "name": "FinishVoting"
-                  },
-                  {
-                    "index": 4,
-                    "name": "Running"
-                  },
-                  {
-                    "index": 5,
-                    "name": "Denied"
-                  },
-                  {
-                    "index": 6,
-                    "name": "Finished"
-                  }
-                ]
-              }
-            },
-            "path": [
-              "proposal_manager",
-              "proposal_manager",
-              "ProposalStatus"
-            ]
-          }
-        },
-        {
-          "id": 14,
-          "type": {
-            "def": {
-              "sequence": {
-                "type": 15
-              }
-            }
-          }
-        },
-        {
-          "id": 15,
-          "type": {
-            "def": {
-              "tuple": [
-                9,
-                10
-              ]
-            }
-          }
-        },
-        {
-          "id": 16,
-          "type": {
-            "def": {
-              "composite": {
-                "fields": [
-                  {
-                    "type": 18
-                  }
-                ]
-              }
-            },
-            "params": [
-              {
-                "name": "K",
-                "type": 9
-              },
-              {
-                "name": "V",
-                "type": 17
-              }
-            ],
-            "path": [
-              "openbrush_lang",
-              "storage",
-              "mapping",
-              "Mapping"
-            ]
-          }
-        },
-        {
-          "id": 17,
-          "type": {
-            "def": {
-              "composite": {
-                "fields": [
-                  {
-                    "name": "proposal_id",
-                    "type": 3,
-                    "typeName": "u128"
-                  },
-                  {
-                    "name": "yes",
-                    "type": 5,
-                    "typeName": "u16"
-                  },
-                  {
-                    "name": "no",
-                    "type": 5,
-                    "typeName": "u16"
-                  }
-                ]
-              }
-            },
-            "path": [
-              "proposal_manager",
-              "proposal_manager",
-              "VotingResult"
-            ]
-          }
-        },
-        {
-          "id": 18,
-          "type": {
-            "def": {
-              "sequence": {
-                "type": 19
-              }
-            }
-          }
-        },
-        {
-          "id": 19,
-          "type": {
-            "def": {
-              "tuple": [
-                9,
-                17
-              ]
-            }
-          }
-        },
-        {
-          "id": 20,
-          "type": {
-            "def": {
-              "composite": {
-                "fields": [
-                  {
-                    "type": 22
-                  }
-                ]
-              }
-            },
-            "params": [
-              {
-                "name": "K",
-                "type": 9
-              },
-              {
-                "name": "V",
-                "type": 21
-              }
-            ],
-            "path": [
-              "openbrush_lang",
-              "storage",
-              "mapping",
-              "Mapping"
-            ]
-          }
-        },
-        {
-          "id": 21,
-          "type": {
-            "def": {
-              "sequence": {
-                "type": 0
-              }
-            }
-          }
-        },
-        {
-          "id": 22,
-          "type": {
-            "def": {
-              "sequence": {
-                "type": 23
-              }
-            }
-          }
-        },
-        {
-          "id": 23,
-          "type": {
-            "def": {
-              "tuple": [
-                9,
-                21
-              ]
-            }
-          }
-        },
-        {
-          "id": 24,
-          "type": {
-            "def": {
-              "composite": {
-                "fields": [
-                  {
-                    "name": "inner",
-                    "type": 25,
-                    "typeName": "<MemberManager as::ink_lang::codegen::ContractCallBuilder>::Type"
-                  }
-                ]
-              }
-            },
-            "path": [
-              "member_manager",
-              "member_manager",
-              "MemberManagerRef"
-            ]
-          }
-        },
-        {
-          "id": 25,
-          "type": {
-            "def": {
-              "composite": {
-                "fields": [
-                  {
-                    "name": "account_id",
-                    "type": 0,
-                    "typeName": "AccountId"
-                  }
-                ]
-              }
-            },
-            "path": [
-              "member_manager",
-              "member_manager",
-              "CallBuilder"
-            ]
-          }
-        },
-        {
-          "id": 26,
-          "type": {
-            "def": {
-              "composite": {
-                "fields": [
-                  {
-                    "name": "inner",
-                    "type": 27,
-                    "typeName": "<DaoManager as::ink_lang::codegen::ContractCallBuilder>::Type"
-                  }
-                ]
-              }
-            },
-            "path": [
-              "dao_manager",
-              "dao_manager",
-              "DaoManagerRef"
-            ]
-          }
-        },
-        {
-          "id": 27,
-          "type": {
-            "def": {
-              "composite": {
-                "fields": [
-                  {
-                    "name": "account_id",
-                    "type": 0,
-                    "typeName": "AccountId"
-                  }
-                ]
-              }
-            },
-            "path": [
-              "dao_manager",
-              "dao_manager",
-              "CallBuilder"
-            ]
-          }
-        },
-        {
-          "id": 28,
-          "type": {
-            "def": {
-              "variant": {
-                "variants": [
-                  {
-                    "fields": [
-                      {
-                        "type": 29
-                      }
-                    ],
-                    "index": 0,
-                    "name": "Ok"
-                  },
-                  {
-                    "fields": [
-                      {
-                        "type": 30
-                      }
-                    ],
-                    "index": 1,
-                    "name": "Err"
-                  }
-                ]
-              }
-            },
-            "params": [
-              {
-                "name": "T",
-                "type": 29
-              },
-              {
-                "name": "E",
-                "type": 30
-              }
-            ],
-            "path": [
-              "Result"
-            ]
-          }
-        },
-        {
-          "id": 29,
-          "type": {
-            "def": {
-              "tuple": []
-            }
-          }
-        },
-        {
-          "id": 30,
-          "type": {
-            "def": {
-              "variant": {
-                "variants": [
-                  {
-                    "index": 0,
-                    "name": "MemberDoesNotExist"
-                  },
-                  {
-                    "index": 1,
-                    "name": "MemberAlreadyExists"
-                  },
-                  {
-                    "index": 2,
-                    "name": "ElectoralCommissionerDataMismatch"
-                  },
-                  {
-                    "index": 3,
-                    "name": "ProposalDoesNotExist"
-                  },
-                  {
-                    "index": 4,
-                    "name": "InvalidChanging"
-                  },
-                  {
-                    "index": 5,
-                    "name": "OnlyElectoralCommissioner"
-                  },
-                  {
-                    "index": 6,
-                    "name": "OnlyMemberDoes"
-                  },
-                  {
-                    "index": 7,
-                    "name": "AlreadyVoted"
-                  },
-                  {
-                    "index": 8,
-                    "name": "IncorrectVotingStatus"
-                  },
-                  {
-                    "index": 9,
-                    "name": "VotedResultDoesNotExist"
-                  },
-                  {
-                    "index": 10,
-                    "name": "VoterTurnoutNotAchieved"
-                  },
-                  {
-                    "index": 11,
-                    "name": "NotRunning"
-                  },
-                  {
-                    "index": 12,
-                    "name": "NotImplemented"
-                  },
-                  {
-                    "index": 13,
-                    "name": "ExpirationOfTermOfElectionCommissioner"
-                  },
-                  {
-                    "index": 14,
-                    "name": "NotExpirationOfTermOfElectionCommissioner"
-                  },
-                  {
-                    "index": 15,
-                    "name": "InvalidMemberManagerCall"
-                  },
-                  {
-                    "index": 16,
-                    "name": "InvalidDaoManagerCall"
-                  }
-                ]
-              }
-            },
-            "path": [
-              "proposal_manager",
-              "proposal_manager",
-              "Error"
-            ]
-          }
-        },
-        {
-          "id": 31,
-          "type": {
-            "def": {
-              "sequence": {
-                "type": 10
-              }
-            }
-          }
-        },
-        {
-          "id": 32,
-          "type": {
-            "def": {
-              "variant": {
-                "variants": [
-                  {
-                    "index": 0,
-                    "name": "Yes"
-                  },
-                  {
-                    "index": 1,
-                    "name": "No"
-                  }
-                ]
-              }
-            },
-            "path": [
-              "proposal_manager",
-              "proposal_manager",
-              "YesOrNoWithTheProposal"
-            ]
-          }
-        },
-        {
-          "id": 33,
-          "type": {
-            "def": {
-              "variant": {
-                "variants": [
-                  {
-                    "index": 0,
-                    "name": "None"
-                  },
-                  {
-                    "fields": [
-                      {
-                        "type": 17
-                      }
-                    ],
-                    "index": 1,
-                    "name": "Some"
-                  }
-                ]
-              }
-            },
-            "params": [
-              {
-                "name": "T",
-                "type": 17
-              }
-            ],
-            "path": [
-              "Option"
+        }
+      },
+      {
+        "id": 7,
+        "type": {
+          "def": {
+            "tuple": [
+              0,
+              5
             ]
           }
         }
-      ]
-    }
+      },
+      {
+        "id": 8,
+        "type": {
+          "def": {
+            "composite": {
+              "fields": [
+                {
+                  "type": 14
+                }
+              ]
+            }
+          },
+          "params": [
+            {
+              "name": "K",
+              "type": 9
+            },
+            {
+              "name": "V",
+              "type": 10
+            }
+          ],
+          "path": [
+            "openbrush_lang",
+            "storage",
+            "mapping",
+            "Mapping"
+          ]
+        }
+      },
+      {
+        "id": 9,
+        "type": {
+          "def": {
+            "tuple": [
+              0,
+              3
+            ]
+          }
+        }
+      },
+      {
+        "id": 10,
+        "type": {
+          "def": {
+            "composite": {
+              "fields": [
+                {
+                  "name": "proposal_type",
+                  "type": 11,
+                  "typeName": "ProposalType"
+                },
+                {
+                  "name": "proposal_id",
+                  "type": 3,
+                  "typeName": "u128"
+                },
+                {
+                  "name": "proposer",
+                  "type": 0,
+                  "typeName": "AccountId"
+                },
+                {
+                  "name": "title",
+                  "type": 12,
+                  "typeName": "String"
+                },
+                {
+                  "name": "outline",
+                  "type": 12,
+                  "typeName": "String"
+                },
+                {
+                  "name": "details",
+                  "type": 12,
+                  "typeName": "String"
+                },
+                {
+                  "name": "status",
+                  "type": 13,
+                  "typeName": "ProposalStatus"
+                },
+                {
+                  "name": "csv_data",
+                  "type": 12,
+                  "typeName": "String"
+                }
+              ]
+            }
+          },
+          "path": [
+            "proposal_manager",
+            "proposal_manager",
+            "ProposalInfo"
+          ]
+        }
+      },
+      {
+        "id": 11,
+        "type": {
+          "def": {
+            "variant": {
+              "variants": [
+                {
+                  "index": 0,
+                  "name": "AddMember"
+                },
+                {
+                  "index": 1,
+                  "name": "DeleteMember"
+                },
+                {
+                  "index": 2,
+                  "name": "ChangeElectoralCommissioner"
+                },
+                {
+                  "index": 3,
+                  "name": "UseDaoTresury"
+                },
+                {
+                  "index": 4,
+                  "name": "IssueToken"
+                },
+                {
+                  "index": 5,
+                  "name": "ChangeStatusOfTokenSale"
+                },
+                {
+                  "index": 6,
+                  "name": "WithdrawTokenSales"
+                },
+                {
+                  "index": 7,
+                  "name": "DistributeGovernanceToken"
+                }
+              ]
+            }
+          },
+          "path": [
+            "proposal_manager",
+            "proposal_manager",
+            "ProposalType"
+          ]
+        }
+      },
+      {
+        "id": 12,
+        "type": {
+          "def": {
+            "primitive": "str"
+          }
+        }
+      },
+      {
+        "id": 13,
+        "type": {
+          "def": {
+            "variant": {
+              "variants": [
+                {
+                  "index": 0,
+                  "name": "None"
+                },
+                {
+                  "index": 1,
+                  "name": "Proposed"
+                },
+                {
+                  "index": 2,
+                  "name": "Voting"
+                },
+                {
+                  "index": 3,
+                  "name": "FinishVoting"
+                },
+                {
+                  "index": 4,
+                  "name": "Running"
+                },
+                {
+                  "index": 5,
+                  "name": "Denied"
+                },
+                {
+                  "index": 6,
+                  "name": "Finished"
+                }
+              ]
+            }
+          },
+          "path": [
+            "proposal_manager",
+            "proposal_manager",
+            "ProposalStatus"
+          ]
+        }
+      },
+      {
+        "id": 14,
+        "type": {
+          "def": {
+            "sequence": {
+              "type": 15
+            }
+          }
+        }
+      },
+      {
+        "id": 15,
+        "type": {
+          "def": {
+            "tuple": [
+              9,
+              10
+            ]
+          }
+        }
+      },
+      {
+        "id": 16,
+        "type": {
+          "def": {
+            "composite": {
+              "fields": [
+                {
+                  "type": 18
+                }
+              ]
+            }
+          },
+          "params": [
+            {
+              "name": "K",
+              "type": 9
+            },
+            {
+              "name": "V",
+              "type": 17
+            }
+          ],
+          "path": [
+            "openbrush_lang",
+            "storage",
+            "mapping",
+            "Mapping"
+          ]
+        }
+      },
+      {
+        "id": 17,
+        "type": {
+          "def": {
+            "composite": {
+              "fields": [
+                {
+                  "name": "proposal_id",
+                  "type": 3,
+                  "typeName": "u128"
+                },
+                {
+                  "name": "yes",
+                  "type": 5,
+                  "typeName": "u16"
+                },
+                {
+                  "name": "no",
+                  "type": 5,
+                  "typeName": "u16"
+                }
+              ]
+            }
+          },
+          "path": [
+            "proposal_manager",
+            "proposal_manager",
+            "VotingResult"
+          ]
+        }
+      },
+      {
+        "id": 18,
+        "type": {
+          "def": {
+            "sequence": {
+              "type": 19
+            }
+          }
+        }
+      },
+      {
+        "id": 19,
+        "type": {
+          "def": {
+            "tuple": [
+              9,
+              17
+            ]
+          }
+        }
+      },
+      {
+        "id": 20,
+        "type": {
+          "def": {
+            "composite": {
+              "fields": [
+                {
+                  "type": 22
+                }
+              ]
+            }
+          },
+          "params": [
+            {
+              "name": "K",
+              "type": 9
+            },
+            {
+              "name": "V",
+              "type": 21
+            }
+          ],
+          "path": [
+            "openbrush_lang",
+            "storage",
+            "mapping",
+            "Mapping"
+          ]
+        }
+      },
+      {
+        "id": 21,
+        "type": {
+          "def": {
+            "sequence": {
+              "type": 0
+            }
+          }
+        }
+      },
+      {
+        "id": 22,
+        "type": {
+          "def": {
+            "sequence": {
+              "type": 23
+            }
+          }
+        }
+      },
+      {
+        "id": 23,
+        "type": {
+          "def": {
+            "tuple": [
+              9,
+              21
+            ]
+          }
+        }
+      },
+      {
+        "id": 24,
+        "type": {
+          "def": {
+            "composite": {
+              "fields": [
+                {
+                  "name": "inner",
+                  "type": 25,
+                  "typeName": "<MemberManager as::ink_lang::codegen::ContractCallBuilder>::Type"
+                }
+              ]
+            }
+          },
+          "path": [
+            "member_manager",
+            "member_manager",
+            "MemberManagerRef"
+          ]
+        }
+      },
+      {
+        "id": 25,
+        "type": {
+          "def": {
+            "composite": {
+              "fields": [
+                {
+                  "name": "account_id",
+                  "type": 0,
+                  "typeName": "AccountId"
+                }
+              ]
+            }
+          },
+          "path": [
+            "member_manager",
+            "member_manager",
+            "CallBuilder"
+          ]
+        }
+      },
+      {
+        "id": 26,
+        "type": {
+          "def": {
+            "composite": {
+              "fields": [
+                {
+                  "name": "inner",
+                  "type": 27,
+                  "typeName": "<DaoManager as::ink_lang::codegen::ContractCallBuilder>::Type"
+                }
+              ]
+            }
+          },
+          "path": [
+            "dao_manager",
+            "dao_manager",
+            "DaoManagerRef"
+          ]
+        }
+      },
+      {
+        "id": 27,
+        "type": {
+          "def": {
+            "composite": {
+              "fields": [
+                {
+                  "name": "account_id",
+                  "type": 0,
+                  "typeName": "AccountId"
+                }
+              ]
+            }
+          },
+          "path": [
+            "dao_manager",
+            "dao_manager",
+            "CallBuilder"
+          ]
+        }
+      },
+      {
+        "id": 28,
+        "type": {
+          "def": {
+            "variant": {
+              "variants": [
+                {
+                  "fields": [
+                    {
+                      "type": 29
+                    }
+                  ],
+                  "index": 0,
+                  "name": "Ok"
+                },
+                {
+                  "fields": [
+                    {
+                      "type": 30
+                    }
+                  ],
+                  "index": 1,
+                  "name": "Err"
+                }
+              ]
+            }
+          },
+          "params": [
+            {
+              "name": "T",
+              "type": 29
+            },
+            {
+              "name": "E",
+              "type": 30
+            }
+          ],
+          "path": [
+            "Result"
+          ]
+        }
+      },
+      {
+        "id": 29,
+        "type": {
+          "def": {
+            "tuple": []
+          }
+        }
+      },
+      {
+        "id": 30,
+        "type": {
+          "def": {
+            "variant": {
+              "variants": [
+                {
+                  "index": 0,
+                  "name": "MemberDoesNotExist"
+                },
+                {
+                  "index": 1,
+                  "name": "MemberAlreadyExists"
+                },
+                {
+                  "index": 2,
+                  "name": "ElectoralCommissionerDataMismatch"
+                },
+                {
+                  "index": 3,
+                  "name": "ProposalDoesNotExist"
+                },
+                {
+                  "index": 4,
+                  "name": "InvalidChanging"
+                },
+                {
+                  "index": 5,
+                  "name": "OnlyElectoralCommissioner"
+                },
+                {
+                  "index": 6,
+                  "name": "OnlyMemberDoes"
+                },
+                {
+                  "index": 7,
+                  "name": "AlreadyVoted"
+                },
+                {
+                  "index": 8,
+                  "name": "IncorrectVotingStatus"
+                },
+                {
+                  "index": 9,
+                  "name": "VotedResultDoesNotExist"
+                },
+                {
+                  "index": 10,
+                  "name": "VoterTurnoutNotAchieved"
+                },
+                {
+                  "index": 11,
+                  "name": "NotRunning"
+                },
+                {
+                  "index": 12,
+                  "name": "NotImplemented"
+                },
+                {
+                  "index": 13,
+                  "name": "ExpirationOfTermOfElectionCommissioner"
+                },
+                {
+                  "index": 14,
+                  "name": "NotExpirationOfTermOfElectionCommissioner"
+                },
+                {
+                  "index": 15,
+                  "name": "InvalidMemberManagerCall"
+                },
+                {
+                  "index": 16,
+                  "name": "InvalidDaoManagerCall"
+                }
+              ]
+            }
+          },
+          "path": [
+            "proposal_manager",
+            "proposal_manager",
+            "Error"
+          ]
+        }
+      },
+      {
+        "id": 31,
+        "type": {
+          "def": {
+            "sequence": {
+              "type": 10
+            }
+          }
+        }
+      },
+      {
+        "id": 32,
+        "type": {
+          "def": {
+            "variant": {
+              "variants": [
+                {
+                  "index": 0,
+                  "name": "Yes"
+                },
+                {
+                  "index": 1,
+                  "name": "No"
+                }
+              ]
+            }
+          },
+          "path": [
+            "proposal_manager",
+            "proposal_manager",
+            "YesOrNoWithTheProposal"
+          ]
+        }
+      },
+      {
+        "id": 33,
+        "type": {
+          "def": {
+            "variant": {
+              "variants": [
+                {
+                  "index": 0,
+                  "name": "None"
+                },
+                {
+                  "fields": [
+                    {
+                      "type": 17
+                    }
+                  ],
+                  "index": 1,
+                  "name": "Some"
+                }
+              ]
+            }
+          },
+          "params": [
+            {
+              "name": "T",
+              "type": 17
+            }
+          ],
+          "path": [
+            "Option"
+          ]
+        }
+      }
+    ]
   }
+}

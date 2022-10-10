@@ -10,7 +10,7 @@ const ChangeStatusOfProposal = (props: ProposalProps) => {
     setChangeStatus(status);
   };
 
-  const _doChangeStatus = async () => {
+  const doChangeStatus = async () => {
     await changeProposalStatus(
       Number(changeStatus),
       Number(props.targetProposal.proposalId),
@@ -35,13 +35,8 @@ const ChangeStatusOfProposal = (props: ProposalProps) => {
             value={changeStatus}
             onChange={(e) => selectChangeStatus(e.target.value)}
           >
-            <option value="0">UnderDiscussionOnGithub</option>
-            <option value="1">Voting</option>
-            <option value="2">Pending</option>
-            <option value="3">Running</option>
-            <option value="4">Rejected</option>
-            <option value="5">FinishedVoting</option>
-            <option value="6">Finished</option>
+            <option value="2">Voting</option>
+            <option value="3">FinishVoting</option>
           </select>
           <div className="p-3"></div>
         </div>
@@ -49,7 +44,7 @@ const ChangeStatusOfProposal = (props: ProposalProps) => {
       <div className="flex justify-center">
         <button
           className="m-2 px-4 py-2  border-black border-2 bg-blue-200 rounded text-black  hover:bg-green-200"
-          onClick={() => _doChangeStatus()}
+          onClick={() => doChangeStatus()}
         >
           Change
         </button>

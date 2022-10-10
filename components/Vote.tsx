@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { get_account_info, get_selected_address } from "../contracts/get_account_info_api";
 import { doVoteForProposal } from "../contracts/ProposalManagerApi";
 import { ProposalProps } from "../types/ProposalManagerType";
 import ProposalParts from "./ProposalParts";
@@ -11,7 +12,9 @@ const Vote = (props: ProposalProps) => {
   };
 
   const _doVote = async () => {
+    const selectedAccount = await get_account_info(get_selected_address());
     await doVoteForProposal(
+      selectedAccount,
       Boolean(Number(voteStatus)),
       Number(props.targetProposal.proposalId),
       props.daoAddress

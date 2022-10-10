@@ -14,30 +14,47 @@ const proposalManagerAddress =
 const gasLimit = 100000 * 1000000;
 const storageDepositLimit = null;
 
-export const getProposalList = async (daoAddress:string): Promise<
+export const getProposalList = async (
+  peformanceAddress:string,
+  daoAddress:string
+): Promise<
   Array<ProposalInfo>
 > => {
-  const proposalManagerAddress =
-    process.env.NEXT_PUBLIC_PROPOSAL_MANAGER_CONTRACT_ADDRESS;
-  const contractConstract = ProposalManagerContractConstruct;
+  const wsProvider = new WsProvider(blockchainUrl);
+  const api = await ApiPromise.create({ provider: wsProvider });
 
   let response: ProposalInfo[] = [];
-  if (typeof window.ethereum !== "undefined" && proposalManagerAddress) {
-    const provider = new ethers.providers.Web3Provider(window.ethereum);
-    const signer = provider.getSigner();
-    const contract = new ethers.Contract(
-      proposalManagerAddress,
-      contractConstract.abi,
-      signer
-    );
-    response = await contract
-      .getProposalList(daoAddress)
-      .catch((err: any) => {
-        console.log(err);
-        errorFunction(err);
-      });
-    console.log("### getProposalList Return: ", response);
+
+  const contract = new ContractPromise(
+    api,
+    proposalManagerAbi,
+    proposalManagerAddress
+  );
+  const { gasConsumed, result, output } =
+    await contract.query.getMemberList(peformanceAddress, {
+      value: 0,
+      gasLimit: -1,
+    },
+    daoAddress);
+  if (output !== undefined && output !== null) {
+    let response_json = output.toJSON();
+    let json_data = JSON.parse(JSON.stringify(response_json));
+    for (let i = 0; i < json_data.length; i++) {
+      let item: ProposalInfo = {
+        proposalKind: json_data[i].proposalType,
+        proposalId: json_data[i].proposalId,
+        proposer: json_data[i].proposer,
+        title: json_data[i].title,
+        outline: json_data[i].outline,
+        details: json_data[i].details,
+        githubURL: json_data[i].githubUrl,
+        proposalStatus: json_data[i].status,
+        csvData:json_data[i].csvData,
+      };
+      response.push(item); 
+    }
   }
+  api.disconnect();
   return response;
 };
 
@@ -75,59 +92,88 @@ export const addProposal =async (
   }
 }
 
+export const doVoteForProposal = async (
+  performingAccount: InjectedAccountWithMeta,
+  yes: boolean, 
+  proposalId: number,
+  daoAddress:string
+) => {
+  const { web3FromSource } = await import("@polkadot/extension-dapp");
+  const wsProvider = new WsProvider(blockchainUrl);
+  const api = await ApiPromise.create({ provider: wsProvider });
 
-export const doVoteForProposal = async (yes: boolean, proposalId: number,daoAddress:string) => {
-  console.log("## doVote:yes: ", yes);
-  const proposalManagerAddress =
-    process.env.NEXT_PUBLIC_PROPOSAL_MANAGER_CONTRACT_ADDRESS;
-  const contractConstract = ProposalManagerContractConstruct;
-  let response: ProposalInfo[] = [];
-  if (typeof window.ethereum !== "undefined" && proposalManagerAddress) {
-    const provider = new ethers.providers.Web3Provider(window.ethereum);
-    const signer = provider.getSigner();
-    const contract = new ethers.Contract(
-      proposalManagerAddress,
-      contractConstract.abi,
-      signer
-    );
-    response = await contract
-      .voteForProposal(daoAddress, proposalId, yes)
-      .catch((err: any) => {
-        console.log(err);
-        errorFunction(err);
-      });
-    console.log("### voteForProposal Return: ", response);
+  const contract = new ContractPromise(api, proposalManagerAbi, proposalManagerAddress);
+  const injector = await web3FromSource(performingAccount.meta.source);
+  const tx = await contract.tx.voteForTheProposal(
+    { value: 0, gasLimit: -1 },
+    daoAddress,
+    proposalId,
+    yes,
+  );
+  if (injector !== undefined) {
+    const unsub = await tx.signAndSend(performingAccount.address, { signer: injector.signer }, (result) => {
+      if (result.status.isFinalized) {
+        unsub();
+        api.disconnect();
+      }
+    });
   }
-  return response;
-};
+}
 
 export const changeProposalStatus = async (
+  performingAccount: InjectedAccountWithMeta,
   proposalStatus: number,
   proposalId: number,
   daoAddress: string
 ) => {
-  console.log("#### changeProposalStatus ####");
-  console.log("## Proposal Status: ", proposalStatus);
-  console.log("## Proposal Id: ", proposalId);
-  const proposalManagerAddress =
-    process.env.NEXT_PUBLIC_PROPOSAL_MANAGER_CONTRACT_ADDRESS;
-  const contractConstract = ProposalManagerContractConstruct;
-  let response: ProposalInfo[] = [];
-  if (typeof window.ethereum !== "undefined" && proposalManagerAddress) {
-    const provider = new ethers.providers.Web3Provider(window.ethereum);
-    const signer = provider.getSigner();
-    const contract = new ethers.Contract(
-      proposalManagerAddress,
-      contractConstract.abi,
-      signer
-    );
-    response = await contract
-      .changeProposalStatus(daoAddress, proposalId, proposalStatus)
-      .catch((err: any) => {
-        console.log(err);
-        errorFunction(err);
-      });
-    console.log("### changeProposalStatus Return: ", response);
+  const { web3FromSource } = await import("@polkadot/extension-dapp");
+  const wsProvider = new WsProvider(blockchainUrl);
+  const api = await ApiPromise.create({ provider: wsProvider });
+
+  const contract = new ContractPromise(api, proposalManagerAbi, proposalManagerAddress);
+  const injector = await web3FromSource(performingAccount.meta.source);
+  const tx = await contract.tx.changeProposalStatus(
+    { value: 0, gasLimit: -1 },
+    daoAddress,
+    proposalId,
+    proposalStatus,
+  );
+  if (injector !== undefined) {
+    const unsub = await tx.signAndSend(performingAccount.address, { signer: injector.signer }, (result) => {
+      if (result.status.isFinalized) {
+        unsub();
+        api.disconnect();
+      }
+    });
   }
-  return response;
-};
+}
+// export const changeProposalStatus = async (
+//   proposalStatus: number,
+//   proposalId: number,
+//   daoAddress: string
+// ) => {
+//   console.log("#### changeProposalStatus ####");
+//   console.log("## Proposal Status: ", proposalStatus);
+//   console.log("## Proposal Id: ", proposalId);
+//   const proposalManagerAddress =
+//     process.env.NEXT_PUBLIC_PROPOSAL_MANAGER_CONTRACT_ADDRESS;
+//   const contractConstract = ProposalManagerContractConstruct;
+//   let response: ProposalInfo[] = [];
+//   if (typeof window.ethereum !== "undefined" && proposalManagerAddress) {
+//     const provider = new ethers.providers.Web3Provider(window.ethereum);
+//     const signer = provider.getSigner();
+//     const contract = new ethers.Contract(
+//       proposalManagerAddress,
+//       contractConstract.abi,
+//       signer
+//     );
+//     response = await contract
+//       .changeProposalStatus(daoAddress, proposalId, proposalStatus)
+//       .catch((err: any) => {
+//         console.log(err);
+//         errorFunction(err);
+//       });
+//     console.log("### changeProposalStatus Return: ", response);
+//   }
+//   return response;
+// };
