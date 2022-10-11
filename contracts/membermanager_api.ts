@@ -110,7 +110,7 @@ export const addFirstMember = async (
   const contract = new ContractPromise(api, memberManagerAbi, memberManagerAddress);
   const injector = await web3FromSource(performingAccount.meta.source);
   const tx = await contract.tx.addFirstMember(
-    { value: 0, gasLimit: -1 },
+    { value: 0, gasLimit: gasLimit },
     daoAddress,
     performingAccount.address,
     _memberFormData.ownerName,
@@ -133,7 +133,7 @@ export const propose4AddingTheMember =async (
   proposalData: ProposalData4AddingMember,
   daoAddress: string,
 ) => {
-  const csvData = proposalData.name + "," + proposalData.memberAddress;
+  const csvData = proposalData.name + "," + proposalData.memberAddress + "," + "0" + "," + "0" + "," + "false";
   const proposalParameter:AddProposalFormData ={
     proposalKind:proposalData.proposalKind,
     title:proposalData.title,
@@ -222,6 +222,7 @@ export const propose4DeletingTheMember =async (
     detail:proposalData.detail,
     csvData:csvData,
   };
+  console.log("## delete proposal. parameter:",proposalParameter);
   await addProposal(performingAccount,proposalParameter,daoAddress);  
 };
 

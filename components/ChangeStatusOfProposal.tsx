@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { get_account_info, get_selected_address } from "../contracts/get_account_info_api";
 import { changeProposalStatus } from "../contracts/ProposalManagerApi";
 import { ProposalProps } from "../types/ProposalManagerType";
 import ProposalParts from "./ProposalParts";
@@ -11,7 +12,9 @@ const ChangeStatusOfProposal = (props: ProposalProps) => {
   };
 
   const doChangeStatus = async () => {
+    const selectedAccount = await get_account_info(get_selected_address());
     await changeProposalStatus(
+      selectedAccount,
       Number(changeStatus),
       Number(props.targetProposal.proposalId),
       props.daoAddress
@@ -35,6 +38,7 @@ const ChangeStatusOfProposal = (props: ProposalProps) => {
             value={changeStatus}
             onChange={(e) => selectChangeStatus(e.target.value)}
           >
+            <option value="0"></option>
             <option value="2">Voting</option>
             <option value="3">FinishVoting</option>
           </select>

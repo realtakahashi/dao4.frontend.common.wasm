@@ -221,7 +221,7 @@ export const registerToDaoManager = async (
 
   const contract = new ContractPromise(api, daoManagerAbi, daoManagerAddress);
   const injector = await web3FromSource(performingAccount.meta.source);
-  const tx = await contract.tx.addDao({ value: 0, gasLimit: -1 }, daoAddress);
+  const tx = await contract.tx.addDao({ value: 0, gasLimit: gasLimit }, daoAddress);
   if (injector !== undefined) {
     const unsub = await tx.signAndSend(
       performingAccount.address,

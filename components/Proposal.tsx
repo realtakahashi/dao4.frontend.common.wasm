@@ -40,12 +40,12 @@ const Proposal = (props:ProposalParameter) => {
         )}
         {showSubmitButton == true && (
           <div>
-          <button
+          {/* <button
             className="m-2 px-4 py-2  border-black border-2 bg-white rounded text-black  hover:bg-green-200"
             onClick={() => _manageShowing(true, false, false, true,false)}
           >
             + Submit New
-          </button>
+          </button> */}
           <button
           className="m-2 px-4 py-2  border-black border-2 bg-white rounded text-black  hover:bg-green-200"
           onClick={() => _manageShowing(false, true, true, false, !showAllList)}
@@ -66,7 +66,7 @@ const Proposal = (props:ProposalParameter) => {
             daoAddress={props.daoAddress}
             />
         )}
-        {showSubmitScreen == true && <SubmitProposal daoAddress={props.daoAddress}></SubmitProposal>}
+        {/* {showSubmitScreen == true && <SubmitProposal daoAddress={props.daoAddress}></SubmitProposal>} */}
       </div>
     </>
   );

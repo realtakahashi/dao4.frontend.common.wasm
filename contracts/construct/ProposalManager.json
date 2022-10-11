@@ -1,6 +1,6 @@
 {
   "source": {
-    "hash": "0xd750655171fb33a453e29fb73be53be139a3bd16896d3ef2b175de4a9dd26d23",
+    "hash": "0x546c5c79b58d6d8dc837a82484df11d7dd95cd6ac4203c2949853751a206222d",
     "language": "ink! 3.3.1",
     "compiler": "rustc 1.63.0-nightly"
   },
@@ -49,7 +49,7 @@
         {
           "args": [
             {
-              "label": "_proposal_type",
+              "label": "proposal_type",
               "type": {
                 "displayName": [
                   "ProposalType"
@@ -58,7 +58,7 @@
               }
             },
             {
-              "label": "_dao_address",
+              "label": "dao_address",
               "type": {
                 "displayName": [
                   "AccountId"
@@ -67,7 +67,7 @@
               }
             },
             {
-              "label": "_title",
+              "label": "title",
               "type": {
                 "displayName": [
                   "String"
@@ -76,7 +76,7 @@
               }
             },
             {
-              "label": "_outline",
+              "label": "outline",
               "type": {
                 "displayName": [
                   "String"
@@ -85,7 +85,7 @@
               }
             },
             {
-              "label": "_details",
+              "label": "details",
               "type": {
                 "displayName": [
                   "String"
@@ -94,7 +94,16 @@
               }
             },
             {
-              "label": "_csv_data",
+              "label": "githubUrl",
+              "type": {
+                "displayName": [
+                  "String"
+                ],
+                "type": 12
+              }
+            },
+            {
+              "label": "csv_data",
               "type": {
                 "displayName": [
                   "String"
@@ -146,7 +155,7 @@
         {
           "args": [
             {
-              "label": "_dao_address",
+              "label": "dao_address",
               "type": {
                 "displayName": [
                   "AccountId"
@@ -155,7 +164,7 @@
               }
             },
             {
-              "label": "_proposal_id",
+              "label": "proposal_id",
               "type": {
                 "displayName": [
                   "u128"
@@ -164,10 +173,10 @@
               }
             },
             {
-              "label": "_yes_or_no",
+              "label": "vote_yes",
               "type": {
                 "displayName": [
-                  "YesOrNoWithTheProposal"
+                  "bool"
                 ],
                 "type": 32
               }
@@ -589,6 +598,11 @@
                 },
                 {
                   "name": "details",
+                  "type": 12,
+                  "typeName": "String"
+                },
+                {
+                  "name": "githubUrl",
                   "type": 12,
                   "typeName": "String"
                 },
@@ -1108,24 +1122,8 @@
         "id": 32,
         "type": {
           "def": {
-            "variant": {
-              "variants": [
-                {
-                  "index": 0,
-                  "name": "Yes"
-                },
-                {
-                  "index": 1,
-                  "name": "No"
-                }
-              ]
-            }
-          },
-          "path": [
-            "proposal_manager",
-            "proposal_manager",
-            "YesOrNoWithTheProposal"
-          ]
+            "primitive": "bool"
+          }
         }
       },
       {

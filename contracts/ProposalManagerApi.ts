@@ -31,7 +31,7 @@ export const getProposalList = async (
     proposalManagerAddress
   );
   const { gasConsumed, result, output } =
-    await contract.query.getMemberList(peformanceAddress, {
+    await contract.query.getProposalList(peformanceAddress, {
       value: 0,
       gasLimit: -1,
     },
@@ -70,12 +70,13 @@ export const addProposal =async (
   const contract = new ContractPromise(api, proposalManagerAbi, proposalManagerAddress);
   const injector = await web3FromSource(performingAccount.meta.source);
   const tx = await contract.tx.addProposal(
-    { value: 0, gasLimit: -1 }, 
+    { value: 0, gasLimit: gasLimit }, 
     inputData.proposalKind,
     daoAddress,
     inputData.title,
     inputData.outline,
     inputData.detail,
+    inputData.githubURL,
     inputData.csvData,
   );
   if (injector !== undefined) {
@@ -83,7 +84,7 @@ export const addProposal =async (
       performingAccount.address,
       { signer: injector.signer },
       (result) => {
-        if (result.status.isFinalized) {
+        if (result.status.isFinalized) { 
           unsub();
           api.disconnect();
         }
@@ -105,7 +106,7 @@ export const doVoteForProposal = async (
   const contract = new ContractPromise(api, proposalManagerAbi, proposalManagerAddress);
   const injector = await web3FromSource(performingAccount.meta.source);
   const tx = await contract.tx.voteForTheProposal(
-    { value: 0, gasLimit: -1 },
+    { value: 0, gasLimit: gasLimit },
     daoAddress,
     proposalId,
     yes,
@@ -132,8 +133,9 @@ export const changeProposalStatus = async (
 
   const contract = new ContractPromise(api, proposalManagerAbi, proposalManagerAddress);
   const injector = await web3FromSource(performingAccount.meta.source);
+  console.log("## proposal status:",proposalStatus);
   const tx = await contract.tx.changeProposalStatus(
-    { value: 0, gasLimit: -1 },
+    { value: 0, gasLimit: gasLimit },
     daoAddress,
     proposalId,
     proposalStatus,
@@ -147,33 +149,30 @@ export const changeProposalStatus = async (
     });
   }
 }
-// export const changeProposalStatus = async (
-//   proposalStatus: number,
-//   proposalId: number,
-//   daoAddress: string
-// ) => {
-//   console.log("#### changeProposalStatus ####");
-//   console.log("## Proposal Status: ", proposalStatus);
-//   console.log("## Proposal Id: ", proposalId);
-//   const proposalManagerAddress =
-//     process.env.NEXT_PUBLIC_PROPOSAL_MANAGER_CONTRACT_ADDRESS;
-//   const contractConstract = ProposalManagerContractConstruct;
-//   let response: ProposalInfo[] = [];
-//   if (typeof window.ethereum !== "undefined" && proposalManagerAddress) {
-//     const provider = new ethers.providers.Web3Provider(window.ethereum);
-//     const signer = provider.getSigner();
-//     const contract = new ethers.Contract(
-//       proposalManagerAddress,
-//       contractConstract.abi,
-//       signer
-//     );
-//     response = await contract
-//       .changeProposalStatus(daoAddress, proposalId, proposalStatus)
-//       .catch((err: any) => {
-//         console.log(err);
-//         errorFunction(err);
-//       });
-//     console.log("### changeProposalStatus Return: ", response);
-//   }
-//   return response;
-// };
+
+export const execute_proposal = async(
+  performingAccount: InjectedAccountWithMeta,
+  proposalId: number,
+  daoAddress: string
+) => {
+  const { web3FromSource } = await import("@polkadot/extension-dapp");
+  const wsProvider = new WsProvider(blockchainUrl);
+  const api = await ApiPromise.create({ provider: wsProvider });
+
+  const contract = new ContractPromise(api, proposalManagerAbi, proposalManagerAddress);
+  const injector = await web3FromSource(performingAccount.meta.source);
+  const tx = await contract.tx.executeProposal(
+    { value: 0, gasLimit: gasLimit },
+    daoAddress,
+    proposalId,
+  );
+  if (injector !== undefined) {
+    const unsub = await tx.signAndSend(performingAccount.address, { signer: injector.signer }, (result) => {
+      if (result.status.isFinalized) {
+        unsub();
+        api.disconnect();
+      }
+    });
+  }
+
+}

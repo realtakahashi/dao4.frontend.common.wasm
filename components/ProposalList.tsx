@@ -1,9 +1,9 @@
 import Link from "next/link";
 import { useState } from "react";
 import { useEffect } from "react";
-import { get_selected_address } from "../contracts/get_account_info_api";
+import { get_account_info, get_selected_address } from "../contracts/get_account_info_api";
 import { checkElectionComission } from "../contracts/membermanager_api";
-import { getProposalList } from "../contracts/ProposalManagerApi";
+import { execute_proposal, getProposalList } from "../contracts/ProposalManagerApi";
 import {
   ProposalInfo,
   PROPOSAL_VOTING,
@@ -38,7 +38,7 @@ const ProposalList = (props: ProposalListProps) => {
     details: "",
     githubURL: "",
     proposalId: "",
-    proposalStatus: 0,
+    proposalStatus: "",
     proposer:"",
     csvData:"",
   });
@@ -86,7 +86,7 @@ const ProposalList = (props: ProposalListProps) => {
   const _getProposalList = async () => {
     const selected_address = get_selected_address();
     const result = await getProposalList(selected_address, props.daoAddress);
-    //console.log("## memberList:",result);
+    console.log("## proposalList:",result);
     setProposalList(result);
   };
 
@@ -94,6 +94,11 @@ const ProposalList = (props: ProposalListProps) => {
     const selected_address = get_selected_address();
     setIsElectionComission(await checkElectionComission(selected_address,props.daoAddress));
   };
+
+  const executeProposal =async () => {
+    const selected_address = await get_account_info(get_selected_address());
+    await execute_proposal(selected_address,Number(targetProposal.proposalId),props.daoAddress);
+  }
 
   useEffect(() => {
     _getProposalList();
@@ -121,9 +126,9 @@ const ProposalList = (props: ProposalListProps) => {
                     <div key={proposal.title}>
                       {(props.showAllList == true ||
                         (props.showAllList == false &&
-                          proposal.proposalStatus != PROPOSAL_FINISHED) &&
+                          proposal.proposalStatus != "Finished") &&
                           (props.showAllList == false &&
-                            proposal.proposalStatus != PROPOSAL_REJECTED)
+                            proposal.proposalStatus != "Denied")
                             ) && (
                         <div
                           className="m-5  max-w-sm rounded overflow-hidden shadow-lg bg-black border-4 border-white"    
@@ -133,7 +138,7 @@ const ProposalList = (props: ProposalListProps) => {
                             daoAddress={props.daoAddress}
                           ></ProposalParts>
                           <div className="px-6 py-4">
-                            {proposal.proposalStatus == PROPOSAL_VOTING && (
+                            {proposal.proposalStatus == "Voting" && (
                               <button
                                 className="inline-block bg-red-700 rounded-full px-3 py-1 text-sm font-semibold text-white mr-2 mb-2"
                                 onClick={() =>
@@ -148,6 +153,14 @@ const ProposalList = (props: ProposalListProps) => {
                                 }
                               >
                                 Vote
+                              </button>
+                            )}
+                            {proposal.proposalStatus == "Running" && (
+                              <button
+                                className="inline-block bg-blue-700 rounded-full px-3 py-1 text-sm font-semibold text-white mr-2 mb-2"
+                                onClick={() => executeProposal() }
+                              >
+                                Execute Proposal
                               </button>
                             )}
                             <button className="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2">

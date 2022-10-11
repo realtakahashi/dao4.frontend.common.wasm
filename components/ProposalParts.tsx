@@ -14,10 +14,10 @@ const ProposalParts = (props: ProposalProps) => {
         Id: {String(props.targetProposal.proposalId)}
       </p>
       <p className="p-1 text-white text-base">
-        Kind: {PROPOSAL_KIND[props.targetProposal.proposalKind]}
+        Kind: {props.targetProposal.proposalKind}
       </p>
       <p className="p-1 text-white text-base">
-        Status: {PROPOSAL_STATUS[props.targetProposal.proposalStatus]}
+        Status: {props.targetProposal.proposalStatus}
       </p>
       <p className="p-1 text-white text-base">{props.targetProposal.details}</p>
       <p className="p-1 text-white text-11px">

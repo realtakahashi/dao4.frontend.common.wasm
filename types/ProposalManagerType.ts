@@ -32,7 +32,7 @@ export interface ProposalInfo {
   title: string;
   outline: string;
   details: string;
-  proposalStatus: number;
+  proposalStatus: string;
   githubURL: string;
   csvData: string,
 }
@@ -57,6 +57,6 @@ export const PROPOSAL_STATUS = [
   "Finished",
 ] as const;
 
-export const PROPOSAL_VOTING = 1;
-export const PROPOSAL_FINISHED = 6;
-export const PROPOSAL_REJECTED= 4;
+export const PROPOSAL_VOTING = 2;
+export const PROPOSAL_FINISHED = 3;
+export const PROPOSAL_REJECTED= 5;
