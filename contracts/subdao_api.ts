@@ -1,4 +1,5 @@
 import {
+  ProposalData4ADivide,
   SubDAOData,
   SubDAODataWithMemberFlg,
   SubDAODeployFormData,
@@ -20,12 +21,19 @@ import daoManagerAbi from "../contracts/construct/DaoManager.json";
 import daoAbi from "../contracts/construct/Dao.json";
 import memberManagerAbi from "../contracts/construct/MemberManager.json";
 import daoContractWasm from "../contracts/construct/Dao_contract.json";
+import { checkEventsAndInculueError } from "./contract_common_util";
+import { AddProposalFormData } from "../types/ProposalManagerType";
+import { addProposal } from "./ProposalManagerApi";
+import psp22Abi from "../contracts/construct/Psp22.json";
+import psp34Abi from "../contracts/construct/Psp34.json";
+import governnanceTokenAbi from "../contracts/construct/GovernanceToken.json";
 
 const blockchainUrl = String(process.env.NEXT_PUBLIC_BLOCKCHAIN_URL) ?? "";
 const daoManagerAddress =
   String(process.env.NEXT_PUBLIC_DAO_MANAGER_CONTRACT_ADDRESS) ?? "";
 const memberManagerAddress =
   String(process.env.NEXT_PUBLIC_MEMBER_MANAGER_CONTRACT_ADDRESS) ?? "";
+
 // const gasLimit = -1;
 const gasLimit = 100000 * 1000000;
 const storageDepositLimit = null;
@@ -170,12 +178,8 @@ export const deploySubDAO = async (
   setShowDaoAddress: (address: string) => void,
   setFinished: (value: boolean) => void
 ) => {
-  console.log("#### deploySubDAO pass 1");
   const wsProvider = new WsProvider(blockchainUrl);
   const api = await ApiPromise.create({ provider: wsProvider });
-  console.log("#### deploySubDAO pass 2");
-
-  console.log("### performingAccount: ", performingAccount);
 
   let subDAOContractAddess = "";
   const { web3FromSource } = await import("@polkadot/extension-dapp");
@@ -189,22 +193,21 @@ export const deploySubDAO = async (
     inputData.githubUrl,
     inputData.description
   );
-  console.log("#### deploySubDAO pass 3");
   const unsub = await tx.signAndSend(
     performingAccount.address,
     { signer: injector.signer },
-    ({ contract, status }) => {
-      if (status.isInBlock || status.isFinalized) {
-        console.log("#### deploySubDAO pass 4");
-        subDAOContractAddess = contract.address.toString();
-        console.log("### subDAOContractAddess: ", subDAOContractAddess);
-        setDaoAddress(subDAOContractAddess);
-        setShowDaoAddress(subDAOContractAddess);
-        setFinished(true);
+    ({ events = [], contract, status }) => {
+      if (status.isFinalized) {
+        if (checkEventsAndInculueError(events)) {
+          alert("Transaction is failure.");
+        } else {
+          subDAOContractAddess = contract.address.toString();
+          setDaoAddress(subDAOContractAddess);
+          setShowDaoAddress(subDAOContractAddess);
+          setFinished(true);
+        }
         unsub();
         api.disconnect();
-      } else {
-        console.log("## status: ", status.toHuman()?.toString());
       }
     }
   );
@@ -221,13 +224,19 @@ export const registerToDaoManager = async (
 
   const contract = new ContractPromise(api, daoManagerAbi, daoManagerAddress);
   const injector = await web3FromSource(performingAccount.meta.source);
-  const tx = await contract.tx.addDao({ value: 0, gasLimit: gasLimit }, daoAddress);
+  const tx = await contract.tx.addDao(
+    { value: 0, gasLimit: gasLimit },
+    daoAddress
+  );
   if (injector !== undefined) {
     const unsub = await tx.signAndSend(
       performingAccount.address,
       { signer: injector.signer },
-      (result) => {
+      (result, events = []) => {
         if (result.status.isFinalized) {
+          if (checkEventsAndInculueError(events)) {
+            alert("Transaction is failure.");
+          }
           setFinished(true);
           unsub();
           api.disconnect();
@@ -237,37 +246,50 @@ export const registerToDaoManager = async (
   }
 };
 
-export const doDonateSubDao = async (subDaoAddress: string, amount: number) => {
-  const contractConstract = SubDAOContractConstruct;
-  if (typeof window.ethereum !== "undefined" && subDaoAddress) {
-    const provider = new ethers.providers.Web3Provider(window.ethereum);
-    const signer = provider.getSigner();
-    const contract = new ethers.Contract(
-      subDaoAddress,
-      contractConstract.abi,
-      signer
+export const doDonateSubDao = async (
+  performingAccount: InjectedAccountWithMeta,
+  daoAddress: string,
+  amount: number
+) => {
+  const { web3FromSource } = await import("@polkadot/extension-dapp");
+  const wsProvider = new WsProvider(blockchainUrl);
+  const api = await ApiPromise.create({ provider: wsProvider });
+  const contract = new ContractPromise(api, daoAbi, daoAddress);
+  const injector = await web3FromSource(performingAccount.meta.source);
+  const tx = await contract.tx.donateToTheDao({
+    value: amount,
+    gasLimit: gasLimit,
+  });
+  if (injector !== undefined) {
+    const unsub = await tx.signAndSend(
+      performingAccount.address,
+      { signer: injector.signer },
+      (result, events = []) => {
+        if (result.status.isFinalized) {
+          if (checkEventsAndInculueError(events)) {
+            alert("Transaction is failure.");
+          }
+          unsub();
+          api.disconnect();
+        }
+      }
     );
-    await contract
-      .donate({ value: ethers.utils.parseEther(String(amount)) })
-      .catch((err: any) => {
-        console.log(err);
-        errorFunction(err);
-      });
   }
 };
 
-export const getDaoBalance = async (peformanceAddress: string, daoAddress: string): Promise<number> => {
+export const getDaoBalance = async (
+  peformanceAddress: string,
+  daoAddress: string
+): Promise<number> => {
   let response: number = 0;
   const wsProvider = new WsProvider(blockchainUrl);
   const api = await ApiPromise.create({ provider: wsProvider });
   const daoContract = new ContractPromise(api, daoAbi, daoAddress);
-  const { gasConsumed, result, output } = await daoContract.query.getContractBalance(
-    peformanceAddress,
-    {
+  const { gasConsumed, result, output } =
+    await daoContract.query.getContractBalance(peformanceAddress, {
       value: 0,
       gasLimit: -1,
-    }
-  );
+    });
   if (output !== undefined && output !== null) {
     response = Number(output.toHuman()?.toString());
   }
@@ -301,114 +323,214 @@ export const getDaoName = async (
 };
 
 export const getTokenList = async (
+  peformanceAddress: string,
   daoAddress: string
 ): Promise<Array<TokenInfo>> => {
-  const contractConstract = SubDAOContractConstruct;
   let response: TokenInfo[] = [];
-  const provider = await detectEthereumProvider({ mustBeMetaMask: true });
-  if (provider && window.ethereum?.isMetaMask) {
-    if (typeof window.ethereum !== "undefined" && daoAddress) {
-      const provider = new ethers.providers.Web3Provider(window.ethereum);
-      const signer = provider.getSigner();
-      const contract = new ethers.Contract(
-        daoAddress,
-        contractConstract.abi,
-        signer
-      );
-      await contract
-        .getTokenList()
-        .then((r: any) => {
-          console.log(r);
-          response = r;
-        })
-        .catch((err: any) => {
-          console.log(err);
-          errorFunction(err);
-        });
+  const wsProvider = new WsProvider(blockchainUrl);
+  const api = await ApiPromise.create({ provider: wsProvider });
+
+  const contract = new ContractPromise(api, daoAbi, daoAddress);
+  const { gasConsumed, result, output } = await contract.query.getTokenList(
+    peformanceAddress,
+    {
+      value: 0,
+      gasLimit: -1,
+    },
+    daoAddress
+  );
+  if (output !== undefined && output !== null) {
+    let response_json = output.toJSON();
+    let json_data = JSON.parse(JSON.stringify(response_json));
+    for (let i = 0; i < json_data.length; i++) {
+      let item: TokenInfo = {
+        tokenKind: convert_token_kind(json_data[i].tokenType),
+        tokenAddress: json_data[i].tokenAddress,
+      };
+      response.push(item);
     }
-  } else {
-    alert("Please instal metamask.");
   }
+  api.disconnect();
   return response;
+};
+
+const convert_token_kind = (value_string: string): TokenKind => {
+  if (value_string == "GovernanceToken") {
+    return TokenKind.GOVERNANCE;
+  } else if (value_string == "Psp22") {
+    return TokenKind.ERC20;
+  } else if (value_string == "Psp34") {
+    return TokenKind.ERC721;
+  } else {
+    return TokenKind.None;
+  }
 };
 
 export const getTokenListWithName = async (
+  peformanceAddress: string,
   tokenList: Array<TokenInfo>
 ): Promise<Array<TokenInfoWithName>> => {
   let response: TokenInfoWithName[] = [];
-  const erc20contractDefine = DaoErc20Contract;
-  const erc721contractDefine = DaoErc721Contract;
-  const GovernaceTokenDefine = GovernaceTokenConstract;
-  const provider = await detectEthereumProvider({ mustBeMetaMask: true });
-  if (provider && window.ethereum?.isMetaMask) {
-    if (typeof window.ethereum !== "undefined") {
-      const provider = new ethers.providers.Web3Provider(window.ethereum);
-      const signer = provider.getSigner();
-      for (var item of tokenList) {
-        let commonContractDefine: any;
-        if (item.tokenKind == TokenKind.ERC20) {
-          commonContractDefine = erc20contractDefine;
-        } else if (item.tokenKind == TokenKind.ERC721) {
-          commonContractDefine = erc721contractDefine;
-        } else {
-          commonContractDefine = GovernaceTokenConstract;
-        }
-        const contract = new ethers.Contract(
+
+  let contract;
+
+  for (var item of tokenList) {
+    let tokenName = "";
+    let tokenSymbol = "";
+    switch (item.tokenKind) {
+      case (TokenKind.ERC20, TokenKind.GOVERNANCE):
+        tokenName = await getPsp22Value(
+          peformanceAddress,
           item.tokenAddress,
-          commonContractDefine.abi,
-          signer
+          "psp22Metadata::tokenName"
         );
-        let tokenName = await contract.name().catch((err: any) => {
-          console.log(err);
-          errorFunction(err);
-        });
-        let tokenSymbol = await contract.symbol().catch((err: any) => {
-          console.log(err);
-          errorFunction(err);
-        });
-        const pushItem: TokenInfoWithName = {
-          tokenAddress: item.tokenAddress,
-          tokenKind: item.tokenKind,
-          tokenName: String(tokenName),
-          tokenSymbol: String(tokenSymbol),
-        };
-
-        response.push(pushItem);
-      }
+        tokenSymbol = await getPsp22Value(
+          peformanceAddress,
+          item.tokenAddress,
+          "psp22Metadata::tokenSymbol"
+        );
+        break;
+      case TokenKind.ERC721:
+        tokenName = await getPsp34Value(
+          peformanceAddress,
+          item.tokenAddress,
+          "psp34Metadata::getAttribute",
+          "name"
+        );
+        tokenSymbol = await getPsp34Value(
+          peformanceAddress,
+          item.tokenAddress,
+          "psp34Metadata::getAttribute",
+          "symbol"
+        );
+        break;
+      default:
+        alert("Unexpected Error.");
+        return response;
     }
-  } else {
-    alert("Please instal metamask.");
+    const pushItem: TokenInfoWithName = {
+      tokenAddress: item.tokenAddress,
+      tokenKind: item.tokenKind,
+      tokenName: String(tokenName),
+      tokenSymbol: String(tokenSymbol),
+    };
+    response.push(pushItem);
   }
-
   return response;
 };
 
-export const divide = async (
-  proposalId: string,
-  daoAddress: string,
-  targetAddress: string,
-  amount: number
-) => {
-  const contractConstract = SubDAOContractConstruct;
-  if (typeof window.ethereum !== "undefined" && daoAddress) {
-    const provider = new ethers.providers.Web3Provider(window.ethereum);
-    const signer = provider.getSigner();
-    const contract = new ethers.Contract(
-      daoAddress,
-      contractConstract.abi,
-      signer
-    );
-    await contract
-      .divide(
-        targetAddress,
-        ethers.utils.parseEther(String(amount)),
-        proposalId
-      )
-      .catch((err: any) => {
-        console.log(err);
-        errorFunction(err);
-      });
+const getPsp22Value = async (
+  peformanceAddress: string,
+  tokenAddress: string,
+  functionName: string
+): Promise<string> => {
+  let res: string = "";
+  const wsProvider = new WsProvider(blockchainUrl);
+  const api = await ApiPromise.create({ provider: wsProvider });
+  const contract = new ContractPromise(api, psp22Abi, tokenAddress);
+  const { output } = await contract.query[functionName](peformanceAddress, {
+    value: 0,
+    gasLimit: -1,
+  });
+  if (output !== undefined && output !== null) {
+    res = output.toHuman()?.toString() ?? "";
   }
+  api.disconnect();
+  return res;
+};
+
+const getPsp34Value = async (
+  peformanceAddress: string,
+  tokenAddress: string,
+  functionName: string,
+  metaDataKey: string
+): Promise<string> => {
+  let res = "";
+  const wsProvider = new WsProvider(blockchainUrl);
+  const api = await ApiPromise.create({ provider: wsProvider });
+  const contract = new ContractPromise(api, psp34Abi, tokenAddress);
+  const { output } = await contract.query[functionName](
+    peformanceAddress,
+    {
+      value: 0,
+      gasLimit: -1,
+    },
+    0,
+    metaDataKey
+  );
+  if (output !== undefined && output !== null) {
+    res = output.toHuman()?.toString() ?? "";
+  }
+  api.disconnect();
+  return res;
+};
+
+// export const getTokenListWithName = async (
+//   tokenList: Array<TokenInfo>
+// ): Promise<Array<TokenInfoWithName>> => {
+//   let response: TokenInfoWithName[] = [];
+//   const erc20contractDefine = DaoErc20Contract;
+//   const erc721contractDefine = DaoErc721Contract;
+//   const GovernaceTokenDefine = GovernaceTokenConstract;
+//   const provider = await detectEthereumProvider({ mustBeMetaMask: true });
+//   if (provider && window.ethereum?.isMetaMask) {
+//     if (typeof window.ethereum !== "undefined") {
+//       const provider = new ethers.providers.Web3Provider(window.ethereum);
+//       const signer = provider.getSigner();
+//       for (var item of tokenList) {
+//         let commonContractDefine: any;
+//         if (item.tokenKind == TokenKind.ERC20) {
+//           commonContractDefine = erc20contractDefine;
+//         } else if (item.tokenKind == TokenKind.ERC721) {
+//           commonContractDefine = erc721contractDefine;
+//         } else {
+//           commonContractDefine = GovernaceTokenConstract;
+//         }
+//         const contract = new ethers.Contract(
+//           item.tokenAddress,
+//           commonContractDefine.abi,
+//           signer
+//         );
+//         let tokenName = await contract.name().catch((err: any) => {
+//           console.log(err);
+//           errorFunction(err);
+//         });
+//         let tokenSymbol = await contract.symbol().catch((err: any) => {
+//           console.log(err);
+//           errorFunction(err);
+//         });
+//         const pushItem: TokenInfoWithName = {
+//           tokenAddress: item.tokenAddress,
+//           tokenKind: item.tokenKind,
+//           tokenName: String(tokenName),
+//           tokenSymbol: String(tokenSymbol),
+//         };
+
+//         response.push(pushItem);
+//       }
+//     }
+//   } else {
+//     alert("Please instal metamask.");
+//   }
+
+//   return response;
+// };
+
+export const createDivideProposal = async (
+  performingAccount: InjectedAccountWithMeta,
+  daoAddress: string,
+  proposalData: ProposalData4ADivide
+) => {
+  const csvData = proposalData.targetAddress + "," + proposalData.amount;
+  const proposalParameter: AddProposalFormData = {
+    proposalKind: proposalData.proposalKind,
+    title: proposalData.title,
+    outline: proposalData.outline,
+    githubURL: proposalData.githubURL,
+    detail: proposalData.detail,
+    csvData: csvData,
+  };
+  await addProposal(performingAccount, proposalParameter, daoAddress);
 };
 
 export const addTokenToList = async (

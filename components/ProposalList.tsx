@@ -32,7 +32,7 @@ const ProposalList = (props: ProposalListProps) => {
   const [showList, setShowList] = useState(true);
   const [showListButton, setShowListButton] = useState(false);
   const [targetProposal, setTargetProposal] = useState<ProposalInfo>({
-    proposalKind: 0,
+    proposalKind: "",
     title: "",
     outline: "",
     details: "",

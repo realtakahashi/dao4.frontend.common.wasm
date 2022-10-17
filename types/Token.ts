@@ -26,8 +26,8 @@ export interface Erc721DeployData {
   tokenName: string;
   tokenSymbol: string;
   daoAddress: string;
-  priceWei:number;
-  baseUri:string;
+  priceWei: number;
+  baseUri: string;
 }
 
 export interface TokenInfoWithName {
@@ -37,12 +37,16 @@ export interface TokenInfoWithName {
   tokenSymbol: string;
 }
 
-export interface MintInfo {
-  price:number;
-  amount:number;
+export interface ProposalData4ChangingTokenSaleStatus {
+  tokenSaleStatus: boolean;
+  proposalKind: number;
+  title: string;
+  outline: string;
+  githubURL: string;
+  detail: string;
 }
 
 export interface TransferInfo {
-  amount:number;
-  to:string;
+  amount: number;
+  to: string;
 }

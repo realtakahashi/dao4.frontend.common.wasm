@@ -26,7 +26,7 @@ export interface AddProposalFormData {
 }
 
 export interface ProposalInfo {
-  proposalKind: number;
+  proposalKind: string;
   proposalId: string;
   proposer: string;
   title: string;
@@ -38,13 +38,14 @@ export interface ProposalInfo {
 }
 
 export const PROPOSAL_KIND = [
-  "AddAMember",
-  "DeleteAMember",
-  "UseOfFunds",
-  "CommunityManagement",
-  "Activities",
-  "ElectionComissionPropsal",
-  "DaoReward"
+  "AddMember",
+  "DeleteMember",
+  "ChangeElectoralCommissioner",
+  "UseDaoTresury",
+  "IssueToken",
+  "ChangeStatusOfTokenSale",
+  "WithdrawTokenSales",
+  "DistributeGovernanceToken",
 ] as const;
 
 export const PROPOSAL_STATUS = [

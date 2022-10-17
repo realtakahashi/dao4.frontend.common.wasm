@@ -1,6 +1,6 @@
 {
   "source": {
-    "hash": "0x546c5c79b58d6d8dc837a82484df11d7dd95cd6ac4203c2949853751a206222d",
+    "hash": "0x63285a9d49abf52554efd87f55b3e9b567ed6fd1cba9628c1c72b7261c0e8412",
     "language": "ink! 3.3.1",
     "compiler": "rustc 1.63.0-nightly"
   },
@@ -22,7 +22,7 @@
                 "displayName": [
                   "MemberManagerRef"
                 ],
-                "type": 24
+                "type": 26
               }
             },
             {
@@ -31,7 +31,7 @@
                 "displayName": [
                   "DaoManagerRef"
                 ],
-                "type": 26
+                "type": 28
               }
             }
           ],
@@ -122,14 +122,14 @@
             "displayName": [
               "Result"
             ],
-            "type": 28
+            "type": 30
           },
           "selector": "0xcd3f131d"
         },
         {
           "args": [
             {
-              "label": "_dao_address",
+              "label": "dao_address",
               "type": {
                 "displayName": [
                   "AccountId"
@@ -148,7 +148,7 @@
             "displayName": [
               "Vec"
             ],
-            "type": 31
+            "type": 33
           },
           "selector": "0xb068d06b"
         },
@@ -169,7 +169,7 @@
                 "displayName": [
                   "u128"
                 ],
-                "type": 3
+                "type": 9
               }
             },
             {
@@ -178,7 +178,7 @@
                 "displayName": [
                   "bool"
                 ],
-                "type": 32
+                "type": 34
               }
             }
           ],
@@ -192,7 +192,7 @@
             "displayName": [
               "Result"
             ],
-            "type": 28
+            "type": 30
           },
           "selector": "0xdb7c18f4"
         },
@@ -213,7 +213,7 @@
                 "displayName": [
                   "u128"
                 ],
-                "type": 3
+                "type": 9
               }
             }
           ],
@@ -227,7 +227,7 @@
             "displayName": [
               "Option"
             ],
-            "type": 33
+            "type": 35
           },
           "selector": "0x0fb20008"
         },
@@ -248,7 +248,7 @@
                 "displayName": [
                   "u128"
                 ],
-                "type": 3
+                "type": 9
               }
             },
             {
@@ -271,7 +271,7 @@
             "displayName": [
               "Result"
             ],
-            "type": 28
+            "type": 30
           },
           "selector": "0x2871339c"
         },
@@ -292,7 +292,7 @@
                 "displayName": [
                   "u128"
                 ],
-                "type": 3
+                "type": 9
               }
             }
           ],
@@ -306,9 +306,35 @@
             "displayName": [
               "Result"
             ],
-            "type": 28
+            "type": 30
           },
           "selector": "0xde5bbbbc"
+        },
+        {
+          "args": [
+            {
+              "label": "_dao_address",
+              "type": {
+                "displayName": [
+                  "AccountId"
+                ],
+                "type": 0
+              }
+            }
+          ],
+          "docs": [
+            " check tenure count"
+          ],
+          "label": "is_limit_tenure_count_of_electoral_commissioner",
+          "mutates": false,
+          "payable": false,
+          "returnType": {
+            "displayName": [
+              "bool"
+            ],
+            "type": 34
+          },
+          "selector": "0xbf98213b"
         }
       ]
     },
@@ -376,22 +402,13 @@
                 "ty": 3
               }
             },
-            "name": "next_proposal_id"
-          },
-          {
-            "layout": {
-              "cell": {
-                "key": "0x0300000000000000000000000000000000000000000000000000000000000000",
-                "ty": 4
-              }
-            },
             "name": "count_of_tenure"
           },
           {
             "layout": {
               "cell": {
-                "key": "0x0400000000000000000000000000000000000000000000000000000000000000",
-                "ty": 8
+                "key": "0x0300000000000000000000000000000000000000000000000000000000000000",
+                "ty": 7
               }
             },
             "name": "proposal_infoes"
@@ -399,7 +416,7 @@
           {
             "layout": {
               "cell": {
-                "key": "0x0500000000000000000000000000000000000000000000000000000000000000",
+                "key": "0x0400000000000000000000000000000000000000000000000000000000000000",
                 "ty": 16
               }
             },
@@ -408,11 +425,20 @@
           {
             "layout": {
               "cell": {
-                "key": "0x0600000000000000000000000000000000000000000000000000000000000000",
+                "key": "0x0500000000000000000000000000000000000000000000000000000000000000",
                 "ty": 20
               }
             },
             "name": "voted_people"
+          },
+          {
+            "layout": {
+              "cell": {
+                "key": "0x0600000000000000000000000000000000000000000000000000000000000000",
+                "ty": 24
+              }
+            },
+            "name": "next_proposal_ids"
           }
         ]
       }
@@ -461,18 +487,10 @@
         "id": 3,
         "type": {
           "def": {
-            "primitive": "u128"
-          }
-        }
-      },
-      {
-        "id": 4,
-        "type": {
-          "def": {
             "composite": {
               "fields": [
                 {
-                  "type": 6
+                  "type": 5
                 }
               ]
             }
@@ -484,7 +502,7 @@
             },
             {
               "name": "V",
-              "type": 5
+              "type": 4
             }
           ],
           "path": [
@@ -496,7 +514,7 @@
         }
       },
       {
-        "id": 5,
+        "id": 4,
         "type": {
           "def": {
             "primitive": "u16"
@@ -504,28 +522,28 @@
         }
       },
       {
-        "id": 6,
+        "id": 5,
         "type": {
           "def": {
             "sequence": {
-              "type": 7
+              "type": 6
             }
           }
         }
       },
       {
-        "id": 7,
+        "id": 6,
         "type": {
           "def": {
             "tuple": [
               0,
-              5
+              4
             ]
           }
         }
       },
       {
-        "id": 8,
+        "id": 7,
         "type": {
           "def": {
             "composite": {
@@ -539,7 +557,7 @@
           "params": [
             {
               "name": "K",
-              "type": 9
+              "type": 8
             },
             {
               "name": "V",
@@ -555,13 +573,21 @@
         }
       },
       {
-        "id": 9,
+        "id": 8,
         "type": {
           "def": {
             "tuple": [
               0,
-              3
+              9
             ]
+          }
+        }
+      },
+      {
+        "id": 9,
+        "type": {
+          "def": {
+            "primitive": "u128"
           }
         }
       },
@@ -578,7 +604,7 @@
                 },
                 {
                   "name": "proposal_id",
-                  "type": 3,
+                  "type": 9,
                   "typeName": "u128"
                 },
                 {
@@ -741,7 +767,7 @@
         "type": {
           "def": {
             "tuple": [
-              9,
+              8,
               10
             ]
           }
@@ -762,7 +788,7 @@
           "params": [
             {
               "name": "K",
-              "type": 9
+              "type": 8
             },
             {
               "name": "V",
@@ -785,17 +811,17 @@
               "fields": [
                 {
                   "name": "proposal_id",
-                  "type": 3,
+                  "type": 9,
                   "typeName": "u128"
                 },
                 {
                   "name": "yes",
-                  "type": 5,
+                  "type": 4,
                   "typeName": "u16"
                 },
                 {
                   "name": "no",
-                  "type": 5,
+                  "type": 4,
                   "typeName": "u16"
                 }
               ]
@@ -823,7 +849,7 @@
         "type": {
           "def": {
             "tuple": [
-              9,
+              8,
               17
             ]
           }
@@ -844,7 +870,7 @@
           "params": [
             {
               "name": "K",
-              "type": 9
+              "type": 8
             },
             {
               "name": "V",
@@ -884,7 +910,7 @@
         "type": {
           "def": {
             "tuple": [
-              9,
+              8,
               21
             ]
           }
@@ -897,17 +923,26 @@
             "composite": {
               "fields": [
                 {
-                  "name": "inner",
-                  "type": 25,
-                  "typeName": "<MemberManager as::ink_lang::codegen::ContractCallBuilder>::Type"
+                  "type": 25
                 }
               ]
             }
           },
+          "params": [
+            {
+              "name": "K",
+              "type": 0
+            },
+            {
+              "name": "V",
+              "type": 9
+            }
+          ],
           "path": [
-            "member_manager",
-            "member_manager",
-            "MemberManagerRef"
+            "openbrush_lang",
+            "storage",
+            "mapping",
+            "Mapping"
           ]
         }
       },
@@ -915,21 +950,10 @@
         "id": 25,
         "type": {
           "def": {
-            "composite": {
-              "fields": [
-                {
-                  "name": "account_id",
-                  "type": 0,
-                  "typeName": "AccountId"
-                }
-              ]
+            "sequence": {
+              "type": 8
             }
-          },
-          "path": [
-            "member_manager",
-            "member_manager",
-            "CallBuilder"
-          ]
+          }
         }
       },
       {
@@ -941,15 +965,15 @@
                 {
                   "name": "inner",
                   "type": 27,
-                  "typeName": "<DaoManager as::ink_lang::codegen::ContractCallBuilder>::Type"
+                  "typeName": "<MemberManager as::ink_lang::codegen::ContractCallBuilder>::Type"
                 }
               ]
             }
           },
           "path": [
-            "dao_manager",
-            "dao_manager",
-            "DaoManagerRef"
+            "member_manager",
+            "member_manager",
+            "MemberManagerRef"
           ]
         }
       },
@@ -968,8 +992,8 @@
             }
           },
           "path": [
-            "dao_manager",
-            "dao_manager",
+            "member_manager",
+            "member_manager",
             "CallBuilder"
           ]
         }
@@ -978,12 +1002,54 @@
         "id": 28,
         "type": {
           "def": {
+            "composite": {
+              "fields": [
+                {
+                  "name": "inner",
+                  "type": 29,
+                  "typeName": "<DaoManager as::ink_lang::codegen::ContractCallBuilder>::Type"
+                }
+              ]
+            }
+          },
+          "path": [
+            "dao_manager",
+            "dao_manager",
+            "DaoManagerRef"
+          ]
+        }
+      },
+      {
+        "id": 29,
+        "type": {
+          "def": {
+            "composite": {
+              "fields": [
+                {
+                  "name": "account_id",
+                  "type": 0,
+                  "typeName": "AccountId"
+                }
+              ]
+            }
+          },
+          "path": [
+            "dao_manager",
+            "dao_manager",
+            "CallBuilder"
+          ]
+        }
+      },
+      {
+        "id": 30,
+        "type": {
+          "def": {
             "variant": {
               "variants": [
                 {
                   "fields": [
                     {
-                      "type": 29
+                      "type": 31
                     }
                   ],
                   "index": 0,
@@ -992,7 +1058,7 @@
                 {
                   "fields": [
                     {
-                      "type": 30
+                      "type": 32
                     }
                   ],
                   "index": 1,
@@ -1004,11 +1070,11 @@
           "params": [
             {
               "name": "T",
-              "type": 29
+              "type": 31
             },
             {
               "name": "E",
-              "type": 30
+              "type": 32
             }
           ],
           "path": [
@@ -1017,7 +1083,7 @@
         }
       },
       {
-        "id": 29,
+        "id": 31,
         "type": {
           "def": {
             "tuple": []
@@ -1025,7 +1091,7 @@
         }
       },
       {
-        "id": 30,
+        "id": 32,
         "type": {
           "def": {
             "variant": {
@@ -1097,6 +1163,10 @@
                 {
                   "index": 16,
                   "name": "InvalidDaoManagerCall"
+                },
+                {
+                  "index": 17,
+                  "name": "PossibleBug"
                 }
               ]
             }
@@ -1109,7 +1179,7 @@
         }
       },
       {
-        "id": 31,
+        "id": 33,
         "type": {
           "def": {
             "sequence": {
@@ -1119,7 +1189,7 @@
         }
       },
       {
-        "id": 32,
+        "id": 34,
         "type": {
           "def": {
             "primitive": "bool"
@@ -1127,7 +1197,7 @@
         }
       },
       {
-        "id": 33,
+        "id": 35,
         "type": {
           "def": {
             "variant": {

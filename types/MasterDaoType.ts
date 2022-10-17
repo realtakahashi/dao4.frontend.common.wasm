@@ -12,15 +12,15 @@ export interface DonateInfo {
   relatedProposalId: number;
 }
 
-export const enum TargetDaoKind{
-  MASTER_DAO,
-  TARGET_DAO_FROM_MASTER_DAO,
-  TARGET_DAO_FROM_INDIVIDIALS,
-  NONE,
-}
+// export const enum TargetDaoKind{
+//   MASTER_DAO,
+//   TARGET_DAO_FROM_MASTER_DAO,
+//   TARGET_DAO_FROM_INDIVIDIALS,
+//   NONE,
+// }
 
-export interface TargetDaoInterface {
-  daoAddress: string;
-  daoName: string;
-  targetDaoKind:TargetDaoKind;
-}
+// export interface TargetDaoInterface {
+//   daoAddress: string;
+//   daoName: string;
+//   targetDaoKind:TargetDaoKind;
+// }

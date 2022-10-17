@@ -1,718 +1,718 @@
 {
-    "source": {
-      "hash": "0xe0e68c4b9ad74ec32b76ef447972ef8f0f4554062f37b9bef27d2e3fb25fb644",
-      "language": "ink! 3.3.1",
-      "compiler": "rustc 1.63.0-nightly"
-    },
-    "contract": {
-      "name": "dao_contract",
-      "version": "0.1.0",
-      "authors": [
-        "[your_name] <[your_email]>"
+  "source": {
+    "hash": "0x29eb1ca6a6097a28d3ae5c2ce0169d2aae575e034f0670855c06d18fc7d25a31",
+    "language": "ink! 3.3.1",
+    "compiler": "rustc 1.63.0-nightly"
+  },
+  "contract": {
+    "name": "dao_contract",
+    "version": "0.1.0",
+    "authors": [
+      "[your_name] <[your_email]>"
+    ]
+  },
+  "V3": {
+    "spec": {
+      "constructors": [
+        {
+          "args": [
+            {
+              "label": "dao_manager_account_id",
+              "type": {
+                "displayName": [
+                  "AccountId"
+                ],
+                "type": 4
+              }
+            },
+            {
+              "label": "dao_name",
+              "type": {
+                "displayName": [
+                  "String"
+                ],
+                "type": 12
+              }
+            },
+            {
+              "label": "github_url",
+              "type": {
+                "displayName": [
+                  "String"
+                ],
+                "type": 12
+              }
+            },
+            {
+              "label": "description",
+              "type": {
+                "displayName": [
+                  "String"
+                ],
+                "type": 12
+              }
+            }
+          ],
+          "docs": [],
+          "label": "new",
+          "payable": false,
+          "selector": "0x9bae9d5e"
+        }
+      ],
+      "docs": [],
+      "events": [],
+      "messages": [
+        {
+          "args": [],
+          "docs": [],
+          "label": "get_dao_info",
+          "mutates": false,
+          "payable": false,
+          "returnType": {
+            "displayName": [
+              "DaoInfo"
+            ],
+            "type": 13
+          },
+          "selector": "0x5cbe3883"
+        },
+        {
+          "args": [
+            {
+              "label": "token_type",
+              "type": {
+                "displayName": [
+                  "TokenType"
+                ],
+                "type": 3
+              }
+            },
+            {
+              "label": "token_address",
+              "type": {
+                "displayName": [
+                  "AccountId"
+                ],
+                "type": 4
+              }
+            }
+          ],
+          "docs": [],
+          "label": "add_dao_token",
+          "mutates": true,
+          "payable": false,
+          "returnType": {
+            "displayName": [
+              "Result"
+            ],
+            "type": 14
+          },
+          "selector": "0x795c8be5"
+        },
+        {
+          "args": [],
+          "docs": [],
+          "label": "get_token_list",
+          "mutates": false,
+          "payable": false,
+          "returnType": {
+            "displayName": [
+              "Vec"
+            ],
+            "type": 17
+          },
+          "selector": "0x600804bc"
+        },
+        {
+          "args": [
+            {
+              "label": "token_address",
+              "type": {
+                "displayName": [
+                  "AccountId"
+                ],
+                "type": 4
+              }
+            },
+            {
+              "label": "is_start",
+              "type": {
+                "displayName": [
+                  "bool"
+                ],
+                "type": 18
+              }
+            }
+          ],
+          "docs": [],
+          "label": "change_token_sales_status",
+          "mutates": true,
+          "payable": false,
+          "returnType": {
+            "displayName": [
+              "Result"
+            ],
+            "type": 14
+          },
+          "selector": "0x25e2e405"
+        },
+        {
+          "args": [
+            {
+              "label": "token_address",
+              "type": {
+                "displayName": [
+                  "AccountId"
+                ],
+                "type": 4
+              }
+            }
+          ],
+          "docs": [],
+          "label": "withdraw_token_proceeds",
+          "mutates": true,
+          "payable": false,
+          "returnType": {
+            "displayName": [
+              "Result"
+            ],
+            "type": 14
+          },
+          "selector": "0x6eb3ead4"
+        },
+        {
+          "args": [
+            {
+              "label": "token_address",
+              "type": {
+                "displayName": [
+                  "AccountId"
+                ],
+                "type": 4
+              }
+            },
+            {
+              "label": "csv_data",
+              "type": {
+                "displayName": [
+                  "String"
+                ],
+                "type": 12
+              }
+            }
+          ],
+          "docs": [],
+          "label": "distribute_governance_token",
+          "mutates": true,
+          "payable": false,
+          "returnType": {
+            "displayName": [
+              "Result"
+            ],
+            "type": 14
+          },
+          "selector": "0xdb4e3a28"
+        },
+        {
+          "args": [],
+          "docs": [],
+          "label": "donate_to_the_dao",
+          "mutates": true,
+          "payable": true,
+          "returnType": {
+            "displayName": [
+              "Result"
+            ],
+            "type": 14
+          },
+          "selector": "0x5bde6a94"
+        },
+        {
+          "args": [
+            {
+              "label": "to",
+              "type": {
+                "displayName": [
+                  "AccountId"
+                ],
+                "type": 4
+              }
+            },
+            {
+              "label": "amount",
+              "type": {
+                "displayName": [
+                  "Balance"
+                ],
+                "type": 1
+              }
+            }
+          ],
+          "docs": [],
+          "label": "distribute_dao_treasury",
+          "mutates": true,
+          "payable": false,
+          "returnType": {
+            "displayName": [
+              "Result"
+            ],
+            "type": 14
+          },
+          "selector": "0x41608f04"
+        },
+        {
+          "args": [],
+          "docs": [],
+          "label": "get_contract_balance",
+          "mutates": false,
+          "payable": false,
+          "returnType": {
+            "displayName": [
+              "Balance"
+            ],
+            "type": 1
+          },
+          "selector": "0xbe15a422"
+        }
       ]
     },
-    "V3": {
-      "spec": {
-        "constructors": [
+    "storage": {
+      "struct": {
+        "fields": [
           {
-            "args": [
-              {
-                "label": "dao_manager_account_id",
-                "type": {
-                  "displayName": [
-                    "AccountId"
-                  ],
-                  "type": 4
-                }
-              },
-              {
-                "label": "dao_name",
-                "type": {
-                  "displayName": [
-                    "String"
-                  ],
-                  "type": 12
-                }
-              },
-              {
-                "label": "github_url",
-                "type": {
-                  "displayName": [
-                    "String"
-                  ],
-                  "type": 12
-                }
-              },
-              {
-                "label": "description",
-                "type": {
-                  "displayName": [
-                    "String"
-                  ],
-                  "type": 12
-                }
+            "layout": {
+              "cell": {
+                "key": "0x0000000000000000000000000000000000000000000000000000000000000000",
+                "ty": 0
               }
-            ],
-            "docs": [],
-            "label": "new",
-            "payable": false,
-            "selector": "0x9bae9d5e"
-          }
-        ],
-        "docs": [],
-        "events": [],
-        "messages": [
-          {
-            "args": [],
-            "docs": [],
-            "label": "get_dao_info",
-            "mutates": false,
-            "payable": false,
-            "returnType": {
-              "displayName": [
-                "DaoInfo"
-              ],
-              "type": 13
             },
-            "selector": "0x5cbe3883"
+            "name": "token_list_for_id"
           },
           {
-            "args": [
-              {
-                "label": "token_type",
-                "type": {
-                  "displayName": [
-                    "TokenType"
-                  ],
-                  "type": 3
-                }
-              },
-              {
-                "label": "token_address",
-                "type": {
-                  "displayName": [
-                    "AccountId"
-                  ],
-                  "type": 4
-                }
+            "layout": {
+              "cell": {
+                "key": "0x0100000000000000000000000000000000000000000000000000000000000000",
+                "ty": 9
               }
-            ],
-            "docs": [],
-            "label": "add_dao_token",
-            "mutates": true,
-            "payable": false,
-            "returnType": {
-              "displayName": [
-                "Result"
-              ],
-              "type": 14
             },
-            "selector": "0x795c8be5"
+            "name": "token_list_for_address"
           },
           {
-            "args": [],
-            "docs": [],
-            "label": "get_token_list",
-            "mutates": false,
-            "payable": false,
-            "returnType": {
-              "displayName": [
-                "Vec"
-              ],
-              "type": 17
-            },
-            "selector": "0x600804bc"
-          },
-          {
-            "args": [
-              {
-                "label": "token_address",
-                "type": {
-                  "displayName": [
-                    "AccountId"
-                  ],
-                  "type": 4
-                }
-              },
-              {
-                "label": "is_start",
-                "type": {
-                  "displayName": [
-                    "bool"
-                  ],
-                  "type": 18
-                }
+            "layout": {
+              "cell": {
+                "key": "0x0200000000000000000000000000000000000000000000000000000000000000",
+                "ty": 1
               }
-            ],
-            "docs": [],
-            "label": "change_token_sales_status",
-            "mutates": true,
-            "payable": false,
-            "returnType": {
-              "displayName": [
-                "Result"
-              ],
-              "type": 14
             },
-            "selector": "0x25e2e405"
+            "name": "next_token_id"
           },
           {
-            "args": [
-              {
-                "label": "token_address",
-                "type": {
-                  "displayName": [
-                    "AccountId"
-                  ],
-                  "type": 4
-                }
+            "layout": {
+              "cell": {
+                "key": "0x0300000000000000000000000000000000000000000000000000000000000000",
+                "ty": 4
               }
-            ],
-            "docs": [],
-            "label": "withdraw_token_proceeds",
-            "mutates": true,
-            "payable": false,
-            "returnType": {
-              "displayName": [
-                "Result"
-              ],
-              "type": 14
             },
-            "selector": "0x6eb3ead4"
+            "name": "dao_manager_account_id"
           },
           {
-            "args": [
-              {
-                "label": "token_address",
-                "type": {
-                  "displayName": [
-                    "AccountId"
-                  ],
-                  "type": 4
-                }
-              },
-              {
-                "label": "csv_data",
-                "type": {
-                  "displayName": [
-                    "String"
-                  ],
-                  "type": 12
-                }
+            "layout": {
+              "struct": {
+                "fields": [
+                  {
+                    "layout": {
+                      "cell": {
+                        "key": "0x0400000000000000000000000000000000000000000000000000000000000000",
+                        "ty": 12
+                      }
+                    },
+                    "name": "dao_name"
+                  },
+                  {
+                    "layout": {
+                      "cell": {
+                        "key": "0x0500000000000000000000000000000000000000000000000000000000000000",
+                        "ty": 12
+                      }
+                    },
+                    "name": "github_url"
+                  },
+                  {
+                    "layout": {
+                      "cell": {
+                        "key": "0x0600000000000000000000000000000000000000000000000000000000000000",
+                        "ty": 12
+                      }
+                    },
+                    "name": "description"
+                  }
+                ]
               }
-            ],
-            "docs": [],
-            "label": "distribute_governance_token",
-            "mutates": true,
-            "payable": false,
-            "returnType": {
-              "displayName": [
-                "Result"
-              ],
-              "type": 14
             },
-            "selector": "0xdb4e3a28"
-          },
-          {
-            "args": [],
-            "docs": [],
-            "label": "donate_to_the_dao",
-            "mutates": true,
-            "payable": true,
-            "returnType": {
-              "displayName": [
-                "Result"
-              ],
-              "type": 14
-            },
-            "selector": "0x5bde6a94"
-          },
-          {
-            "args": [
-              {
-                "label": "to",
-                "type": {
-                  "displayName": [
-                    "AccountId"
-                  ],
-                  "type": 4
-                }
-              },
-              {
-                "label": "amount",
-                "type": {
-                  "displayName": [
-                    "Balance"
-                  ],
-                  "type": 1
-                }
-              }
-            ],
-            "docs": [],
-            "label": "distribute_dao_treasury",
-            "mutates": true,
-            "payable": false,
-            "returnType": {
-              "displayName": [
-                "Result"
-              ],
-              "type": 14
-            },
-            "selector": "0x41608f04"
-          },
-          {
-            "args": [],
-            "docs": [],
-            "label": "get_contract_balance",
-            "mutates": false,
-            "payable": false,
-            "returnType": {
-              "displayName": [
-                "Balance"
-              ],
-              "type": 1
-            },
-            "selector": "0xbe15a422"
+            "name": "dao_info"
           }
         ]
-      },
-      "storage": {
-        "struct": {
-          "fields": [
-            {
-              "layout": {
-                "cell": {
-                  "key": "0x0000000000000000000000000000000000000000000000000000000000000000",
-                  "ty": 0
+      }
+    },
+    "types": [
+      {
+        "id": 0,
+        "type": {
+          "def": {
+            "composite": {
+              "fields": [
+                {
+                  "type": 7
                 }
-              },
-              "name": "token_list_for_id"
-            },
-            {
-              "layout": {
-                "cell": {
-                  "key": "0x0100000000000000000000000000000000000000000000000000000000000000",
-                  "ty": 9
-                }
-              },
-              "name": "token_list_for_address"
-            },
-            {
-              "layout": {
-                "cell": {
-                  "key": "0x0200000000000000000000000000000000000000000000000000000000000000",
-                  "ty": 1
-                }
-              },
-              "name": "next_token_id"
-            },
-            {
-              "layout": {
-                "cell": {
-                  "key": "0x0300000000000000000000000000000000000000000000000000000000000000",
-                  "ty": 4
-                }
-              },
-              "name": "dao_manager_account_id"
-            },
-            {
-              "layout": {
-                "struct": {
-                  "fields": [
-                    {
-                      "layout": {
-                        "cell": {
-                          "key": "0x0400000000000000000000000000000000000000000000000000000000000000",
-                          "ty": 12
-                        }
-                      },
-                      "name": "dao_name"
-                    },
-                    {
-                      "layout": {
-                        "cell": {
-                          "key": "0x0500000000000000000000000000000000000000000000000000000000000000",
-                          "ty": 12
-                        }
-                      },
-                      "name": "github_url"
-                    },
-                    {
-                      "layout": {
-                        "cell": {
-                          "key": "0x0600000000000000000000000000000000000000000000000000000000000000",
-                          "ty": 12
-                        }
-                      },
-                      "name": "description"
-                    }
-                  ]
-                }
-              },
-              "name": "dao_info"
+              ]
             }
+          },
+          "params": [
+            {
+              "name": "K",
+              "type": 1
+            },
+            {
+              "name": "V",
+              "type": 2
+            }
+          ],
+          "path": [
+            "openbrush_lang",
+            "storage",
+            "mapping",
+            "Mapping"
           ]
         }
       },
-      "types": [
-        {
-          "id": 0,
-          "type": {
-            "def": {
-              "composite": {
-                "fields": [
-                  {
-                    "type": 7
-                  }
-                ]
-              }
-            },
-            "params": [
-              {
-                "name": "K",
-                "type": 1
-              },
-              {
-                "name": "V",
-                "type": 2
-              }
-            ],
-            "path": [
-              "openbrush_lang",
-              "storage",
-              "mapping",
-              "Mapping"
-            ]
+      {
+        "id": 1,
+        "type": {
+          "def": {
+            "primitive": "u128"
           }
-        },
-        {
-          "id": 1,
-          "type": {
-            "def": {
-              "primitive": "u128"
-            }
-          }
-        },
-        {
-          "id": 2,
-          "type": {
-            "def": {
-              "composite": {
-                "fields": [
-                  {
-                    "name": "token_type",
-                    "type": 3,
-                    "typeName": "TokenType"
-                  },
-                  {
-                    "name": "token_address",
-                    "type": 4,
-                    "typeName": "AccountId"
-                  }
-                ]
-              }
-            },
-            "path": [
-              "dao_contract",
-              "dao_contract",
-              "TokenInfo"
-            ]
-          }
-        },
-        {
-          "id": 3,
-          "type": {
-            "def": {
-              "variant": {
-                "variants": [
-                  {
-                    "index": 0,
-                    "name": "GovernanceToken"
-                  },
-                  {
-                    "index": 1,
-                    "name": "Psp22"
-                  },
-                  {
-                    "index": 2,
-                    "name": "Psp34"
-                  }
-                ]
-              }
-            },
-            "path": [
-              "dao_contract",
-              "dao_contract",
-              "TokenType"
-            ]
-          }
-        },
-        {
-          "id": 4,
-          "type": {
-            "def": {
-              "composite": {
-                "fields": [
-                  {
-                    "type": 5,
-                    "typeName": "[u8; 32]"
-                  }
-                ]
-              }
-            },
-            "path": [
-              "ink_env",
-              "types",
-              "AccountId"
-            ]
-          }
-        },
-        {
-          "id": 5,
-          "type": {
-            "def": {
-              "array": {
-                "len": 32,
-                "type": 6
-              }
-            }
-          }
-        },
-        {
-          "id": 6,
-          "type": {
-            "def": {
-              "primitive": "u8"
-            }
-          }
-        },
-        {
-          "id": 7,
-          "type": {
-            "def": {
-              "sequence": {
-                "type": 8
-              }
-            }
-          }
-        },
-        {
-          "id": 8,
-          "type": {
-            "def": {
-              "tuple": [
-                1,
-                2
+        }
+      },
+      {
+        "id": 2,
+        "type": {
+          "def": {
+            "composite": {
+              "fields": [
+                {
+                  "name": "token_type",
+                  "type": 3,
+                  "typeName": "TokenType"
+                },
+                {
+                  "name": "token_address",
+                  "type": 4,
+                  "typeName": "AccountId"
+                }
               ]
             }
-          }
-        },
-        {
-          "id": 9,
-          "type": {
-            "def": {
-              "composite": {
-                "fields": [
-                  {
-                    "type": 10
-                  }
-                ]
-              }
-            },
-            "params": [
-              {
-                "name": "K",
-                "type": 4
-              },
-              {
-                "name": "V",
-                "type": 2
-              }
-            ],
-            "path": [
-              "openbrush_lang",
-              "storage",
-              "mapping",
-              "Mapping"
-            ]
-          }
-        },
-        {
-          "id": 10,
-          "type": {
-            "def": {
-              "sequence": {
-                "type": 11
-              }
-            }
-          }
-        },
-        {
-          "id": 11,
-          "type": {
-            "def": {
-              "tuple": [
-                4,
-                2
+          },
+          "path": [
+            "dao_contract",
+            "dao_contract",
+            "TokenInfo"
+          ]
+        }
+      },
+      {
+        "id": 3,
+        "type": {
+          "def": {
+            "variant": {
+              "variants": [
+                {
+                  "index": 0,
+                  "name": "GovernanceToken"
+                },
+                {
+                  "index": 1,
+                  "name": "Psp22"
+                },
+                {
+                  "index": 2,
+                  "name": "Psp34"
+                }
               ]
             }
-          }
-        },
-        {
-          "id": 12,
-          "type": {
-            "def": {
-              "primitive": "str"
+          },
+          "path": [
+            "dao_contract",
+            "dao_contract",
+            "TokenType"
+          ]
+        }
+      },
+      {
+        "id": 4,
+        "type": {
+          "def": {
+            "composite": {
+              "fields": [
+                {
+                  "type": 5,
+                  "typeName": "[u8; 32]"
+                }
+              ]
             }
-          }
-        },
-        {
-          "id": 13,
-          "type": {
-            "def": {
-              "composite": {
-                "fields": [
-                  {
-                    "name": "dao_name",
-                    "type": 12,
-                    "typeName": "String"
-                  },
-                  {
-                    "name": "github_url",
-                    "type": 12,
-                    "typeName": "String"
-                  },
-                  {
-                    "name": "description",
-                    "type": 12,
-                    "typeName": "String"
-                  }
-                ]
-              }
-            },
-            "path": [
-              "dao_contract",
-              "dao_contract",
-              "DaoInfo"
-            ]
-          }
-        },
-        {
-          "id": 14,
-          "type": {
-            "def": {
-              "variant": {
-                "variants": [
-                  {
-                    "fields": [
-                      {
-                        "type": 15
-                      }
-                    ],
-                    "index": 0,
-                    "name": "Ok"
-                  },
-                  {
-                    "fields": [
-                      {
-                        "type": 16
-                      }
-                    ],
-                    "index": 1,
-                    "name": "Err"
-                  }
-                ]
-              }
-            },
-            "params": [
-              {
-                "name": "T",
-                "type": 15
-              },
-              {
-                "name": "E",
-                "type": 16
-              }
-            ],
-            "path": [
-              "Result"
-            ]
-          }
-        },
-        {
-          "id": 15,
-          "type": {
-            "def": {
-              "tuple": []
-            }
-          }
-        },
-        {
-          "id": 16,
-          "type": {
-            "def": {
-              "variant": {
-                "variants": [
-                  {
-                    "index": 0,
-                    "name": "TheTokenDoesNotExist"
-                  },
-                  {
-                    "index": 1,
-                    "name": "InvalidOperation"
-                  },
-                  {
-                    "index": 2,
-                    "name": "DistributionIsFailure"
-                  },
-                  {
-                    "index": 3,
-                    "name": "ChangingTokenStatusIsFailure"
-                  },
-                  {
-                    "index": 4,
-                    "name": "WithdrawingIsFailure"
-                  },
-                  {
-                    "index": 5,
-                    "name": "WrongCsvData"
-                  },
-                  {
-                    "index": 6,
-                    "name": "TransferingContractBalanceIsFailure"
-                  },
-                  {
-                    "index": 7,
-                    "name": "ThisFunctionCanBeCalledFromDaoManager"
-                  }
-                ]
-              }
-            },
-            "path": [
-              "dao_contract",
-              "dao_contract",
-              "Error"
-            ]
-          }
-        },
-        {
-          "id": 17,
-          "type": {
-            "def": {
-              "sequence": {
-                "type": 2
-              }
-            }
-          }
-        },
-        {
-          "id": 18,
-          "type": {
-            "def": {
-              "primitive": "bool"
+          },
+          "path": [
+            "ink_env",
+            "types",
+            "AccountId"
+          ]
+        }
+      },
+      {
+        "id": 5,
+        "type": {
+          "def": {
+            "array": {
+              "len": 32,
+              "type": 6
             }
           }
         }
-      ]
-    }
+      },
+      {
+        "id": 6,
+        "type": {
+          "def": {
+            "primitive": "u8"
+          }
+        }
+      },
+      {
+        "id": 7,
+        "type": {
+          "def": {
+            "sequence": {
+              "type": 8
+            }
+          }
+        }
+      },
+      {
+        "id": 8,
+        "type": {
+          "def": {
+            "tuple": [
+              1,
+              2
+            ]
+          }
+        }
+      },
+      {
+        "id": 9,
+        "type": {
+          "def": {
+            "composite": {
+              "fields": [
+                {
+                  "type": 10
+                }
+              ]
+            }
+          },
+          "params": [
+            {
+              "name": "K",
+              "type": 4
+            },
+            {
+              "name": "V",
+              "type": 2
+            }
+          ],
+          "path": [
+            "openbrush_lang",
+            "storage",
+            "mapping",
+            "Mapping"
+          ]
+        }
+      },
+      {
+        "id": 10,
+        "type": {
+          "def": {
+            "sequence": {
+              "type": 11
+            }
+          }
+        }
+      },
+      {
+        "id": 11,
+        "type": {
+          "def": {
+            "tuple": [
+              4,
+              2
+            ]
+          }
+        }
+      },
+      {
+        "id": 12,
+        "type": {
+          "def": {
+            "primitive": "str"
+          }
+        }
+      },
+      {
+        "id": 13,
+        "type": {
+          "def": {
+            "composite": {
+              "fields": [
+                {
+                  "name": "dao_name",
+                  "type": 12,
+                  "typeName": "String"
+                },
+                {
+                  "name": "github_url",
+                  "type": 12,
+                  "typeName": "String"
+                },
+                {
+                  "name": "description",
+                  "type": 12,
+                  "typeName": "String"
+                }
+              ]
+            }
+          },
+          "path": [
+            "dao_contract",
+            "dao_contract",
+            "DaoInfo"
+          ]
+        }
+      },
+      {
+        "id": 14,
+        "type": {
+          "def": {
+            "variant": {
+              "variants": [
+                {
+                  "fields": [
+                    {
+                      "type": 15
+                    }
+                  ],
+                  "index": 0,
+                  "name": "Ok"
+                },
+                {
+                  "fields": [
+                    {
+                      "type": 16
+                    }
+                  ],
+                  "index": 1,
+                  "name": "Err"
+                }
+              ]
+            }
+          },
+          "params": [
+            {
+              "name": "T",
+              "type": 15
+            },
+            {
+              "name": "E",
+              "type": 16
+            }
+          ],
+          "path": [
+            "Result"
+          ]
+        }
+      },
+      {
+        "id": 15,
+        "type": {
+          "def": {
+            "tuple": []
+          }
+        }
+      },
+      {
+        "id": 16,
+        "type": {
+          "def": {
+            "variant": {
+              "variants": [
+                {
+                  "index": 0,
+                  "name": "TheTokenDoesNotExist"
+                },
+                {
+                  "index": 1,
+                  "name": "InvalidOperation"
+                },
+                {
+                  "index": 2,
+                  "name": "DistributionIsFailure"
+                },
+                {
+                  "index": 3,
+                  "name": "ChangingTokenStatusIsFailure"
+                },
+                {
+                  "index": 4,
+                  "name": "WithdrawingIsFailure"
+                },
+                {
+                  "index": 5,
+                  "name": "WrongCsvData"
+                },
+                {
+                  "index": 6,
+                  "name": "TransferingContractBalanceIsFailure"
+                },
+                {
+                  "index": 7,
+                  "name": "ThisFunctionCanBeCalledFromDaoManager"
+                }
+              ]
+            }
+          },
+          "path": [
+            "dao_contract",
+            "dao_contract",
+            "Error"
+          ]
+        }
+      },
+      {
+        "id": 17,
+        "type": {
+          "def": {
+            "sequence": {
+              "type": 2
+            }
+          }
+        }
+      },
+      {
+        "id": 18,
+        "type": {
+          "def": {
+            "primitive": "bool"
+          }
+        }
+      }
+    ]
   }
+}

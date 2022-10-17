@@ -1,8 +1,10 @@
 import DaoErc20Contract from "./construct/DaoErc20";
 import { ethers } from "ethers";
 import { errorFunction } from "./commonFunctions";
-import { Erc20DeployData } from "../types/Token";
-import { BigNumber } from "ethers";
+import { Erc20DeployData, ProposalData4ChangingTokenSaleStatus } from "../types/Token";
+import type { InjectedAccountWithMeta } from "@polkadot/extension-inject/types";
+import { AddProposalFormData } from "../types/ProposalManagerType";
+import { addProposal } from "./ProposalManagerApi";
 
 export const deployDaoErc20 = async (
   inputData: Erc20DeployData
@@ -80,25 +82,49 @@ export const buy = async (tokenAddress: string, amount: number) => {
   }
 };
 
-export const controlTokenSale = async (
-  onSale: boolean,
-  tokenAddress: string
+export const proposeChangingTokenSaleStatus = async (
+  performingAccount: InjectedAccountWithMeta,
+  proposalData:ProposalData4ChangingTokenSaleStatus,
+  tokenAddress:string,
+  daoAddress:string
 ) => {
-  const contractConstract = DaoErc20Contract;
-  if (typeof window.ethereum !== "undefined" && tokenAddress) {
-    const provider = new ethers.providers.Web3Provider(window.ethereum);
-    const signer = provider.getSigner();
-    const contract = new ethers.Contract(
-      tokenAddress,
-      contractConstract.abi,
-      signer
-    );
-    await contract.controlTokenSale(onSale).catch((err: any) => {
-      console.log(err);
-      errorFunction(err);
-    });
+  let isStart = "0";
+  if (proposalData.tokenSaleStatus == false){
+    isStart = "1";
   }
-};
+  const csvData = tokenAddress + "," + isStart;
+  const proposalParameter: AddProposalFormData = {
+    proposalKind: proposalData.proposalKind,
+    title: proposalData.title,
+    outline: proposalData.outline,
+    githubURL: proposalData.githubURL,
+    detail: proposalData.detail,
+    csvData: csvData,
+  };
+  console.log("## delete proposal. parameter:", proposalParameter);
+  await addProposal(performingAccount, proposalParameter, daoAddress);
+
+}
+
+// export const controlTokenSale = async (
+//   onSale: boolean,
+//   tokenAddress: string
+// ) => {
+//   const contractConstract = DaoErc20Contract;
+//   if (typeof window.ethereum !== "undefined" && tokenAddress) {
+//     const provider = new ethers.providers.Web3Provider(window.ethereum);
+//     const signer = provider.getSigner();
+//     const contract = new ethers.Contract(
+//       tokenAddress,
+//       contractConstract.abi,
+//       signer
+//     );
+//     await contract.controlTokenSale(onSale).catch((err: any) => {
+//       console.log(err);
+//       errorFunction(err);
+//     });
+//   }
+// };
 
 export const getContractBalance = async (
   tokenAddress: string

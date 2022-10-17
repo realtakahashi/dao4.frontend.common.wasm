@@ -1,4 +1,9 @@
-import { AddProposalFormData, ProposalInfo } from "../types/ProposalManagerType";
+import {
+  AddProposalFormData,
+  ProposalInfo,
+  PROPOSAL_KIND,
+  PROPOSAL_VOTING,
+} from "../types/ProposalManagerType";
 import ProposalManagerContractConstruct from "./construct/ProposalManager";
 import { ethers } from "ethers";
 import { errorFunction } from "../contracts/commonFunctions";
@@ -7,6 +12,7 @@ import { ApiPromise, WsProvider } from "@polkadot/api";
 import { ContractPromise } from "@polkadot/api-contract";
 import type { InjectedAccountWithMeta } from "@polkadot/extension-inject/types";
 import proposalManagerAbi from "../contracts/construct/ProposalManager.json";
+import { checkEventsAndInculueError } from "./contract_common_util";
 
 const blockchainUrl = String(process.env.NEXT_PUBLIC_BLOCKCHAIN_URL) ?? "";
 const proposalManagerAddress =
@@ -15,11 +21,9 @@ const gasLimit = 100000 * 1000000;
 const storageDepositLimit = null;
 
 export const getProposalList = async (
-  peformanceAddress:string,
-  daoAddress:string
-): Promise<
-  Array<ProposalInfo>
-> => {
+  peformanceAddress: string,
+  daoAddress: string
+): Promise<Array<ProposalInfo>> => {
   const wsProvider = new WsProvider(blockchainUrl);
   const api = await ApiPromise.create({ provider: wsProvider });
 
@@ -30,12 +34,14 @@ export const getProposalList = async (
     proposalManagerAbi,
     proposalManagerAddress
   );
-  const { gasConsumed, result, output } =
-    await contract.query.getProposalList(peformanceAddress, {
+  const { gasConsumed, result, output } = await contract.query.getProposalList(
+    peformanceAddress,
+    {
       value: 0,
       gasLimit: -1,
     },
-    daoAddress);
+    daoAddress
+  );
   if (output !== undefined && output !== null) {
     let response_json = output.toJSON();
     let json_data = JSON.parse(JSON.stringify(response_json));
@@ -49,77 +55,126 @@ export const getProposalList = async (
         details: json_data[i].details,
         githubURL: json_data[i].githubUrl,
         proposalStatus: json_data[i].status,
-        csvData:json_data[i].csvData,
+        csvData: json_data[i].csvData,
       };
-      response.push(item); 
+      response.push(item);
     }
   }
   api.disconnect();
   return response;
 };
 
-export const addProposal =async (
-  performingAccount:InjectedAccountWithMeta,
+const PROPOSAL_KIND_CHANGE_ELECTORAL_COMMISSIONER = 2;
+
+export const addProposal = async (
+  performingAccount: InjectedAccountWithMeta,
   inputData: AddProposalFormData,
   daoAddress: string
 ) => {
   const { web3FromSource } = await import("@polkadot/extension-dapp");
   const wsProvider = new WsProvider(blockchainUrl);
   const api = await ApiPromise.create({ provider: wsProvider });
+  const contract = new ContractPromise(
+    api,
+    proposalManagerAbi,
+    proposalManagerAddress
+  );
+  let isLimitTnure: boolean = false;
+  const { gasConsumed, result, output } =
+    await contract.query.isLimitTenureCountOfElectoralCommissioner(
+      performingAccount.address,
+      {
+        value: 0,
+        gasLimit: -1,
+      },
+      daoAddress
+    );
+  if (output !== undefined && output !== null) {
+    isLimitTnure = output.toHuman()?.toString() == "true";
+  }
 
-  const contract = new ContractPromise(api, proposalManagerAbi, proposalManagerAddress);
+  switch (inputData.proposalKind) {
+    case PROPOSAL_KIND_CHANGE_ELECTORAL_COMMISSIONER:
+      if (isLimitTnure == false) {
+        alert("The term of office of the Election Commission has not expired.");
+        return;
+      }
+      break;
+    default:
+      if (isLimitTnure == true) {
+        alert(
+          "The term of office of the Election Commission has expired. Propose renewal of the committee."
+        );
+        return;
+      }
+  }
+
   const injector = await web3FromSource(performingAccount.meta.source);
   const tx = await contract.tx.addProposal(
-    { value: 0, gasLimit: gasLimit }, 
+    { value: 0, gasLimit: gasLimit },
     inputData.proposalKind,
     daoAddress,
     inputData.title,
     inputData.outline,
     inputData.detail,
     inputData.githubURL,
-    inputData.csvData,
+    inputData.csvData
   );
   if (injector !== undefined) {
     const unsub = await tx.signAndSend(
       performingAccount.address,
       { signer: injector.signer },
-      (result) => {
-        if (result.status.isFinalized) { 
+      (result, events = []) => {
+        if (result.status.isFinalized) {
+          if (checkEventsAndInculueError(events)) {
+            alert("Transaction is failure.");
+          }
           unsub();
           api.disconnect();
         }
       }
     );
   }
-}
+};
 
 export const doVoteForProposal = async (
   performingAccount: InjectedAccountWithMeta,
-  yes: boolean, 
+  yes: boolean,
   proposalId: number,
-  daoAddress:string
+  daoAddress: string
 ) => {
   const { web3FromSource } = await import("@polkadot/extension-dapp");
   const wsProvider = new WsProvider(blockchainUrl);
   const api = await ApiPromise.create({ provider: wsProvider });
 
-  const contract = new ContractPromise(api, proposalManagerAbi, proposalManagerAddress);
+  const contract = new ContractPromise(
+    api,
+    proposalManagerAbi,
+    proposalManagerAddress
+  );
   const injector = await web3FromSource(performingAccount.meta.source);
   const tx = await contract.tx.voteForTheProposal(
     { value: 0, gasLimit: gasLimit },
     daoAddress,
     proposalId,
-    yes,
+    yes
   );
   if (injector !== undefined) {
-    const unsub = await tx.signAndSend(performingAccount.address, { signer: injector.signer }, (result) => {
-      if (result.status.isFinalized) {
-        unsub();
-        api.disconnect();
+    const unsub = await tx.signAndSend(
+      performingAccount.address,
+      { signer: injector.signer },
+      (result, events = []) => {
+        if (result.status.isFinalized) {
+          if (checkEventsAndInculueError(events)) {
+            alert("Transaction is failure.");
+          }
+          unsub();
+          api.disconnect();
+        }
       }
-    });
+    );
   }
-}
+};
 
 export const changeProposalStatus = async (
   performingAccount: InjectedAccountWithMeta,
@@ -131,26 +186,37 @@ export const changeProposalStatus = async (
   const wsProvider = new WsProvider(blockchainUrl);
   const api = await ApiPromise.create({ provider: wsProvider });
 
-  const contract = new ContractPromise(api, proposalManagerAbi, proposalManagerAddress);
+  const contract = new ContractPromise(
+    api,
+    proposalManagerAbi,
+    proposalManagerAddress
+  );
   const injector = await web3FromSource(performingAccount.meta.source);
-  console.log("## proposal status:",proposalStatus);
+  console.log("## proposal status:", proposalStatus);
   const tx = await contract.tx.changeProposalStatus(
     { value: 0, gasLimit: gasLimit },
     daoAddress,
     proposalId,
-    proposalStatus,
+    proposalStatus
   );
   if (injector !== undefined) {
-    const unsub = await tx.signAndSend(performingAccount.address, { signer: injector.signer }, (result) => {
-      if (result.status.isFinalized) {
-        unsub();
-        api.disconnect();
+    const unsub = await tx.signAndSend(
+      performingAccount.address,
+      { signer: injector.signer },
+      (result, events = []) => {
+        if (result.status.isFinalized) {
+          if (checkEventsAndInculueError(events)) {
+            alert("Transaction is failure.");
+          }
+          unsub();
+          api.disconnect();
+        }
       }
-    });
+    );
   }
-}
+};
 
-export const execute_proposal = async(
+export const execute_proposal = async (
   performingAccount: InjectedAccountWithMeta,
   proposalId: number,
   daoAddress: string
@@ -159,20 +225,30 @@ export const execute_proposal = async(
   const wsProvider = new WsProvider(blockchainUrl);
   const api = await ApiPromise.create({ provider: wsProvider });
 
-  const contract = new ContractPromise(api, proposalManagerAbi, proposalManagerAddress);
+  const contract = new ContractPromise(
+    api,
+    proposalManagerAbi,
+    proposalManagerAddress
+  );
   const injector = await web3FromSource(performingAccount.meta.source);
   const tx = await contract.tx.executeProposal(
     { value: 0, gasLimit: gasLimit },
     daoAddress,
-    proposalId,
+    proposalId
   );
   if (injector !== undefined) {
-    const unsub = await tx.signAndSend(performingAccount.address, { signer: injector.signer }, (result) => {
-      if (result.status.isFinalized) {
-        unsub();
-        api.disconnect();
+    const unsub = await tx.signAndSend(
+      performingAccount.address,
+      { signer: injector.signer },
+      (result, events = []) => {
+        if (result.status.isFinalized) {
+          if (checkEventsAndInculueError(events)) {
+            alert("Transaction is failure.");
+          }
+          unsub();
+          api.disconnect();
+        }
       }
-    });
+    );
   }
-
-}
+};

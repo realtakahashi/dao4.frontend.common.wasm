@@ -1,4 +1,4 @@
-import { TargetDaoInterface } from "../types/MasterDaoType";
+import { TargetDaoInterface } from "../types/SubDaoType";
 
 const TargetDao = (props: TargetDaoInterface) => {
   return (
