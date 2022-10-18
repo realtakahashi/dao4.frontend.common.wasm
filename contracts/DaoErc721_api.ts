@@ -1,7 +1,13 @@
-import DaoErc721Contract from "./construct/DaoErc721";
-import { ethers } from "ethers";
-import { errorFunction } from "./commonFunctions";
 import { Erc721DeployData } from "../types/Token";
+import { ApiPromise, WsProvider } from "@polkadot/api";
+import { ContractPromise, CodePromise, Abi } from "@polkadot/api-contract";
+import psp34Abi from "./construct/Psp34.json";
+import { checkEventsAndInculueError } from "./contract_common_util";
+import type { InjectedAccountWithMeta } from "@polkadot/extension-inject/types";
+
+const blockchainUrl = String(process.env.NEXT_PUBLIC_BLOCKCHAIN_URL) ?? "";
+const gasLimit = 100000 * 1000000;
+const storageDepositLimit = null;
 
 export const deployDaoErc721 = async (
   inputData: Erc721DeployData
@@ -33,193 +39,189 @@ export const deployDaoErc721 = async (
   return res;
 };
 
-export const buy = async (tokenAddress:string,setTokenId:(id:string) => void) => {
-    const contractConstract = DaoErc721Contract;
-    const price = await getPrice(tokenAddress);
-    if (typeof window.ethereum !== "undefined" && tokenAddress) {
-      const provider = new ethers.providers.Web3Provider(window.ethereum);
-      const signer = provider.getSigner();
-      const contract = new ethers.Contract(
-        tokenAddress,
-        contractConstract.abi,
-        signer
-      );
-      const tx = await contract
-        .buy({value:price})
-        // .then(() => {
-        //   const filters = contract.filters["Bought"];
-        //   if (filters !== undefined) {
-        //     provider.once("block", () => {
-        //       contract.on(filters(), (senderAddress, tokenID) => {
-        //         console.log(senderAddress, tokenID);
-        //         const id = parseInt(tokenID._hex,16);
-        //         setTokenId(id.toString());
-        //       });
-        //     });
-        //   }
-  
-        // })
-        .catch((err: any) => {
-          console.log(err);
-          errorFunction(err);
-        });
-        if (tx !== undefined) {
-          const ret = await tx.wait();
-          console.log("ret.events:", ret.events);
-          console.log("tokenId hex", ret.events[0].args.tokenId);
-          console.log("tokenid:", String(Number(ret.events[0].args.tokenId)));
-          const id = Number(ret.events[0].args.tokenId);
-          setTokenId(id.toString());
-          alert("Your Token Id is :" + id);
+export const buy = async (
+  performingAccount: InjectedAccountWithMeta,
+  tokenAddress: string,
+  setTokenId: (id: string) => void
+) => {
+  const { web3FromSource } = await import("@polkadot/extension-dapp");
+  const wsProvider = new WsProvider(blockchainUrl);
+  const api = await ApiPromise.create({ provider: wsProvider });
+
+  const price = await getPrice(performingAccount.address, tokenAddress);
+
+  const contract = new ContractPromise(api, psp34Abi, tokenAddress);
+  const injector = await web3FromSource(performingAccount.meta.source);
+  const tx = await contract.tx.mintForBuy(
+    { value: price, gasLimit: gasLimit },
+    performingAccount.address
+  );
+  if (injector !== undefined) {
+    const unsub = await tx.signAndSend(
+      performingAccount.address,
+      { signer: injector.signer },
+      (result, events = []) => {
+        if (result.status.isFinalized) {
+          if (checkEventsAndInculueError(events)) {
+            alert("Transaction is failure.");
+          }
+          events.forEach(({ event }) => {
+            if (api.events.contracts.ContractEmitted.is(event)) {
+              const [account_id, contract_evt] = event.data;
+              const decoded = new Abi(psp34Abi).decodeEvent(contract_evt);
+              setTokenId(decoded.args[1].toHuman()?.toString() ?? "0");
+            }
+          });
+          unsub();
+          api.disconnect();
         }
-    
-    }
-  };
-  
-  export const controlTokenSale = async (onSale:boolean,tokenAddress:string) => {
-    const contractConstract = DaoErc721Contract;
-    if (typeof window.ethereum !== "undefined" && tokenAddress) {
-      const provider = new ethers.providers.Web3Provider(window.ethereum);
-      const signer = provider.getSigner();
-      const contract = new ethers.Contract(
-        tokenAddress,
-        contractConstract.abi,
-        signer
-      );
-      await contract
-        .controlTokenSale(onSale)
-        .catch((err: any) => {
-          console.log(err);
-          errorFunction(err);
-        });
-    }
-  };
-  
-  export const getContractBalance = async (tokenAddress:string):Promise<number> => {
-    const contractConstract = DaoErc721Contract;
-    let res = 0;
-    if (typeof window.ethereum !== "undefined" && tokenAddress) {
-      const provider = new ethers.providers.Web3Provider(window.ethereum);
-      const signer = provider.getSigner();
-      const contract = new ethers.Contract(
-        tokenAddress,
-        contractConstract.abi,
-        signer
-      );
-      res = await contract
-        .getContractBalance()
-        .catch((err: any) => {
-          console.log(err);
-          errorFunction(err);
-        });
-    }
-  
-    return res;
-  };
-  
-  export const withdraw = async (tokenAddress:string) => {
-    const contractConstract = DaoErc721Contract;
-    if (typeof window.ethereum !== "undefined" && tokenAddress) {
-      const provider = new ethers.providers.Web3Provider(window.ethereum);
-      const signer = provider.getSigner();
-      const contract = new ethers.Contract(
-        tokenAddress,
-        contractConstract.abi,
-        signer
-      );
-      await contract
-        .withdraw()
-        .catch((err: any) => {
-          console.log(err);
-          errorFunction(err);
-        });
-    }
-  };
+      }
+    );
+  }
+};
 
-  export const tokenURI = async (tokenAddress:string,tokenId:string):Promise<string> => {
-    const contractConstract = DaoErc721Contract;
-    let res = "";
-    if (typeof window.ethereum !== "undefined" && tokenAddress) {
-      const provider = new ethers.providers.Web3Provider(window.ethereum);
-      const signer = provider.getSigner();
-      const contract = new ethers.Contract(
-        tokenAddress,
-        contractConstract.abi,
-        signer
-      );
-      res = await contract
-        .tokenURI(tokenId)
-        .catch((err: any) => {
-          console.log(err);
-          errorFunction(err);
-        });
-    }
-  
-    return res;
-  };
+export const controlTokenSale = async (
+  onSale: boolean,
+  tokenAddress: string
+) => {
+  const contractConstract = DaoErc721Contract;
+  if (typeof window.ethereum !== "undefined" && tokenAddress) {
+    const provider = new ethers.providers.Web3Provider(window.ethereum);
+    const signer = provider.getSigner();
+    const contract = new ethers.Contract(
+      tokenAddress,
+      contractConstract.abi,
+      signer
+    );
+    await contract.controlTokenSale(onSale).catch((err: any) => {
+      console.log(err);
+      errorFunction(err);
+    });
+  }
+};
 
-  export const getPrice = async (tokenAddress:string):Promise<number> => {
-    const contractConstract = DaoErc721Contract;
-    let res = 0;
-    if (typeof window.ethereum !== "undefined" && tokenAddress) {
-      const provider = new ethers.providers.Web3Provider(window.ethereum);
-      const signer = provider.getSigner();
-      const contract = new ethers.Contract(
-        tokenAddress,
-        contractConstract.abi,
-        signer
-      );
-      res = await contract
-        .priceWei()
-        .catch((err: any) => {
-          console.log(err);
-          errorFunction(err);
-        });
-    }
-    return res;
+export const getContractBalance = async (
+  tokenAddress: string
+): Promise<number> => {
+  const contractConstract = DaoErc721Contract;
+  let res = 0;
+  if (typeof window.ethereum !== "undefined" && tokenAddress) {
+    const provider = new ethers.providers.Web3Provider(window.ethereum);
+    const signer = provider.getSigner();
+    const contract = new ethers.Contract(
+      tokenAddress,
+      contractConstract.abi,
+      signer
+    );
+    res = await contract.getContractBalance().catch((err: any) => {
+      console.log(err);
+      errorFunction(err);
+    });
   }
 
-  export const getSalesAmount = async (tokenAddress:string):Promise<number> => {
-    const contractConstract = DaoErc721Contract;
-    let res = 0;
-    if (typeof window.ethereum !== "undefined" && tokenAddress) {
-      const provider = new ethers.providers.Web3Provider(window.ethereum);
-      const signer = provider.getSigner();
-      const contract = new ethers.Contract(
-        tokenAddress,
-        contractConstract.abi,
-        signer
-      );
-      res = await contract
-        .salesAmount()
-        .catch((err: any) => {
-          console.log(err);
-          errorFunction(err);
-        });
-    }
-  
-    return res;
-  };
+  return res;
+};
 
-  export const getSalesStatus = async (tokenAddress:string):Promise<boolean> => {
-    const contractConstract = DaoErc721Contract;
-    let res = false;
-    if (typeof window.ethereum !== "undefined" && tokenAddress) {
-      const provider = new ethers.providers.Web3Provider(window.ethereum);
-      const signer = provider.getSigner();
-      const contract = new ethers.Contract(
-        tokenAddress,
-        contractConstract.abi,
-        signer
-      );
-      res = await contract
-        .onSale()
-        .catch((err: any) => {
-          console.log(err);
-          errorFunction(err);
-        });
+export const withdraw = async (tokenAddress: string) => {
+  const contractConstract = DaoErc721Contract;
+  if (typeof window.ethereum !== "undefined" && tokenAddress) {
+    const provider = new ethers.providers.Web3Provider(window.ethereum);
+    const signer = provider.getSigner();
+    const contract = new ethers.Contract(
+      tokenAddress,
+      contractConstract.abi,
+      signer
+    );
+    await contract.withdraw().catch((err: any) => {
+      console.log(err);
+      errorFunction(err);
+    });
+  }
+};
+
+export const tokenURI = async (
+  tokenAddress: string,
+  tokenId: string
+): Promise<string> => {
+  const contractConstract = DaoErc721Contract;
+  let res = "";
+  if (typeof window.ethereum !== "undefined" && tokenAddress) {
+    const provider = new ethers.providers.Web3Provider(window.ethereum);
+    const signer = provider.getSigner();
+    const contract = new ethers.Contract(
+      tokenAddress,
+      contractConstract.abi,
+      signer
+    );
+    res = await contract.tokenURI(tokenId).catch((err: any) => {
+      console.log(err);
+      errorFunction(err);
+    });
+  }
+
+  return res;
+};
+
+export const getPrice = async (
+  peformanceAddress: string,
+  tokenAddress: string
+): Promise<number> => {
+  let res = "0";
+  const wsProvider = new WsProvider(blockchainUrl);
+  const api = await ApiPromise.create({ provider: wsProvider });
+  const contract = new ContractPromise(api, psp20Abi, tokenAddress);
+  const { output } = await contract.query.getSalesPriceForOneToken(
+    peformanceAddress,
+    {
+      value: 0,
+      gasLimit: -1,
     }
-  
-    return res;
-  };
-  
+  );
+  if (output !== undefined && output !== null) {
+    res = output.toHuman()?.toString() ?? "0";
+  }
+  return Number(res);
+};
+
+export const getSalesAmount = async (
+  peformanceAddress: string,
+  tokenAddress: string
+): Promise<number> => {
+  let res = "0";
+  const wsProvider = new WsProvider(blockchainUrl);
+  const api = await ApiPromise.create({ provider: wsProvider });
+  const contract = new ContractPromise(api, psp34Abi, tokenAddress);
+  const { output } = await contract.query.getSalesAmount(peformanceAddress, {
+    value: 0,
+    gasLimit: -1,
+  });
+  if (output !== undefined && output !== null) {
+    res = output.toHuman()?.toString() ?? "0";
+  }
+  return Number(res);
+};
+
+export const getSalesStatus = async (
+  peformanceAddress: string,
+  tokenAddress: string
+): Promise<boolean> => {
+  let res = false;
+  const wsProvider = new WsProvider(blockchainUrl);
+  const api = await ApiPromise.create({ provider: wsProvider });
+  const contract = new ContractPromise(api, psp34Abi, tokenAddress);
+  const { output } = await contract.query.getTokenSalesStatus(
+    peformanceAddress,
+    {
+      value: 0,
+      gasLimit: -1,
+    }
+  );
+  if (output !== undefined && output !== null) {
+    if (output.toHuman()?.toString() == "true") {
+      res = true;
+    } else {
+      res = false;
+    }
+  }
+  return res;
+};

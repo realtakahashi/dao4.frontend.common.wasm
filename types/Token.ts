@@ -46,7 +46,12 @@ export interface ProposalData4ChangingTokenSaleStatus {
   detail: string;
 }
 
-export interface TransferInfo {
-  amount: number;
-  to: string;
+export interface ProposalData4TransferGovernanceToken {
+  toListCsv:string;
+  amountListCsv:string;
+  proposalKind: number;
+  title: string;
+  outline: string;
+  githubURL: string;
+  detail: string;
 }
