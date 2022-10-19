@@ -12,33 +12,49 @@ import { ApiPromise, WsProvider } from "@polkadot/api";
 import { ContractPromise, CodePromise } from "@polkadot/api-contract";
 import psp20Abi from "./construct/Psp22.json";
 import { checkEventsAndInculueError } from "./contract_common_util";
+import psp22ContractWasm from "../contracts/construct/Psp22_contract.json";
 
 const blockchainUrl = String(process.env.NEXT_PUBLIC_BLOCKCHAIN_URL) ?? "";
 const gasLimit = 100000 * 1000000;
 const storageDepositLimit = null;
 
 export const deployDaoErc20 = async (
-  inputData: Erc20DeployData
-): Promise<string> => {
-  let res: string = "";
-  const daoErc20Contract = DaoErc20Contract;
-  if (typeof window.ethereum !== "undefined") {
-    const provider = new ethers.providers.Web3Provider(window.ethereum);
-    const signer = provider.getSigner();
-    const factory = new ethers.ContractFactory(
-      daoErc20Contract.abi,
-      daoErc20Contract.bytecode,
-      signer
-    );
-    const result: any = await factory
-      .deploy(inputData.tokenName, inputData.tokenSymbol, inputData.daoAddress)
-      .catch((err: any) => {
-        errorFunction(err);
-      });
-    res = result.address;
-  }
+  performingAccount: InjectedAccountWithMeta,
+  inputData: Erc20DeployData,
+  setTokenAddress:(tokenAddress:string) => void
+) => {
+  const wsProvider = new WsProvider(blockchainUrl);
+  const api = await ApiPromise.create({ provider: wsProvider });
 
-  return res;
+  const { web3FromSource } = await import("@polkadot/extension-dapp");
+  const contractWasm = psp22ContractWasm.source.wasm;
+  const contract = new CodePromise(api, psp20Abi, contractWasm);
+  const injector = await web3FromSource(performingAccount.meta.source);
+  const tx = contract.tx.new(
+    { gasLimit, storageDepositLimit },
+    inputData.initialSupply,
+    inputData.tokenName,
+    inputData.tokenSymbol,
+    inputData.decimal,
+    inputData.daoAddress,
+    inputData.price
+  );
+  const unsub = await tx.signAndSend(
+    performingAccount.address,
+    { signer: injector.signer },
+    ({ events = [], contract, status }) => {
+      if (status.isFinalized) {
+        if (checkEventsAndInculueError(events)) {
+          alert("Transaction is failure.");
+        } else {
+          let tokenAddess = contract.address.toString();
+          setTokenAddress(tokenAddess);
+        }
+        unsub();
+        api.disconnect();
+      }
+    }
+  );
 };
 
 export const buy = async (

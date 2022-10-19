@@ -14,19 +14,32 @@ export interface Erc20DeployData {
   tokenName: string;
   tokenSymbol: string;
   daoAddress: string;
+  price: number;
+  initialSupply: number;
+  decimal:number;
+}
+
+export interface ProposalData4RegisterToken {
+  proposalKind: number;
+  title: string;
+  outline: string;
+  githubURL: string;
+  detail: string;
 }
 
 export interface GovernanceDeployData {
   tokenName: string;
   tokenSymbol: string;
   daoAddress: string;
+  initialSupply: number;
+  decimal:number;
 }
 
 export interface Erc721DeployData {
   tokenName: string;
   tokenSymbol: string;
   daoAddress: string;
-  priceWei: number;
+  price: number;
   baseUri: string;
 }
 

@@ -10,7 +10,7 @@ import detectEthereumProvider from "@metamask/detect-provider";
 import { errorFunction } from "./commonFunctions";
 import MemberManagerConstruct from "../contracts/construct/MemberManager";
 import SubDAOContractConstruct from "../contracts/construct/SubDAOContractConstruct";
-import { TokenInfo, TokenInfoWithName, TokenKind } from "../types/Token";
+import { ProposalData4RegisterToken, TokenInfo, TokenInfoWithName, TokenKind } from "../types/Token";
 import DaoErc20Contract from "./construct/DaoErc20";
 import DaoErc721Contract from "./construct/DaoErc721";
 import GovernaceTokenConstract from "./construct/GonvernanceToken";
@@ -533,26 +533,24 @@ export const createDivideProposal = async (
   await addProposal(performingAccount, proposalParameter, daoAddress);
 };
 
-export const addTokenToList = async (
-  tokenKind: TokenKind,
+export const createProposal4AddingTokenToList = async (
+  tokenKind: number,
   tokenAddress: string,
-  daoAddress: string
+  performingAccount: InjectedAccountWithMeta,
+  daoAddress: string,
+  proposalData:ProposalData4RegisterToken
 ) => {
-  console.log("daoAddress:", daoAddress);
-  const contractConstract = SubDAOContractConstruct;
-  if (typeof window.ethereum !== "undefined" && daoAddress) {
-    const provider = new ethers.providers.Web3Provider(window.ethereum);
-    const signer = provider.getSigner();
-    const contract = new ethers.Contract(
-      daoAddress,
-      contractConstract.abi,
-      signer
-    );
-    await contract.addTokenToList(tokenKind, tokenAddress).catch((err: any) => {
-      console.log(err);
-      errorFunction(err);
-    });
-  }
+  const csvData = tokenAddress + "," + String(tokenKind);
+  const proposalParameter: AddProposalFormData = {
+    proposalKind: proposalData.proposalKind,
+    title: proposalData.title,
+    outline: proposalData.outline,
+    githubURL: proposalData.githubURL,
+    detail: proposalData.detail,
+    csvData: csvData,
+  };
+  await addProposal(performingAccount, proposalParameter, daoAddress);
+
 };
 
 export const getMemberNFTAddress = async (

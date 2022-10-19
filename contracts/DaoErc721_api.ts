@@ -2,41 +2,51 @@ import { Erc721DeployData } from "../types/Token";
 import { ApiPromise, WsProvider } from "@polkadot/api";
 import { ContractPromise, CodePromise, Abi } from "@polkadot/api-contract";
 import psp34Abi from "./construct/Psp34.json";
+import psp34ContractWasm from "./construct/Psp34_contract.json";
 import { checkEventsAndInculueError } from "./contract_common_util";
 import type { InjectedAccountWithMeta } from "@polkadot/extension-inject/types";
 
 const blockchainUrl = String(process.env.NEXT_PUBLIC_BLOCKCHAIN_URL) ?? "";
 const gasLimit = 100000 * 1000000;
 const storageDepositLimit = null;
+const initial_id = 0;
 
 export const deployDaoErc721 = async (
-  inputData: Erc721DeployData
-): Promise<string> => {
-  let res: string = "";
-  const daoErc721Contract = DaoErc721Contract;
-  if (typeof window.ethereum !== "undefined") {
-    const provider = new ethers.providers.Web3Provider(window.ethereum);
-    const signer = provider.getSigner();
-    const factory = new ethers.ContractFactory(
-      daoErc721Contract.abi,
-      daoErc721Contract.bytecode,
-      signer
-    );
-    const result: any = await factory
-      .deploy(
-        inputData.tokenName,
-        inputData.tokenSymbol,
-        inputData.daoAddress,
-        ethers.utils.parseEther(String(inputData.priceWei)),
-        inputData.baseUri
-      )
-      .catch((err: any) => {
-        errorFunction(err);
-      });
-    res = result.address;
-  }
+  performingAccount: InjectedAccountWithMeta,
+  inputData: Erc721DeployData,
+  setTokenAddress:(tokenAddress:string) => void
+) => {
+  const wsProvider = new WsProvider(blockchainUrl);
+  const api = await ApiPromise.create({ provider: wsProvider });
 
-  return res;
+  const { web3FromSource } = await import("@polkadot/extension-dapp");
+  const contractWasm = psp34ContractWasm.source.wasm;
+  const contract = new CodePromise(api, psp34Abi, contractWasm);
+  const injector = await web3FromSource(performingAccount.meta.source);
+  const tx = contract.tx.new(
+    { gasLimit, storageDepositLimit },
+    initial_id,
+    inputData.tokenName,
+    inputData.tokenSymbol,
+    inputData.baseUri,
+    inputData.price,
+  );
+  const unsub = await tx.signAndSend(
+    performingAccount.address,
+    { signer: injector.signer },
+    ({ events = [], contract, status }) => {
+      if (status.isFinalized) {
+        if (checkEventsAndInculueError(events)) {
+          alert("Transaction is failure.");
+        } else {
+          let tokenAddess = contract.address.toString();
+          setTokenAddress(tokenAddess);
+        }
+        unsub();
+        api.disconnect();
+      }
+    }
+  );
 };
 
 export const buy = async (
