@@ -1,12 +1,12 @@
 import { useState } from "react";
-import { TargetDaoInterface } from "../types/MasterDaoType";
+import { TargetDaoInterface } from "../types/SubDaoType";
 import TargetDao from "./TargetDao";
-import { TargetDaoKind } from "../types/MasterDaoType";
+import { TargetDaoKind } from "../types/SubDaoType";
 import { doDonateSubDao } from "../contracts/subdao_api";
 import { get_account_info, get_selected_address } from "../contracts/get_account_info_api";
 
 const Donate = (props: TargetDaoInterface) => {
-  const [donateAmount, setDonateAmount] = useState(0);
+  const [donateAmount, setDonateAmount] = useState("0");
   const _doDonateFromIndividials =async () => {
     const selectedAddress = await get_account_info(get_selected_address());
     await doDonateSubDao(selectedAddress,props.daoAddress,donateAmount)
@@ -34,7 +34,7 @@ const Donate = (props: TargetDaoInterface) => {
             <td className="text-white text-18px">
               <input
                 className="text-black text-14px px-2 py-1"
-                onChange={(e) => setDonateAmount(Number(e.target.value))}
+                onChange={(e) => setDonateAmount(e.target.value)}
               ></input>{" "}
               SDN
             </td>

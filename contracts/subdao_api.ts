@@ -4,16 +4,12 @@ import {
   SubDAODataWithMemberFlg,
   SubDAODeployFormData,
 } from "../types/SubDaoType";
-import Web3 from "web3";
-import { ethers } from "ethers";
+import { BigNumber, ethers } from "ethers";
 import detectEthereumProvider from "@metamask/detect-provider";
 import { errorFunction } from "./commonFunctions";
 import MemberManagerConstruct from "../contracts/construct/MemberManager";
 import SubDAOContractConstruct from "../contracts/construct/SubDAOContractConstruct";
 import { ProposalData4RegisterToken, TokenInfo, TokenInfoWithName, TokenKind } from "../types/Token";
-import DaoErc20Contract from "./construct/DaoErc20";
-import DaoErc721Contract from "./construct/DaoErc721";
-import GovernaceTokenConstract from "./construct/GonvernanceToken";
 import { ApiPromise, WsProvider } from "@polkadot/api";
 import { ContractPromise, CodePromise } from "@polkadot/api-contract";
 import type { InjectedAccountWithMeta } from "@polkadot/extension-inject/types";
@@ -21,12 +17,13 @@ import daoManagerAbi from "../contracts/construct/DaoManager.json";
 import daoAbi from "../contracts/construct/Dao.json";
 import memberManagerAbi from "../contracts/construct/MemberManager.json";
 import daoContractWasm from "../contracts/construct/Dao_contract.json";
-import { checkEventsAndInculueError } from "./contract_common_util";
+import { checkEventsAndInculueError, formatBalances } from "./contract_common_util";
 import { AddProposalFormData } from "../types/ProposalManagerType";
 import { addProposal } from "./ProposalManagerApi";
 import psp22Abi from "../contracts/construct/Psp22.json";
 import psp34Abi from "../contracts/construct/Psp34.json";
 import governnanceTokenAbi from "../contracts/construct/GovernanceToken.json";
+import { BN } from "@polkadot/util";
 
 const blockchainUrl = String(process.env.NEXT_PUBLIC_BLOCKCHAIN_URL) ?? "";
 const daoManagerAddress =
@@ -249,15 +246,18 @@ export const registerToDaoManager = async (
 export const doDonateSubDao = async (
   performingAccount: InjectedAccountWithMeta,
   daoAddress: string,
-  amount: number
+  amount: string
 ) => {
   const { web3FromSource } = await import("@polkadot/extension-dapp");
   const wsProvider = new WsProvider(blockchainUrl);
   const api = await ApiPromise.create({ provider: wsProvider });
   const contract = new ContractPromise(api, daoAbi, daoAddress);
   const injector = await web3FromSource(performingAccount.meta.source);
+  const decimals = api.registry.chainDecimals;
+  const decimalAmount:Number = Number(amount) * (10 ** decimals[0]);
+  console.log("### decimalAmount:",decimalAmount.toString());
   const tx = await contract.tx.donateToTheDao({
-    value: amount,
+    value: decimalAmount.toString(),
     gasLimit: gasLimit,
   });
   if (injector !== undefined) {
@@ -280,8 +280,8 @@ export const doDonateSubDao = async (
 export const getDaoBalance = async (
   peformanceAddress: string,
   daoAddress: string
-): Promise<number> => {
-  let response: number = 0;
+): Promise<string> => {
+  let response: string = "0";
   const wsProvider = new WsProvider(blockchainUrl);
   const api = await ApiPromise.create({ provider: wsProvider });
   const daoContract = new ContractPromise(api, daoAbi, daoAddress);
@@ -291,7 +291,10 @@ export const getDaoBalance = async (
       gasLimit: -1,
     });
   if (output !== undefined && output !== null) {
-    response = Number(output.toHuman()?.toString());
+    console.log("### dao balance is :", output.toHuman()?.toString());
+    response = output.toHuman()?.toString() ?? "0";
+    const decimals = api.registry.chainDecimals;
+    response = formatBalances(response,decimals[0])
   }
   api.disconnect();
 
@@ -378,7 +381,7 @@ export const getTokenListWithName = async (
     let tokenName = "";
     let tokenSymbol = "";
     switch (item.tokenKind) {
-      case (TokenKind.ERC20, TokenKind.GOVERNANCE):
+      case (TokenKind.ERC20):
         tokenName = await getPsp22Value(
           peformanceAddress,
           item.tokenAddress,
@@ -390,6 +393,18 @@ export const getTokenListWithName = async (
           "psp22Metadata::tokenSymbol"
         );
         break;
+        case (TokenKind.GOVERNANCE):
+          tokenName = await getGovernanceValue(
+            peformanceAddress,
+            item.tokenAddress,
+            "psp22Metadata::tokenName"
+          );
+          tokenSymbol = await getGovernanceValue(
+            peformanceAddress,
+            item.tokenAddress,
+            "psp22Metadata::tokenSymbol"
+          );
+          break;        
       case TokenKind.ERC721:
         tokenName = await getPsp34Value(
           peformanceAddress,
@@ -439,6 +454,26 @@ const getPsp22Value = async (
   return res;
 };
 
+const getGovernanceValue = async (
+  peformanceAddress: string,
+  tokenAddress: string,
+  functionName: string
+): Promise<string> => {
+  let res: string = "";
+  const wsProvider = new WsProvider(blockchainUrl);
+  const api = await ApiPromise.create({ provider: wsProvider });
+  const contract = new ContractPromise(api, governnanceTokenAbi, tokenAddress);
+  const { output } = await contract.query[functionName](peformanceAddress, {
+    value: 0,
+    gasLimit: -1,
+  });
+  if (output !== undefined && output !== null) {
+    res = output.toHuman()?.toString() ?? "";
+  }
+  api.disconnect();
+  return res;
+};
+
 const getPsp34Value = async (
   peformanceAddress: string,
   tokenAddress: string,
@@ -465,63 +500,18 @@ const getPsp34Value = async (
   return res;
 };
 
-// export const getTokenListWithName = async (
-//   tokenList: Array<TokenInfo>
-// ): Promise<Array<TokenInfoWithName>> => {
-//   let response: TokenInfoWithName[] = [];
-//   const erc20contractDefine = DaoErc20Contract;
-//   const erc721contractDefine = DaoErc721Contract;
-//   const GovernaceTokenDefine = GovernaceTokenConstract;
-//   const provider = await detectEthereumProvider({ mustBeMetaMask: true });
-//   if (provider && window.ethereum?.isMetaMask) {
-//     if (typeof window.ethereum !== "undefined") {
-//       const provider = new ethers.providers.Web3Provider(window.ethereum);
-//       const signer = provider.getSigner();
-//       for (var item of tokenList) {
-//         let commonContractDefine: any;
-//         if (item.tokenKind == TokenKind.ERC20) {
-//           commonContractDefine = erc20contractDefine;
-//         } else if (item.tokenKind == TokenKind.ERC721) {
-//           commonContractDefine = erc721contractDefine;
-//         } else {
-//           commonContractDefine = GovernaceTokenConstract;
-//         }
-//         const contract = new ethers.Contract(
-//           item.tokenAddress,
-//           commonContractDefine.abi,
-//           signer
-//         );
-//         let tokenName = await contract.name().catch((err: any) => {
-//           console.log(err);
-//           errorFunction(err);
-//         });
-//         let tokenSymbol = await contract.symbol().catch((err: any) => {
-//           console.log(err);
-//           errorFunction(err);
-//         });
-//         const pushItem: TokenInfoWithName = {
-//           tokenAddress: item.tokenAddress,
-//           tokenKind: item.tokenKind,
-//           tokenName: String(tokenName),
-//           tokenSymbol: String(tokenSymbol),
-//         };
-
-//         response.push(pushItem);
-//       }
-//     }
-//   } else {
-//     alert("Please instal metamask.");
-//   }
-
-//   return response;
-// };
-
 export const createDivideProposal = async (
   performingAccount: InjectedAccountWithMeta,
   daoAddress: string,
   proposalData: ProposalData4ADivide
 ) => {
-  const csvData = proposalData.targetAddress + "," + proposalData.amount;
+  const wsProvider = new WsProvider(blockchainUrl);
+  const api = await ApiPromise.create({ provider: wsProvider });
+  const decimals = api.registry.chainDecimals;
+  const decimalAmount:Number = Number(proposalData.amount) * (10 ** decimals[0]);
+
+
+  const csvData = proposalData.targetAddress + "," + decimalAmount.toString();
   const proposalParameter: AddProposalFormData = {
     proposalKind: proposalData.proposalKind,
     title: proposalData.title,

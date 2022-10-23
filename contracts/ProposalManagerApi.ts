@@ -242,6 +242,7 @@ export const execute_proposal = async (
       { signer: injector.signer },
       (result, events = []) => {
         if (result.status.isFinalized) {
+          console.log("### proposal is executed events:",events);
           if (checkEventsAndInculueError(events)) {
             alert("Transaction is failure.");
           }
