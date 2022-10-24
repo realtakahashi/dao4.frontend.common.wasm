@@ -95,9 +95,9 @@ const ProposalList = (props: ProposalListProps) => {
     setIsElectionComission(await checkElectionComission(selected_address,props.daoAddress));
   };
 
-  const executeProposal =async () => {
+  const executeProposal =async (propsalId:string) => {
     const selected_address = await get_account_info(get_selected_address());
-    await execute_proposal(selected_address,Number(targetProposal.proposalId),props.daoAddress);
+    await execute_proposal(selected_address,Number(propsalId),props.daoAddress);
   }
 
   useEffect(() => {
@@ -158,7 +158,7 @@ const ProposalList = (props: ProposalListProps) => {
                             {proposal.proposalStatus == "Running" && (
                               <button
                                 className="inline-block bg-blue-700 rounded-full px-3 py-1 text-sm font-semibold text-white mr-2 mb-2"
-                                onClick={() => executeProposal() }
+                                onClick={() => executeProposal(proposal.proposalId) }
                               >
                                 Execute Proposal
                               </button>

@@ -1,10 +1,7 @@
-import { ethers } from "ethers";
-import { errorFunction } from "./commonFunctions";
 import {
   GovernanceDeployData,
   ProposalData4TransferGovernanceToken,
 } from "../types/Token";
-import GovernaceTokenConstract from "./construct/GonvernanceToken";
 import { ApiPromise, WsProvider } from "@polkadot/api";
 import { ContractPromise, CodePromise, Abi } from "@polkadot/api-contract";
 import governanceAbi from "./construct/GovernanceToken.json";
@@ -13,6 +10,7 @@ import { checkEventsAndInculueError } from "./contract_common_util";
 import type { InjectedAccountWithMeta } from "@polkadot/extension-inject/types";
 import { AddProposalFormData } from "../types/ProposalManagerType";
 import { addProposal } from "./ProposalManagerApi";
+import { BN } from "@polkadot/util";
 
 const blockchainUrl = String(process.env.NEXT_PUBLIC_BLOCKCHAIN_URL) ?? "";
 const gasLimit = 100000 * 1000000;
@@ -30,9 +28,12 @@ export const deployGonvernanceToken = async (
   const contractWasm = GovernanceContractWasm.source.wasm;
   const contract = new CodePromise(api, governanceAbi, contractWasm);
   const injector = await web3FromSource(performingAccount.meta.source);
+  const decimaal10 = 10 ** inputData.decimal;
+  const decimalInitialSupply = new BN(inputData.initialSupply.toString()).mul(new BN(decimaal10.toString()));
+
   const tx = contract.tx.new(
     { gasLimit, storageDepositLimit },
-    inputData.initialSupply,
+    decimalInitialSupply,
     inputData.tokenName,
     inputData.tokenSymbol,
     inputData.decimal,
@@ -41,6 +42,7 @@ export const deployGonvernanceToken = async (
   const unsub = await tx.signAndSend(
     performingAccount.address,
     { signer: injector.signer },
+  // check compile error
     ({ events = [], contract, status }) => {
       if (status.isFinalized) {
         if (checkEventsAndInculueError(events)) {
@@ -63,7 +65,7 @@ export const createProposalDistributeGovToken = async (
   tokenAddress: string,
   proposalData: ProposalData4TransferGovernanceToken
 ) => {
-  const addressArray = proposalData.amountListCsv.split(",");
+  const addressArray = proposalData.toListCsv.split(",");
   const amountArray = proposalData.amountListCsv.split(",");
   if (addressArray.length != amountArray.length){
     alert("Invalid Input.");
@@ -76,6 +78,7 @@ export const createProposalDistributeGovToken = async (
       csvData = csvData + "?";
     }
   }
+  console.log("### distribute csv:",csvData);
   const proposalParameter: AddProposalFormData = {
     proposalKind: proposalData.proposalKind,
     title: proposalData.title,

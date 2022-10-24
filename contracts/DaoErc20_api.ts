@@ -1,6 +1,3 @@
-import DaoErc20Contract from "./construct/DaoErc20";
-import { ethers } from "ethers";
-import { errorFunction } from "./commonFunctions";
 import {
   Erc20DeployData,
   ProposalData4ChangingTokenSaleStatus,
@@ -11,8 +8,9 @@ import { addProposal } from "./ProposalManagerApi";
 import { ApiPromise, WsProvider } from "@polkadot/api";
 import { ContractPromise, CodePromise } from "@polkadot/api-contract";
 import psp20Abi from "./construct/Psp22.json";
-import { checkEventsAndInculueError } from "./contract_common_util";
+import { checkEventsAndInculueError, formatBalances } from "./contract_common_util";
 import psp22ContractWasm from "../contracts/construct/Psp22_contract.json";
+import { BN } from "@polkadot/util"
 
 const blockchainUrl = String(process.env.NEXT_PUBLIC_BLOCKCHAIN_URL) ?? "";
 const gasLimit = 100000 * 1000000;
@@ -30,15 +28,22 @@ export const deployDaoErc20 = async (
   const contractWasm = psp22ContractWasm.source.wasm;
   const contract = new CodePromise(api, psp20Abi, contractWasm);
   const injector = await web3FromSource(performingAccount.meta.source);
+  const decimals = api.registry.chainDecimals;
+  const decimalPrice:Number = inputData.price * (10 ** decimals[0]);
+  const decimaal10 = 10 ** inputData.decimal;
+  const decimalInitialSupply = new BN(inputData.initialSupply.toString()).mul(new BN(decimaal10.toString()));
+  console.log("### decimalInitialSupply:",decimalInitialSupply.toString() );
+
   const tx = contract.tx.new(
     { gasLimit, storageDepositLimit },
-    inputData.initialSupply,
+    decimalInitialSupply.toString(),
     inputData.tokenName,
     inputData.tokenSymbol,
     inputData.decimal,
     inputData.daoAddress,
-    inputData.price
+    decimalPrice.toString()
   );
+  // check compile error
   const unsub = await tx.signAndSend(
     performingAccount.address,
     { signer: injector.signer },
@@ -60,29 +65,33 @@ export const deployDaoErc20 = async (
 export const buy = async (
   performingAccount: InjectedAccountWithMeta,
   tokenAddress: string,
-  amount: number
+  amount: BN
 ) => {
   const { web3FromSource } = await import("@polkadot/extension-dapp");
   const wsProvider = new WsProvider(blockchainUrl);
   const api = await ApiPromise.create({ provider: wsProvider });
 
-  const price = await getPrice(performingAccount.address, tokenAddress);
-  const priceAmount = Number(price) * amount;
+  const price = await (await getPrice(performingAccount.address, tokenAddress)).replaceAll(",","");
+  console.log("### buy psp22: price:",price);
+  console.log("### buy psp22: amount:",amount.toString());
+
+  const priceAmount = new BN(price).mul(amount);
 
   const contract = new ContractPromise(api, psp20Abi, tokenAddress);
   const injector = await web3FromSource(performingAccount.meta.source);
-  const tx = await contract.tx.buy_token(
-    { value: priceAmount, gasLimit: gasLimit },
+  const tx = await contract.tx.buyToken(
+    { value: priceAmount.toString(), gasLimit: gasLimit },
     performingAccount.address,
-    amount
+    amount.toString()
   );
   if (injector !== undefined) {
     const unsub = await tx.signAndSend(
       performingAccount.address,
       { signer: injector.signer },
-      (result, events = []) => {
-        if (result.status.isFinalized) {
-          if (checkEventsAndInculueError(events)) {
+      ( {events = [],status} ) => {
+        if (status.isFinalized) {
+          if (checkEventsAndInculueError(events) == true) {
+            console.log("### checkEventsAndInculueError is true");
             alert("Transaction is failure.");
           }
           unsub();
@@ -115,27 +124,27 @@ export const proposeChangingTokenSaleStatus = async (
   await addProposal(performingAccount, proposalParameter, daoAddress);
 };
 
-export const getContractBalance = async (
-  tokenAddress: string
-): Promise<number> => {
-  const contractConstract = DaoErc20Contract;
-  let res = 0;
-  if (typeof window.ethereum !== "undefined" && tokenAddress) {
-    const provider = new ethers.providers.Web3Provider(window.ethereum);
-    const signer = provider.getSigner();
-    const contract = new ethers.Contract(
-      tokenAddress,
-      contractConstract.abi,
-      signer
-    );
-    res = await contract.getContractBalance().catch((err: any) => {
-      console.log(err);
-      errorFunction(err);
-    });
-  }
+// export const getContractBalance = async (
+//   tokenAddress: string
+// ): Promise<number> => {
+//   const contractConstract = DaoErc20Contract;
+//   let res = 0;
+//   if (typeof window.ethereum !== "undefined" && tokenAddress) {
+//     const provider = new ethers.providers.Web3Provider(window.ethereum);
+//     const signer = provider.getSigner();
+//     const contract = new ethers.Contract(
+//       tokenAddress,
+//       contractConstract.abi,
+//       signer
+//     );
+//     res = await contract.getContractBalance().catch((err: any) => {
+//       console.log(err);
+//       errorFunction(err);
+//     });
+//   }
 
-  return res;
-};
+//   return res;
+// };
 
 export const getMintedAmount = async (
   peformanceAddress: string,
@@ -203,7 +212,7 @@ export const getSalesStatus = async (
 
 export const getPrice = async (
   peformanceAddress: string,
-  tokenAddress: string
+  tokenAddress: string,
 ): Promise<string> => {
   let res = "0";
   const wsProvider = new WsProvider(blockchainUrl);

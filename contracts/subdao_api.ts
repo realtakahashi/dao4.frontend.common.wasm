@@ -193,6 +193,7 @@ export const deploySubDAO = async (
   const unsub = await tx.signAndSend(
     performingAccount.address,
     { signer: injector.signer },
+  // check compile error
     ({ events = [], contract, status }) => {
       if (status.isFinalized) {
         if (checkEventsAndInculueError(events)) {
@@ -229,8 +230,8 @@ export const registerToDaoManager = async (
     const unsub = await tx.signAndSend(
       performingAccount.address,
       { signer: injector.signer },
-      (result, events = []) => {
-        if (result.status.isFinalized) {
+      ( { status, events = [] } ) => {
+        if (status.isFinalized) {
           if (checkEventsAndInculueError(events)) {
             alert("Transaction is failure.");
           }
@@ -264,8 +265,8 @@ export const doDonateSubDao = async (
     const unsub = await tx.signAndSend(
       performingAccount.address,
       { signer: injector.signer },
-      (result, events = []) => {
-        if (result.status.isFinalized) {
+      ( { status, events = [] } ) => {
+        if (status.isFinalized) {
           if (checkEventsAndInculueError(events)) {
             alert("Transaction is failure.");
           }
@@ -333,6 +334,8 @@ export const getTokenList = async (
   const wsProvider = new WsProvider(blockchainUrl);
   const api = await ApiPromise.create({ provider: wsProvider });
 
+ console.log("### dao address:",daoAddress);
+
   const contract = new ContractPromise(api, daoAbi, daoAddress);
   const { gasConsumed, result, output } = await contract.query.getTokenList(
     peformanceAddress,
@@ -340,7 +343,6 @@ export const getTokenList = async (
       value: 0,
       gasLimit: -1,
     },
-    daoAddress
   );
   if (output !== undefined && output !== null) {
     let response_json = output.toJSON();
@@ -380,6 +382,7 @@ export const getTokenListWithName = async (
   for (var item of tokenList) {
     let tokenName = "";
     let tokenSymbol = "";
+    let decimal = "";
     switch (item.tokenKind) {
       case (TokenKind.ERC20):
         tokenName = await getPsp22Value(
@@ -391,6 +394,11 @@ export const getTokenListWithName = async (
           peformanceAddress,
           item.tokenAddress,
           "psp22Metadata::tokenSymbol"
+        );
+        decimal = await getPsp22Value(
+          peformanceAddress,
+          item.tokenAddress,
+          "psp22Metadata::tokenDecimals"
         );
         break;
         case (TokenKind.GOVERNANCE):
@@ -404,7 +412,12 @@ export const getTokenListWithName = async (
             item.tokenAddress,
             "psp22Metadata::tokenSymbol"
           );
-          break;        
+          decimal = await getPsp22Value(
+            peformanceAddress,
+            item.tokenAddress,
+            "psp22Metadata::tokenDecimals"
+          );
+            break;        
       case TokenKind.ERC721:
         tokenName = await getPsp34Value(
           peformanceAddress,
@@ -428,6 +441,7 @@ export const getTokenListWithName = async (
       tokenKind: item.tokenKind,
       tokenName: String(tokenName),
       tokenSymbol: String(tokenSymbol),
+      decimal:decimal,
     };
     response.push(pushItem);
   }
@@ -530,6 +544,7 @@ export const createProposal4AddingTokenToList = async (
   daoAddress: string,
   proposalData:ProposalData4RegisterToken
 ) => {
+  console.log("### createProposal4AddingTokenToList pass 1")
   const csvData = tokenAddress + "," + String(tokenKind);
   const proposalParameter: AddProposalFormData = {
     proposalKind: proposalData.proposalKind,
@@ -539,7 +554,9 @@ export const createProposal4AddingTokenToList = async (
     detail: proposalData.detail,
     csvData: csvData,
   };
+  console.log("### createProposal4AddingTokenToList pass 2")
   await addProposal(performingAccount, proposalParameter, daoAddress);
+  console.log("### createProposal4AddingTokenToList pass 3")
 
 };
 

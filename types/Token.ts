@@ -48,6 +48,7 @@ export interface TokenInfoWithName {
   tokenAddress: string;
   tokenName: string;
   tokenSymbol: string;
+  decimal: string;
 }
 
 export interface ProposalData4ChangingTokenSaleStatus {

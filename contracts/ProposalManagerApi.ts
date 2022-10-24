@@ -1,12 +1,7 @@
 import {
   AddProposalFormData,
   ProposalInfo,
-  PROPOSAL_KIND,
-  PROPOSAL_VOTING,
 } from "../types/ProposalManagerType";
-import ProposalManagerContractConstruct from "./construct/ProposalManager";
-import { ethers } from "ethers";
-import { errorFunction } from "../contracts/commonFunctions";
 
 import { ApiPromise, WsProvider } from "@polkadot/api";
 import { ContractPromise } from "@polkadot/api-contract";
@@ -124,8 +119,8 @@ export const addProposal = async (
     const unsub = await tx.signAndSend(
       performingAccount.address,
       { signer: injector.signer },
-      (result, events = []) => {
-        if (result.status.isFinalized) {
+      ( { status, events = [] } ) => {
+        if (status.isFinalized) {
           if (checkEventsAndInculueError(events)) {
             alert("Transaction is failure.");
           }
@@ -163,8 +158,8 @@ export const doVoteForProposal = async (
     const unsub = await tx.signAndSend(
       performingAccount.address,
       { signer: injector.signer },
-      (result, events = []) => {
-        if (result.status.isFinalized) {
+      ( {status, events = []} ) => {
+        if (status.isFinalized) {
           if (checkEventsAndInculueError(events)) {
             alert("Transaction is failure.");
           }
@@ -203,8 +198,8 @@ export const changeProposalStatus = async (
     const unsub = await tx.signAndSend(
       performingAccount.address,
       { signer: injector.signer },
-      (result, events = []) => {
-        if (result.status.isFinalized) {
+      ({ status, events = []} ) => {
+        if (status.isFinalized) {
           if (checkEventsAndInculueError(events)) {
             alert("Transaction is failure.");
           }
@@ -231,6 +226,9 @@ export const execute_proposal = async (
     proposalManagerAddress
   );
   const injector = await web3FromSource(performingAccount.meta.source);
+  console.log("### execute proposal daoAddress:", daoAddress);
+  console.log("### execute proposal proposalId:", proposalId);
+
   const tx = await contract.tx.executeProposal(
     { value: 0, gasLimit: gasLimit },
     daoAddress,
@@ -240,9 +238,9 @@ export const execute_proposal = async (
     const unsub = await tx.signAndSend(
       performingAccount.address,
       { signer: injector.signer },
-      (result, events = []) => {
-        if (result.status.isFinalized) {
-          console.log("### proposal is executed events:",events);
+      ({ status, events = [] } ) => {
+        if (status.isFinalized) {
+          console.log("### proposal is executed events:", events);
           if (checkEventsAndInculueError(events)) {
             alert("Transaction is failure.");
           }
