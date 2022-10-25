@@ -439,7 +439,6 @@ const getPsp22Value = async (
   if (output !== undefined && output !== null) {
     res = output.toHuman()?.toString() ?? "";
   }
-  api.disconnect();
   return res;
 };
 

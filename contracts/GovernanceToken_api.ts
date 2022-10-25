@@ -49,7 +49,6 @@ export const deployGonvernanceToken = async (
           setTokenAddress(tokenAddess);
         }
         unsub();
-        api.disconnect();
       }
     }
   );

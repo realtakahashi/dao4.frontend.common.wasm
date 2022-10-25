@@ -44,7 +44,6 @@ export const deployDaoErc721 = async (
           setTokenAddress(tokenAddess);
         }
         unsub();
-        api.disconnect();
       }
     }
   );
@@ -88,7 +87,6 @@ export const buy = async (
             }
           });
           unsub();
-          api.disconnect();
         }
       }
     );

@@ -59,7 +59,6 @@ export const getMemberList = async (
       response.push(item);
     }
   }
-  api.disconnect();
   return response;
 };
 
@@ -91,7 +90,6 @@ export const checkElectionComission = async (
       response = false;
     }
   }
-  api.disconnect();
   return response;
 };
 
@@ -127,7 +125,6 @@ export const addFirstMember = async (
           }
           setFinished(true);
           unsub();
-          api.disconnect();
         }
       }
     );

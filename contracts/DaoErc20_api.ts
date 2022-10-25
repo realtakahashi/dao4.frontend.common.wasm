@@ -21,7 +21,6 @@ export const deployDaoErc20 = async (
   inputData: Erc20DeployData,
   setTokenAddress:(tokenAddress:string) => void
 ) => {
-
   const { web3FromSource } = await import("@polkadot/extension-dapp");
   const contractWasm = psp22ContractWasm.source.wasm;
   const contract = new CodePromise(api, psp20Abi, contractWasm);
@@ -54,7 +53,6 @@ export const deployDaoErc20 = async (
           setTokenAddress(tokenAddess);
         }
         unsub();
-        api.disconnect();
       }
     }
   );
@@ -91,7 +89,6 @@ export const buy = async (
             alert("Transaction is failure.");
           }
           unsub();
-          api.disconnect();
         }
       }
     );

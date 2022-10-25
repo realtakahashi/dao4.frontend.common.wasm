@@ -120,7 +120,6 @@ export const addProposal = async (
             alert("Transaction is failure.");
           }
           unsub();
-          api.disconnect();
         }
       }
     );
@@ -158,7 +157,6 @@ export const doVoteForProposal = async (
             alert("Transaction is failure.");
           }
           unsub();
-          api.disconnect();
         }
       }
     );
@@ -197,7 +195,6 @@ export const changeProposalStatus = async (
             alert("Transaction is failure.");
           }
           unsub();
-          api.disconnect();
         }
       }
     );
@@ -237,7 +234,6 @@ export const execute_proposal = async (
             alert("Transaction is failure.");
           }
           unsub();
-          api.disconnect();
         }
       }
     );
