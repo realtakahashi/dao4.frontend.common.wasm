@@ -216,6 +216,9 @@ export const registerToDaoManager = async (
   daoAddress: string,
   setFinished: (value: boolean) => void
 ) => {
+  console.log("### performingAccount.address:",performingAccount.address);
+  console.log("### daoAddress:",daoAddress);
+
   const { web3FromSource } = await import("@polkadot/extension-dapp");
   const wsProvider = new WsProvider(blockchainUrl);
   const api = await ApiPromise.create({ provider: wsProvider });
