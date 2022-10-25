@@ -9,19 +9,16 @@ import type { InjectedAccountWithMeta } from "@polkadot/extension-inject/types";
 import proposalManagerAbi from "../contracts/construct/ProposalManager.json";
 import { checkEventsAndInculueError } from "./contract_common_util";
 
-const blockchainUrl = String(process.env.NEXT_PUBLIC_BLOCKCHAIN_URL) ?? "";
 const proposalManagerAddress =
   String(process.env.NEXT_PUBLIC_PROPOSAL_MANAGER_CONTRACT_ADDRESS) ?? "";
 const gasLimit = 100000 * 1000000;
 const storageDepositLimit = null;
 
 export const getProposalList = async (
+  api:any,
   peformanceAddress: string,
   daoAddress: string
 ): Promise<Array<ProposalInfo>> => {
-  const wsProvider = new WsProvider(blockchainUrl);
-  const api = await ApiPromise.create({ provider: wsProvider });
-
   let response: ProposalInfo[] = [];
 
   const contract = new ContractPromise(
@@ -55,20 +52,18 @@ export const getProposalList = async (
       response.push(item);
     }
   }
-  api.disconnect();
   return response;
 };
 
 const PROPOSAL_KIND_CHANGE_ELECTORAL_COMMISSIONER = 2;
 
 export const addProposal = async (
+  api:any,
   performingAccount: InjectedAccountWithMeta,
   inputData: AddProposalFormData,
   daoAddress: string
 ) => {
   const { web3FromSource } = await import("@polkadot/extension-dapp");
-  const wsProvider = new WsProvider(blockchainUrl);
-  const api = await ApiPromise.create({ provider: wsProvider });
   const contract = new ContractPromise(
     api,
     proposalManagerAbi,
@@ -133,14 +128,13 @@ export const addProposal = async (
 };
 
 export const doVoteForProposal = async (
+  api:any,
   performingAccount: InjectedAccountWithMeta,
   yes: boolean,
   proposalId: number,
   daoAddress: string
 ) => {
   const { web3FromSource } = await import("@polkadot/extension-dapp");
-  const wsProvider = new WsProvider(blockchainUrl);
-  const api = await ApiPromise.create({ provider: wsProvider });
 
   const contract = new ContractPromise(
     api,
@@ -172,14 +166,13 @@ export const doVoteForProposal = async (
 };
 
 export const changeProposalStatus = async (
+  api:any,
   performingAccount: InjectedAccountWithMeta,
   proposalStatus: number,
   proposalId: number,
   daoAddress: string
 ) => {
   const { web3FromSource } = await import("@polkadot/extension-dapp");
-  const wsProvider = new WsProvider(blockchainUrl);
-  const api = await ApiPromise.create({ provider: wsProvider });
 
   const contract = new ContractPromise(
     api,
@@ -212,13 +205,12 @@ export const changeProposalStatus = async (
 };
 
 export const execute_proposal = async (
+  api:any,
   performingAccount: InjectedAccountWithMeta,
   proposalId: number,
   daoAddress: string
 ) => {
   const { web3FromSource } = await import("@polkadot/extension-dapp");
-  const wsProvider = new WsProvider(blockchainUrl);
-  const api = await ApiPromise.create({ provider: wsProvider });
 
   const contract = new ContractPromise(
     api,

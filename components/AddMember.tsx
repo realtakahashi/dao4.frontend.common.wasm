@@ -1,10 +1,11 @@
-import { useState } from "react";
+import { useState,useContext } from "react";
 import { ProposalData4AddingMember } from "../types/MemberManagerType";
 import { propose4AddingTheMember } from "../contracts/membermanager_api";
 import {
   get_account_info,
   get_selected_address,
 } from "../contracts/get_account_info_api";
+import { AppContext } from "../../pages/_app"; 
 
 interface AddMemberParameter {
   daoAddress: string;
@@ -21,6 +22,7 @@ const AddMember = (props: AddMemberParameter) => {
       detail: "",
       githubURL: "",
     });
+    const {api} = useContext(AppContext);
 
   const onChangeInput = (event: React.ChangeEvent<HTMLInputElement>) => {
     setAddMemberValue({
@@ -41,6 +43,7 @@ const AddMember = (props: AddMemberParameter) => {
     event.preventDefault();
     const selectedAccount = await get_account_info(get_selected_address());
     await propose4AddingTheMember(
+      api,
       selectedAccount,
       addMemberValue,
       props.daoAddress

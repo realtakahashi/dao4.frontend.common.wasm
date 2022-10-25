@@ -1,10 +1,11 @@
 import { useState } from "react";
-import { useEffect } from "react";
+import { useEffect, useContext } from "react";
 import Link from "next/link";
 import { MemberInfo, MemberInfoPlus } from "../types/MemberManagerType";
 import { getMemberList } from "../contracts/membermanager_api";
 import DeleteMember from "./DeleteMember";
 import { get_selected_address } from "../contracts/get_account_info_api";
+import {AppContext} from "../../pages/_app";
 
 interface ShowListSetting {
   setShowMemberButton: (flg: boolean) => void;
@@ -23,11 +24,12 @@ const MemberList = (props: ShowListSetting) => {
     eoaAddress: "",
     tokenId: 0,
   });
+  const {api} = useContext(AppContext);
 
   useEffect(() => {
     const _getMemberList = async () => {
       const selectedAddress = get_selected_address();
-      const result = await getMemberList(selectedAddress,props.daoAddress);
+      const result = await getMemberList(api, selectedAddress,props.daoAddress);
       console.log("## memberList:",result);
       setMemberList(result);
     };

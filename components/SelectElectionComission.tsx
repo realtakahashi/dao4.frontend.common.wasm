@@ -1,7 +1,8 @@
-import { useState } from "react";
+import { useState, useContext } from "react";
 import { get_account_info, get_selected_address } from "../contracts/get_account_info_api";
 import { Proposal4ResetElectionComission } from "../contracts/membermanager_api";
 import { PropsalData4ElectionComission } from "../types/MemberManagerType";
+import {AppContext} from "../../pages/_app";
 
 interface SelectElectionComissionParameter {
   daoAddress: string;
@@ -20,6 +21,7 @@ const SelectElectionComission = (props: SelectElectionComissionParameter) => {
       proposalKind:2,
     });
   const [showSecondCandidate, setShowSecondCandidate] = useState(false);
+  const {api} = useContext(AppContext);
 
   const onChangeInput = (event: React.ChangeEvent<HTMLInputElement>) => {
     setElectionComissionValue({
@@ -40,6 +42,7 @@ const SelectElectionComission = (props: SelectElectionComissionParameter) => {
     event.preventDefault();
     const selectedAccount = await get_account_info(get_selected_address());
     await Proposal4ResetElectionComission(
+      api,
       selectedAccount,
       electionComissionValue,
       props.daoAddress

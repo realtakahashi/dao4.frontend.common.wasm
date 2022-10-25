@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { useState } from "react";
-import { useEffect } from "react";
+import { useEffect, useContext } from "react";
 import { get_account_info, get_selected_address } from "../contracts/get_account_info_api";
 import { checkElectionComission } from "../contracts/membermanager_api";
 import { execute_proposal, getProposalList } from "../contracts/ProposalManagerApi";
@@ -13,6 +13,7 @@ import {
 import ChangeStatusOfProposal from "./ChangeStatusOfProposal";
 import ProposalParts from "./ProposalParts";
 import Vote from "./Vote";
+import {AppContext} from "../../pages/_app";
 
 interface ProposalListProps {
   setShowSubmmitButton: (flg: boolean) => void;
@@ -42,6 +43,7 @@ const ProposalList = (props: ProposalListProps) => {
     proposer:"",
     csvData:"",
   });
+  const {api} = useContext(AppContext);
 
   const _setShowAndSetTargetProposal = (
     _showList: boolean,
@@ -85,19 +87,19 @@ const ProposalList = (props: ProposalListProps) => {
 
   const _getProposalList = async () => {
     const selected_address = get_selected_address();
-    const result = await getProposalList(selected_address, props.daoAddress);
+    const result = await getProposalList(api,selected_address, props.daoAddress);
     console.log("## proposalList:",result);
     setProposalList(result);
   };
 
   const _checkElectionComission = async () => {
     const selected_address = get_selected_address();
-    setIsElectionComission(await checkElectionComission(selected_address,props.daoAddress));
+    setIsElectionComission(await checkElectionComission(api, selected_address,props.daoAddress));
   };
 
   const executeProposal =async (propsalId:string) => {
     const selected_address = await get_account_info(get_selected_address());
-    await execute_proposal(selected_address,Number(propsalId),props.daoAddress);
+    await execute_proposal(api, selected_address,Number(propsalId),props.daoAddress);
   }
 
   useEffect(() => {

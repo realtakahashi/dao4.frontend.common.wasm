@@ -6,19 +6,16 @@ import psp34ContractWasm from "./construct/Psp34_contract.json";
 import { checkEventsAndInculueError, formatBalances } from "./contract_common_util";
 import type { InjectedAccountWithMeta } from "@polkadot/extension-inject/types";
 
-const blockchainUrl = String(process.env.NEXT_PUBLIC_BLOCKCHAIN_URL) ?? "";
 const gasLimit = 100000 * 1000000;
 const storageDepositLimit = null;
 const initial_id = 0;
 
 export const deployDaoErc721 = async (
+  api:any,
   performingAccount: InjectedAccountWithMeta,
   inputData: Erc721DeployData,
   setTokenAddress:(tokenAddress:string) => void
 ) => {
-  const wsProvider = new WsProvider(blockchainUrl);
-  const api = await ApiPromise.create({ provider: wsProvider });
-
   const { web3FromSource } = await import("@polkadot/extension-dapp");
   const contractWasm = psp34ContractWasm.source.wasm;
   const contract = new CodePromise(api, psp34Abi, contractWasm);
@@ -54,15 +51,14 @@ export const deployDaoErc721 = async (
 };
 
 export const buy = async (
+  api:any,
   performingAccount: InjectedAccountWithMeta,
   tokenAddress: string,
   setTokenId: (id: string) => void
 ) => {
   const { web3FromSource } = await import("@polkadot/extension-dapp");
-  const wsProvider = new WsProvider(blockchainUrl);
-  const api = await ApiPromise.create({ provider: wsProvider });
 
-  const price = await getPrice(performingAccount.address, tokenAddress);
+  const price = await getPrice(api, performingAccount.address, tokenAddress);
   console.log("### psp34 price:",price);
 
   const contract = new ContractPromise(api, psp34Abi, tokenAddress);
@@ -80,16 +76,17 @@ export const buy = async (
           if (checkEventsAndInculueError(events)) {
             alert("Transaction is failure.");
           }
-          // events.forEach(({ event }) => {
-          //   if (api.events.contracts.ContractEmitted.is(event)) {
-          //     const [account_id, contract_evt] = event.data;
-          //     const decoded = new Abi(psp34Abi).decodeEvent(contract_evt);
-          //     console.log("### psp34 event decoded:",decoded);
-          //     const tokenId = decoded.args[1].toString() ?? "0";
-          //     console.log("### tokenId:",tokenId);
-          //     setTokenId(tokenId);
-          //   }
-          // });
+          // check compile error
+          events.forEach(({ event }) => {
+            if (api.events.contracts.ContractEmitted.is(event)) {
+              const [account_id, contract_evt] = event.data;
+              const decoded = new Abi(psp34Abi).decodeEvent(contract_evt);
+              console.log("### psp34 event decoded:",decoded);
+              const tokenId = decoded.args[1].toString() ?? "0";
+              console.log("### tokenId:",tokenId);
+              setTokenId(tokenId);
+            }
+          });
           unsub();
           api.disconnect();
         }
@@ -99,12 +96,11 @@ export const buy = async (
 };
 
 export const getPrice = async (
+  api:any,
   peformanceAddress: string,
   tokenAddress: string
 ): Promise<string> => {
   let res = "0";
-  const wsProvider = new WsProvider(blockchainUrl);
-  const api = await ApiPromise.create({ provider: wsProvider });
   const contract = new ContractPromise(api, psp34Abi, tokenAddress);
   const { output } = await contract.query.getSalesPrice(
     peformanceAddress,
@@ -120,12 +116,11 @@ export const getPrice = async (
 };
 
 export const getSalesAmount = async (
+  api:any,
   peformanceAddress: string,
   tokenAddress: string
 ): Promise<number> => {
   let res = "0";
-  const wsProvider = new WsProvider(blockchainUrl);
-  const api = await ApiPromise.create({ provider: wsProvider });
   const contract = new ContractPromise(api, psp34Abi, tokenAddress);
   const { output } = await contract.query.getSalesAmount(peformanceAddress, {
     value: 0,
@@ -138,12 +133,11 @@ export const getSalesAmount = async (
 };
 
 export const getSalesStatus = async (
+  api:any,
   peformanceAddress: string,
   tokenAddress: string
 ): Promise<boolean> => {
   let res = false;
-  const wsProvider = new WsProvider(blockchainUrl);
-  const api = await ApiPromise.create({ provider: wsProvider });
   const contract = new ContractPromise(api, psp34Abi, tokenAddress);
   const { output } = await contract.query.getTokenSalesStatus(
     peformanceAddress,

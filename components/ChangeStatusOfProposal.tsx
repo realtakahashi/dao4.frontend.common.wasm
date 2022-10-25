@@ -1,11 +1,13 @@
-import { useState } from "react";
+import { useState, useContext } from "react";
 import { get_account_info, get_selected_address } from "../contracts/get_account_info_api";
 import { changeProposalStatus } from "../contracts/ProposalManagerApi";
 import { ProposalProps } from "../types/ProposalManagerType";
 import ProposalParts from "./ProposalParts";
+import { AppContext } from "../../pages/_app";
 
 const ChangeStatusOfProposal = (props: ProposalProps) => {
   const [changeStatus, setChangeStatus] = useState("0");
+  const {api} = useContext(AppContext);
 
   const selectChangeStatus = (status: string) => {
     setChangeStatus(status);
@@ -14,6 +16,7 @@ const ChangeStatusOfProposal = (props: ProposalProps) => {
   const doChangeStatus = async () => {
     const selectedAccount = await get_account_info(get_selected_address());
     await changeProposalStatus(
+      api,
       selectedAccount,
       Number(changeStatus),
       Number(props.targetProposal.proposalId),

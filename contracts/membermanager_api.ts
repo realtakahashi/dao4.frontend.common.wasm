@@ -18,7 +18,6 @@ import {
 } from "../types/ProposalManagerType";
 import { checkEventsAndInculueError } from "./contract_common_util";
 
-const blockchainUrl = String(process.env.NEXT_PUBLIC_BLOCKCHAIN_URL) ?? "";
 const memberManagerAddress =
   String(process.env.NEXT_PUBLIC_MEMBER_MANAGER_CONTRACT_ADDRESS) ?? "";
 const proposalManagerAddress =
@@ -27,12 +26,10 @@ const gasLimit = 100000 * 1000000;
 const storageDepositLimit = null;
 
 export const getMemberList = async (
+  api:any,
   peformanceAddress: string,
   daoAddress: string
 ): Promise<Array<MemberInfoPlus>> => {
-  const wsProvider = new WsProvider(blockchainUrl);
-  const api = await ApiPromise.create({ provider: wsProvider });
-
   let response: MemberInfoPlus[] = [];
 
   const contract = new ContractPromise(
@@ -67,12 +64,11 @@ export const getMemberList = async (
 };
 
 export const checkElectionComission = async (
+  api:any,
   peformanceAddress: string,
   daoAddress: string
 ): Promise<boolean> => {
   let response: boolean = false;
-  const wsProvider = new WsProvider(blockchainUrl);
-  const api = await ApiPromise.create({ provider: wsProvider });
   const memberManagerContract = new ContractPromise(
     api,
     memberManagerAbi,
@@ -100,15 +96,13 @@ export const checkElectionComission = async (
 };
 
 export const addFirstMember = async (
+  api:any,
   performingAccount: InjectedAccountWithMeta,
   _memberFormData: FirstMemberData,
   daoAddress: string,
   setFinished: (value: boolean) => void
 ) => {
   const { web3FromSource } = await import("@polkadot/extension-dapp");
-  const wsProvider = new WsProvider(blockchainUrl);
-  const api = await ApiPromise.create({ provider: wsProvider });
-
   const contract = new ContractPromise(
     api,
     memberManagerAbi,
@@ -141,6 +135,7 @@ export const addFirstMember = async (
 };
 
 export const propose4AddingTheMember = async (
+  api:any,
   performingAccount: InjectedAccountWithMeta,
   proposalData: ProposalData4AddingMember,
   daoAddress: string
@@ -163,10 +158,11 @@ export const propose4AddingTheMember = async (
     detail: proposalData.detail,
     csvData: csvData,
   };
-  await addProposal(performingAccount, proposalParameter, daoAddress);
+  await addProposal(api,performingAccount, proposalParameter, daoAddress);
 };
 
 export const Proposal4ResetElectionComission = async (
+  api:any,
   performingAccount: InjectedAccountWithMeta,
   proposalData: PropsalData4ElectionComission,
   daoAddress: string
@@ -183,10 +179,11 @@ export const Proposal4ResetElectionComission = async (
     detail: proposalData.detail,
     csvData: csvData,
   };
-  await addProposal(performingAccount, proposalParameter, daoAddress);
+  await addProposal(api,performingAccount, proposalParameter, daoAddress);
 };
 
 export const propose4DeletingTheMember = async (
+  api:any,
   performingAccount: InjectedAccountWithMeta,
   memberInfoData: MemberInfo,
   proposalData: AddProposalData,
@@ -202,5 +199,5 @@ export const propose4DeletingTheMember = async (
     csvData: csvData,
   };
   console.log("## delete proposal. parameter:", proposalParameter);
-  await addProposal(performingAccount, proposalParameter, daoAddress);
+  await addProposal(api,performingAccount, proposalParameter, daoAddress);
 };

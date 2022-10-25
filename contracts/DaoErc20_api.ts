@@ -12,17 +12,15 @@ import { checkEventsAndInculueError, formatBalances } from "./contract_common_ut
 import psp22ContractWasm from "../contracts/construct/Psp22_contract.json";
 import { BN } from "@polkadot/util"
 
-const blockchainUrl = String(process.env.NEXT_PUBLIC_BLOCKCHAIN_URL) ?? "";
 const gasLimit = 100000 * 1000000;
 const storageDepositLimit = null;
 
 export const deployDaoErc20 = async (
+  api:any,
   performingAccount: InjectedAccountWithMeta,
   inputData: Erc20DeployData,
   setTokenAddress:(tokenAddress:string) => void
 ) => {
-  const wsProvider = new WsProvider(blockchainUrl);
-  const api = await ApiPromise.create({ provider: wsProvider });
 
   const { web3FromSource } = await import("@polkadot/extension-dapp");
   const contractWasm = psp22ContractWasm.source.wasm;
@@ -63,15 +61,13 @@ export const deployDaoErc20 = async (
 };
 
 export const buy = async (
+  api:any,
   performingAccount: InjectedAccountWithMeta,
   tokenAddress: string,
   amount: BN
 ) => {
   const { web3FromSource } = await import("@polkadot/extension-dapp");
-  const wsProvider = new WsProvider(blockchainUrl);
-  const api = await ApiPromise.create({ provider: wsProvider });
-
-  const price = await (await getPrice(performingAccount.address, tokenAddress)).replaceAll(",","");
+  const price = await (await getPrice(api,performingAccount.address, tokenAddress)).replaceAll(",","");
   console.log("### buy psp22: price:",price);
   console.log("### buy psp22: amount:",amount.toString());
 
@@ -103,6 +99,7 @@ export const buy = async (
 };
 
 export const proposeChangingTokenSaleStatus = async (
+  api:any,
   performingAccount: InjectedAccountWithMeta,
   proposalData: ProposalData4ChangingTokenSaleStatus,
   tokenAddress: string,
@@ -121,7 +118,7 @@ export const proposeChangingTokenSaleStatus = async (
     detail: proposalData.detail,
     csvData: csvData,
   };
-  await addProposal(performingAccount, proposalParameter, daoAddress);
+  await addProposal(api,performingAccount, proposalParameter, daoAddress);
 };
 
 // export const getContractBalance = async (
@@ -147,12 +144,11 @@ export const proposeChangingTokenSaleStatus = async (
 // };
 
 export const getMintedAmount = async (
+  api:any,
   peformanceAddress: string,
   tokenAddress: string
 ): Promise<string> => {
   let res = "0";
-  const wsProvider = new WsProvider(blockchainUrl);
-  const api = await ApiPromise.create({ provider: wsProvider });
   const contract = new ContractPromise(api, psp20Abi, tokenAddress);
   const { output } = await contract.query["psp22::totalSupply"](
     peformanceAddress,
@@ -168,12 +164,11 @@ export const getMintedAmount = async (
 };
 
 export const getSalesAmount = async (
+  api:any,
   peformanceAddress: string,
   tokenAddress: string
 ): Promise<string> => {
   let res = "0";
-  const wsProvider = new WsProvider(blockchainUrl);
-  const api = await ApiPromise.create({ provider: wsProvider });
   const contract = new ContractPromise(api, psp20Abi, tokenAddress);
   const { output } = await contract.query.getSalesAmount(peformanceAddress, {
     value: 0,
@@ -186,12 +181,11 @@ export const getSalesAmount = async (
 };
 
 export const getSalesStatus = async (
+  api:any,
   peformanceAddress: string,
   tokenAddress: string
 ): Promise<boolean> => {
   let res = false;
-  const wsProvider = new WsProvider(blockchainUrl);
-  const api = await ApiPromise.create({ provider: wsProvider });
   const contract = new ContractPromise(api, psp20Abi, tokenAddress);
   const { output } = await contract.query.getTokenSalesStatus(
     peformanceAddress,
@@ -211,12 +205,11 @@ export const getSalesStatus = async (
 };
 
 export const getPrice = async (
+  api:any,
   peformanceAddress: string,
   tokenAddress: string,
 ): Promise<string> => {
   let res = "0";
-  const wsProvider = new WsProvider(blockchainUrl);
-  const api = await ApiPromise.create({ provider: wsProvider });
   const contract = new ContractPromise(api, psp20Abi, tokenAddress);
   const { output } = await contract.query.getSalesPriceForOneToken(
     peformanceAddress,
@@ -232,6 +225,7 @@ export const getPrice = async (
 };
 
 export const CreateProoposalOfWithdraw = async (
+  api:any,
   performingAccount: InjectedAccountWithMeta,
   proposalData: ProposalData4ChangingTokenSaleStatus,
   tokenAddress: string,
@@ -246,5 +240,5 @@ export const CreateProoposalOfWithdraw = async (
     detail: proposalData.detail,
     csvData: csvData,
   };
-  await addProposal(performingAccount, proposalParameter, daoAddress);
+  await addProposal(api,performingAccount, proposalParameter, daoAddress);
 };

@@ -1,15 +1,18 @@
-import { useState } from "react";
+import { useState, useContext } from "react";
 import { TargetDaoInterface } from "../types/SubDaoType";
 import TargetDao from "./TargetDao";
 import { TargetDaoKind } from "../types/SubDaoType";
 import { doDonateSubDao } from "../contracts/subdao_api";
 import { get_account_info, get_selected_address } from "../contracts/get_account_info_api";
+import {AppContext} from "../../pages/_app";
 
 const Donate = (props: TargetDaoInterface) => {
   const [donateAmount, setDonateAmount] = useState("0");
+  const {api} = useContext(AppContext);
+
   const _doDonateFromIndividials =async () => {
     const selectedAddress = await get_account_info(get_selected_address());
-    await doDonateSubDao(selectedAddress,props.daoAddress,donateAmount)
+    await doDonateSubDao(api, selectedAddress,props.daoAddress,donateAmount)
   }
 
   return (

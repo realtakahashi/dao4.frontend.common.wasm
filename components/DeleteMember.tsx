@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useContext } from "react";
 import {
   get_account_info,
   get_selected_address,
@@ -6,6 +6,7 @@ import {
 import { propose4DeletingTheMember } from "../contracts/membermanager_api";
 import { MemberInfo } from "../types/MemberManagerType";
 import { AddProposalData } from "../types/ProposalManagerType";
+import {AppContext} from "../../pages/_app";
 
 interface DeleteMemberParameter {
   daoAddress: string;
@@ -20,9 +21,12 @@ const DeleteMember = (props: DeleteMemberParameter) => {
     githubURL: "",
     detail: "",
   });
+  const {api} = useContext(AppContext);
+
   const deleteMember = async () => {
     const selectedAccount = await get_account_info(get_selected_address());
     await propose4DeletingTheMember(
+      api,
       selectedAccount,
       props.memberInfo,
       proposalValue,

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useContext } from "react";
 import TargetDao from "./TargetDao";
 import { createDivideProposal } from "../contracts/subdao_api";
 import {
@@ -10,6 +10,7 @@ import {
   get_account_info,
   get_selected_address,
 } from "../contracts/get_account_info_api";
+import {AppContext} from "../../pages/_app";
 
 const Divide = (props: TargetDaoInterface) => {
   const [proposalValue, setProposalValue] = useState<ProposalData4ADivide>({
@@ -21,6 +22,7 @@ const Divide = (props: TargetDaoInterface) => {
     detail: "",
     githubURL: "",
   });
+  const {api} = useContext(AppContext);
 
   const onChangeInput = (event: React.ChangeEvent<HTMLInputElement>) => {
     setProposalValue({
@@ -42,6 +44,7 @@ const Divide = (props: TargetDaoInterface) => {
     event.preventDefault();
     const selectedAccount = await get_account_info(get_selected_address());
     await createDivideProposal(
+      api,
       selectedAccount,
       props.daoAddress,
       proposalValue

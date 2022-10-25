@@ -12,18 +12,15 @@ import { AddProposalFormData } from "../types/ProposalManagerType";
 import { addProposal } from "./ProposalManagerApi";
 import { BN } from "@polkadot/util";
 
-const blockchainUrl = String(process.env.NEXT_PUBLIC_BLOCKCHAIN_URL) ?? "";
 const gasLimit = 100000 * 1000000;
 const storageDepositLimit = null;
 
 export const deployGonvernanceToken = async (
+  api:any,
   performingAccount: InjectedAccountWithMeta,
   inputData: GovernanceDeployData,
   setTokenAddress:(tokenAddress:string) => void
 ) => {
-  const wsProvider = new WsProvider(blockchainUrl);
-  const api = await ApiPromise.create({ provider: wsProvider });
-
   const { web3FromSource } = await import("@polkadot/extension-dapp");
   const contractWasm = GovernanceContractWasm.source.wasm;
   const contract = new CodePromise(api, governanceAbi, contractWasm);
@@ -60,6 +57,7 @@ export const deployGonvernanceToken = async (
 
 
 export const createProposalDistributeGovToken = async (
+  api:any,
   performingAccount: InjectedAccountWithMeta,
   daoAddress: string,
   tokenAddress: string,
@@ -87,17 +85,16 @@ export const createProposalDistributeGovToken = async (
     detail: proposalData.detail,
     csvData: csvData,
   };
-  await addProposal(performingAccount, proposalParameter, daoAddress);
+  await addProposal(api, performingAccount, proposalParameter, daoAddress);
 
 };
 
 export const getMintedAmount = async (
+  api:any,
   peformanceAddress: string,
   tokenAddress: string
 ): Promise<string> => {
   let res = "0";
-  const wsProvider = new WsProvider(blockchainUrl);
-  const api = await ApiPromise.create({ provider: wsProvider });
   const contract = new ContractPromise(api, governanceAbi, tokenAddress);
   const { output } = await contract.query["psp22::totalSupply"](
     peformanceAddress,

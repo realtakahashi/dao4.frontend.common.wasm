@@ -1,11 +1,13 @@
-import { useState } from "react";
+import { useState,useContext } from "react";
 import { get_account_info, get_selected_address } from "../contracts/get_account_info_api";
 import { doVoteForProposal } from "../contracts/ProposalManagerApi";
 import { ProposalProps } from "../types/ProposalManagerType";
 import ProposalParts from "./ProposalParts";
+import {AppContext} from "../../pages/_app";
 
 const Vote = (props: ProposalProps) => {
   const [voteStatus, setVoteStatus] = useState("0");
+  const {api} = useContext(AppContext);
 
   const selectVoteStatus = (status: string) => {
     setVoteStatus(status);
@@ -14,6 +16,7 @@ const Vote = (props: ProposalProps) => {
   const _doVote = async () => {
     const selectedAccount = await get_account_info(get_selected_address());
     await doVoteForProposal(
+      api,
       selectedAccount,
       Boolean(Number(voteStatus)),
       Number(props.targetProposal.proposalId),
