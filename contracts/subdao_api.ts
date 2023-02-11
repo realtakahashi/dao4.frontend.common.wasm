@@ -178,7 +178,7 @@ export const deploySubDAO = async (
 ) => {
   let subDAOContractAddess = "";
   const gasLimit: any = api.registry.createType("WeightV2", {
-    refTime: 6219235328,
+    refTime: 3219235328,
     proofSize: 131072,
   });
   const { web3FromSource } = await import("@polkadot/extension-dapp");
