@@ -22,7 +22,7 @@ export const getProposalList = async (
 ): Promise<Array<ProposalInfo>> => {
   let response: ProposalInfo[] = [];
   const gasLimit: any = api.registry.createType("WeightV2", {
-    refTime: 6219235328,
+    refTime: 3219235328,
     proofSize: 131072,
   });
 
@@ -75,7 +75,7 @@ export const addProposal = async (
     proposalManagerAddress
   );
   const gasLimit: any = api.registry.createType("WeightV2", {
-    refTime: 6219235328,
+    refTime: 3219235328,
     proofSize: 131072,
   });
 
@@ -151,7 +151,7 @@ export const doVoteForProposal = async (
     proposalManagerAddress
   );
   const gasLimit: any = api.registry.createType("WeightV2", {
-    refTime: 6219235328,
+    refTime: 3219235328,
     proofSize: 131072,
   });
 
@@ -193,7 +193,7 @@ export const changeProposalStatus = async (
     proposalManagerAddress
   );
   const gasLimit: any = api.registry.createType("WeightV2", {
-    refTime: 6219235328,
+    refTime: 3219235328,
     proofSize: 131072,
   });
 
@@ -235,7 +235,7 @@ export const execute_proposal = async (
     proposalManagerAddress
   );
   const gasLimit: any = api.registry.createType("WeightV2", {
-    refTime: 6219235328,
+    refTime: 3219235328,
     proofSize: 131072,
   });
 

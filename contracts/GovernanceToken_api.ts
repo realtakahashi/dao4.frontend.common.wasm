@@ -28,7 +28,7 @@ export const deployGonvernanceToken = async (
   const decimaal10 = 10 ** inputData.decimal;
   const decimalInitialSupply = new BN(inputData.initialSupply.toString()).mul(new BN(decimaal10.toString()));
   const gasLimit: any = api.registry.createType("WeightV2", {
-    refTime: 6219235328,
+    refTime: 3219235328,
     proofSize: 131072,
   });
 
@@ -100,7 +100,7 @@ export const getMintedAmount = async (
   let res = "0";
   const contract = new ContractPromise(api, governanceAbi, tokenAddress);
   const gasLimit: any = api.registry.createType("WeightV2", {
-    refTime: 6219235328,
+    refTime: 3219235328,
     proofSize: 131072,
   });
 

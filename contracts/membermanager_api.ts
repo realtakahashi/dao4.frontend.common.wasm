@@ -39,7 +39,7 @@ export const getMemberList = async (
     memberManagerAddress
   );
   const gasLimit: any = api.registry.createType("WeightV2", {
-    refTime: 6219235328,
+    refTime: 3219235328,
     proofSize: 131072,
   });
 
@@ -80,7 +80,7 @@ export const checkElectionComission = async (
     memberManagerAddress
   );
   const gasLimit: any = api.registry.createType("WeightV2", {
-    refTime: 6219235328,
+    refTime: 3219235328,
     proofSize: 131072,
   });
 
@@ -118,7 +118,7 @@ export const addFirstMember = async (
     memberManagerAddress
   );
   const gasLimit: any = api.registry.createType("WeightV2", {
-    refTime: 6219235328,
+    refTime: 3219235328,
     proofSize: 131072,
   });
 

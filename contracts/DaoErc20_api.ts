@@ -31,7 +31,7 @@ export const deployDaoErc20 = async (
   const decimalInitialSupply = new BN(inputData.initialSupply.toString()).mul(new BN(decimaal10.toString()));
   console.log("### decimalInitialSupply:",decimalInitialSupply.toString() );
   const gasLimit: any = api.registry.createType("WeightV2", {
-    refTime: 6219235328,
+    refTime: 3219235328,
     proofSize: 131072,
   });
 
@@ -75,7 +75,7 @@ export const buy = async (
 
   const priceAmount = new BN(price).mul(amount);
   const gasLimit: any = api.registry.createType("WeightV2", {
-    refTime: 6219235328,
+    refTime: 3219235328,
     proofSize: 131072,
   });
 
@@ -156,7 +156,7 @@ export const getMintedAmount = async (
   let res = "0";
   const contract = new ContractPromise(api, psp20Abi, tokenAddress);
   const gasLimit: any = api.registry.createType("WeightV2", {
-    refTime: 6219235328,
+    refTime: 3219235328,
     proofSize: 131072,
   });
 
@@ -181,7 +181,7 @@ export const getSalesAmount = async (
   let res = "0";
   const contract = new ContractPromise(api, psp20Abi, tokenAddress);
   const gasLimit: any = api.registry.createType("WeightV2", {
-    refTime: 6219235328,
+    refTime: 3219235328,
     proofSize: 131072,
   });
 
@@ -203,7 +203,7 @@ export const getSalesStatus = async (
   let res = false;
   const contract = new ContractPromise(api, psp20Abi, tokenAddress);
   const gasLimit: any = api.registry.createType("WeightV2", {
-    refTime: 6219235328,
+    refTime: 3219235328,
     proofSize: 131072,
   });
 
@@ -232,7 +232,7 @@ export const getPrice = async (
   let res = "0";
   const contract = new ContractPromise(api, psp20Abi, tokenAddress);
   const gasLimit: any = api.registry.createType("WeightV2", {
-    refTime: 6219235328,
+    refTime: 3219235328,
     proofSize: 131072,
   });
 
