@@ -8,10 +8,11 @@ import { ContractPromise } from "@polkadot/api-contract";
 import type { InjectedAccountWithMeta } from "@polkadot/extension-inject/types";
 import proposalManagerAbi from "../contracts/construct/ProposalManager.json";
 import { checkEventsAndInculueError } from "./contract_common_util";
+import { BN } from "@polkadot/util";
 
 const proposalManagerAddress =
   String(process.env.NEXT_PUBLIC_PROPOSAL_MANAGER_CONTRACT_ADDRESS) ?? "";
-const gasLimit = 100000 * 1000000;
+// const gasLimit = 100000 * 1000000;
 const storageDepositLimit = null;
 
 export const getProposalList = async (
@@ -20,6 +21,10 @@ export const getProposalList = async (
   daoAddress: string
 ): Promise<Array<ProposalInfo>> => {
   let response: ProposalInfo[] = [];
+  const gasLimit: any = api.registry.createType("WeightV2", {
+    refTime: new BN("10000000000"),
+    proofSize: new BN("10000000000"),
+  });
 
   const contract = new ContractPromise(
     api,
@@ -30,7 +35,7 @@ export const getProposalList = async (
     peformanceAddress,
     {
       value: 0,
-      gasLimit: -1,
+      gasLimit: gasLimit,
     },
     daoAddress
   );
@@ -69,13 +74,18 @@ export const addProposal = async (
     proposalManagerAbi,
     proposalManagerAddress
   );
+  const gasLimit: any = api.registry.createType("WeightV2", {
+    refTime: new BN("10000000000"),
+    proofSize: new BN("10000000000"),
+  });
+
   let isLimitTnure: boolean = false;
   const { gasConsumed, result, output } =
     await contract.query.isLimitTenureCountOfElectoralCommissioner(
       performingAccount.address,
       {
         value: 0,
-        gasLimit: -1,
+        gasLimit: gasLimit,
       },
       daoAddress
     );
@@ -140,6 +150,11 @@ export const doVoteForProposal = async (
     proposalManagerAbi,
     proposalManagerAddress
   );
+  const gasLimit: any = api.registry.createType("WeightV2", {
+    refTime: new BN("10000000000"),
+    proofSize: new BN("10000000000"),
+  });
+
   const injector = await web3FromSource(performingAccount.meta.source);
   const tx = await contract.tx.voteForTheProposal(
     { value: 0, gasLimit: gasLimit },
@@ -177,6 +192,11 @@ export const changeProposalStatus = async (
     proposalManagerAbi,
     proposalManagerAddress
   );
+  const gasLimit: any = api.registry.createType("WeightV2", {
+    refTime: new BN("10000000000"),
+    proofSize: new BN("10000000000"),
+  });
+
   const injector = await web3FromSource(performingAccount.meta.source);
   console.log("## proposal status:", proposalStatus);
   const tx = await contract.tx.changeProposalStatus(
@@ -214,6 +234,11 @@ export const execute_proposal = async (
     proposalManagerAbi,
     proposalManagerAddress
   );
+  const gasLimit: any = api.registry.createType("WeightV2", {
+    refTime: new BN("10000000000"),
+    proofSize: new BN("10000000000"),
+  });
+
   const injector = await web3FromSource(performingAccount.meta.source);
   console.log("### execute proposal daoAddress:", daoAddress);
   console.log("### execute proposal proposalId:", proposalId);

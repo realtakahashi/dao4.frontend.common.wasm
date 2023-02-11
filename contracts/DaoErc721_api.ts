@@ -5,8 +5,9 @@ import psp34Abi from "./construct/Psp34.json";
 import psp34ContractWasm from "./construct/Psp34_contract.json";
 import { checkEventsAndInculueError, formatBalances } from "./contract_common_util";
 import type { InjectedAccountWithMeta } from "@polkadot/extension-inject/types";
+import { BN } from "@polkadot/util";
 
-const gasLimit = 100000 * 1000000;
+// const gasLimit = 100000 * 1000000;
 const storageDepositLimit = null;
 const initial_id = 0;
 
@@ -22,6 +23,11 @@ export const deployDaoErc721 = async (
   const injector = await web3FromSource(performingAccount.meta.source);
   const decimals = api.registry.chainDecimals;
   const decimalPrice:Number = inputData.price * (10 ** decimals[0]);
+  const gasLimit: any = api.registry.createType("WeightV2", {
+    refTime: new BN("10000000000"),
+    proofSize: new BN("10000000000"),
+  });
+
   const tx = contract.tx.new(
     { gasLimit, storageDepositLimit },
     initial_id,
@@ -59,6 +65,10 @@ export const buy = async (
 
   const price = await getPrice(api, performingAccount.address, tokenAddress);
   console.log("### psp34 price:",price);
+  const gasLimit: any = api.registry.createType("WeightV2", {
+    refTime: new BN("10000000000"),
+    proofSize: new BN("10000000000"),
+  });
 
   const contract = new ContractPromise(api, psp34Abi, tokenAddress);
   const injector = await web3FromSource(performingAccount.meta.source);
@@ -100,11 +110,16 @@ export const getPrice = async (
 ): Promise<string> => {
   let res = "0";
   const contract = new ContractPromise(api, psp34Abi, tokenAddress);
+  const gasLimit: any = api.registry.createType("WeightV2", {
+    refTime: new BN("10000000000"),
+    proofSize: new BN("10000000000"),
+  });
+
   const { output } = await contract.query.getSalesPrice(
     peformanceAddress,
     {
       value: 0,
-      gasLimit: -1,
+      gasLimit: gasLimit,
     }
   );
   if (output !== undefined && output !== null) {
@@ -120,9 +135,14 @@ export const getSalesAmount = async (
 ): Promise<number> => {
   let res = "0";
   const contract = new ContractPromise(api, psp34Abi, tokenAddress);
+  const gasLimit: any = api.registry.createType("WeightV2", {
+    refTime: new BN("10000000000"),
+    proofSize: new BN("10000000000"),
+  });
+
   const { output } = await contract.query.getSalesAmount(peformanceAddress, {
     value: 0,
-    gasLimit: -1,
+    gasLimit: gasLimit,
   });
   if (output !== undefined && output !== null) {
     res = output.toHuman()?.toString() ?? "0";
@@ -137,11 +157,16 @@ export const getSalesStatus = async (
 ): Promise<boolean> => {
   let res = false;
   const contract = new ContractPromise(api, psp34Abi, tokenAddress);
+  const gasLimit: any = api.registry.createType("WeightV2", {
+    refTime: new BN("10000000000"),
+    proofSize: new BN("10000000000"),
+  });
+
   const { output } = await contract.query.getTokenSalesStatus(
     peformanceAddress,
     {
       value: 0,
-      gasLimit: -1,
+      gasLimit: gasLimit,
     }
   );
   if (output !== undefined && output !== null) {

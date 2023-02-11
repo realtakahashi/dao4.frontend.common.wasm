@@ -12,7 +12,7 @@ import { AddProposalFormData } from "../types/ProposalManagerType";
 import { addProposal } from "./ProposalManagerApi";
 import { BN } from "@polkadot/util";
 
-const gasLimit = 100000 * 1000000;
+// const gasLimit = 100000 * 1000000;
 const storageDepositLimit = null;
 
 export const deployGonvernanceToken = async (
@@ -27,6 +27,10 @@ export const deployGonvernanceToken = async (
   const injector = await web3FromSource(performingAccount.meta.source);
   const decimaal10 = 10 ** inputData.decimal;
   const decimalInitialSupply = new BN(inputData.initialSupply.toString()).mul(new BN(decimaal10.toString()));
+  const gasLimit: any = api.registry.createType("WeightV2", {
+    refTime: new BN("10000000000"),
+    proofSize: new BN("10000000000"),
+  });
 
   const tx = contract.tx.new(
     { gasLimit, storageDepositLimit },
@@ -95,11 +99,16 @@ export const getMintedAmount = async (
 ): Promise<string> => {
   let res = "0";
   const contract = new ContractPromise(api, governanceAbi, tokenAddress);
+  const gasLimit: any = api.registry.createType("WeightV2", {
+    refTime: new BN("10000000000"),
+    proofSize: new BN("10000000000"),
+  });
+
   const { output } = await contract.query["psp22::totalSupply"](
     peformanceAddress,
     {
       value: 0,
-      gasLimit: -1,
+      gasLimit: gasLimit,
     }
   );
   if (output !== undefined && output !== null) {
