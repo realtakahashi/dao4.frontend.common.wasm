@@ -66,14 +66,19 @@ export const buy = async (
   const price = await getPrice(api, performingAccount.address, tokenAddress);
   console.log("### psp34 price:",price);
   const gasLimit: any = api.registry.createType("WeightV2", {
-    refTime: 3219235328,
+    refTime: 6219235328,
     proofSize: 131072,
   });
 
   const contract = new ContractPromise(api, psp34Abi, tokenAddress);
   const injector = await web3FromSource(performingAccount.meta.source);
-  const tx = await contract.tx.mintForBuy(
+  const { gasRequired }  = await contract.query.mintForBuy(
+    performingAccount.address,
     { value: price.toString().replaceAll(",",""), gasLimit: gasLimit },
+    performingAccount.address
+  );
+  const tx = await contract.tx.mintForBuy(
+    { value: price.toString().replaceAll(",",""), gasLimit: gasRequired },
     performingAccount.address
   );
   if (injector !== undefined) {

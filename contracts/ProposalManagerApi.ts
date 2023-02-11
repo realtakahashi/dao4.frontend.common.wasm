@@ -75,7 +75,7 @@ export const addProposal = async (
     proposalManagerAddress
   );
   const gasLimit: any = api.registry.createType("WeightV2", {
-    refTime: 3219235328,
+    refTime: 6219235328,
     proofSize: 131072,
   });
 
@@ -110,8 +110,19 @@ export const addProposal = async (
   }
 
   const injector = await web3FromSource(performingAccount.meta.source);
-  const tx = await contract.tx.addProposal(
+  const { gasRequired } = await contract.query.addProposal(
+    performingAccount.address,
     { value: 0, gasLimit: gasLimit },
+    inputData.proposalKind,
+    daoAddress,
+    inputData.title,
+    inputData.outline,
+    inputData.detail,
+    inputData.githubURL,
+    inputData.csvData
+  );
+  const tx = await contract.tx.addProposal(
+    { value: 0, gasLimit: gasRequired },
     inputData.proposalKind,
     daoAddress,
     inputData.title,
@@ -151,13 +162,20 @@ export const doVoteForProposal = async (
     proposalManagerAddress
   );
   const gasLimit: any = api.registry.createType("WeightV2", {
-    refTime: 3219235328,
+    refTime: 6219235328,
     proofSize: 131072,
   });
 
   const injector = await web3FromSource(performingAccount.meta.source);
-  const tx = await contract.tx.voteForTheProposal(
+  const { gasRequired }= await contract.query.voteForTheProposal(
+    performingAccount.address,
     { value: 0, gasLimit: gasLimit },
+    daoAddress,
+    proposalId,
+    yes
+  );
+  const tx = await contract.tx.voteForTheProposal(
+    { value: 0, gasLimit: gasRequired },
     daoAddress,
     proposalId,
     yes
@@ -193,14 +211,21 @@ export const changeProposalStatus = async (
     proposalManagerAddress
   );
   const gasLimit: any = api.registry.createType("WeightV2", {
-    refTime: 3219235328,
+    refTime: 6219235328,
     proofSize: 131072,
   });
 
   const injector = await web3FromSource(performingAccount.meta.source);
   console.log("## proposal status:", proposalStatus);
-  const tx = await contract.tx.changeProposalStatus(
+  const { gasRequired} = await contract.query.changeProposalStatus(
+    performingAccount.address,
     { value: 0, gasLimit: gasLimit },
+    daoAddress,
+    proposalId,
+    proposalStatus
+  );
+  const tx = await contract.tx.changeProposalStatus(
+    { value: 0, gasLimit: gasRequired },
     daoAddress,
     proposalId,
     proposalStatus
@@ -235,7 +260,7 @@ export const execute_proposal = async (
     proposalManagerAddress
   );
   const gasLimit: any = api.registry.createType("WeightV2", {
-    refTime: 3219235328,
+    refTime: 6219235328,
     proofSize: 131072,
   });
 
@@ -243,8 +268,14 @@ export const execute_proposal = async (
   console.log("### execute proposal daoAddress:", daoAddress);
   console.log("### execute proposal proposalId:", proposalId);
 
-  const tx = await contract.tx.executeProposal(
+  const { gasRequired } = await contract.query.executeProposal(
+    performingAccount.address,
     { value: 0, gasLimit: gasLimit },
+    daoAddress,
+    proposalId
+  );
+  const tx = await contract.tx.executeProposal(
+    { value: 0, gasLimit: gasRequired },
     daoAddress,
     proposalId
   );

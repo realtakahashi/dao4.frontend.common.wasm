@@ -118,13 +118,21 @@ export const addFirstMember = async (
     memberManagerAddress
   );
   const gasLimit: any = api.registry.createType("WeightV2", {
-    refTime: 3219235328,
+    refTime: 6219235328,
     proofSize: 131072,
   });
 
   const injector = await web3FromSource(performingAccount.meta.source);
-  const tx = await contract.tx.addFirstMember(
+  const { gasRequired } = await contract.query.addFirstMember(
+    performingAccount.address,
     { value: 0, gasLimit: gasLimit },
+    daoAddress,
+    performingAccount.address,
+    _memberFormData.ownerName,
+    0
+  );
+  const tx = await contract.tx.addFirstMember(
+    { value: 0, gasLimit: gasRequired },
     daoAddress,
     performingAccount.address,
     _memberFormData.ownerName,

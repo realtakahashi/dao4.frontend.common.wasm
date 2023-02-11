@@ -75,14 +75,20 @@ export const buy = async (
 
   const priceAmount = new BN(price).mul(amount);
   const gasLimit: any = api.registry.createType("WeightV2", {
-    refTime: 3219235328,
+    refTime: 6219235328,
     proofSize: 131072,
   });
 
   const contract = new ContractPromise(api, psp20Abi, tokenAddress);
   const injector = await web3FromSource(performingAccount.meta.source);
-  const tx = await contract.tx.buyToken(
+  const { gasRequired }  = await contract.query.buyToken(
+    performingAccount.address,
     { value: priceAmount.toString(), gasLimit: gasLimit },
+    performingAccount.address,
+    amount.toString()
+  );
+  const tx = await contract.tx.buyToken(
+    { value: priceAmount.toString(), gasLimit: gasRequired },
     performingAccount.address,
     amount.toString()
   );

@@ -221,15 +221,24 @@ export const registerToDaoManager = async (
   console.log("### performingAccount.address:", performingAccount.address);
   console.log("### daoAddress:", daoAddress);
   const gasLimit: any = api.registry.createType("WeightV2", {
-    refTime: 3219235328,
+    refTime: 6219235328,
     proofSize: 131072,
   });
   const { web3FromSource } = await import("@polkadot/extension-dapp");
 
   const contract = new ContractPromise(api, daoManagerAbi, daoManagerAddress);
   const injector = await web3FromSource(performingAccount.meta.source);
-  const tx = await contract.tx.addDao(
+
+  const { gasRequired, gasConsumed ,result, output } = await contract.query.addDao(
+    performingAccount.address,
     { value: 0, gasLimit: gasLimit },
+    daoAddress
+  );
+  console.log("##### result:",result?.toHuman());
+  console.log("##### gasRequired:",gasRequired?.toHuman());
+
+  const tx = await contract.tx.addDao(
+    { value: 0, gasLimit: gasRequired },
     daoAddress
   );
   if (injector !== undefined) {
@@ -262,12 +271,18 @@ export const doDonateSubDao = async (
   const decimalAmount: Number = Number(amount) * 10 ** decimals[0];
   console.log("### decimalAmount:", decimalAmount.toString());
   const gasLimit: any = api.registry.createType("WeightV2", {
-    refTime: 3219235328,
+    refTime: 6219235328,
     proofSize: 131072,
+  });
+  const { gasRequired } = await contract.query.donateToTheDao(
+    performingAccount.address,
+    {
+    value: decimalAmount.toString(),
+    gasLimit: gasLimit,
   });
   const tx = await contract.tx.donateToTheDao({
     value: decimalAmount.toString(),
-    gasLimit: gasLimit,
+    gasLimit: gasRequired,
   });
   if (injector !== undefined) {
     const unsub = await tx.signAndSend(
