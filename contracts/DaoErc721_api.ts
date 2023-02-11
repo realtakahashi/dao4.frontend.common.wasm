@@ -116,7 +116,7 @@ export const getPrice = async (
   let res = "0";
   const contract = new ContractPromise(api, psp34Abi, tokenAddress);
   const gasLimit: any = api.registry.createType("WeightV2", {
-    refTime: 3219235328,
+    refTime: 6219235328,
     proofSize: 131072,
   });
 
@@ -141,7 +141,7 @@ export const getSalesAmount = async (
   let res = "0";
   const contract = new ContractPromise(api, psp34Abi, tokenAddress);
   const gasLimit: any = api.registry.createType("WeightV2", {
-    refTime: 3219235328,
+    refTime: 6219235328,
     proofSize: 131072,
   });
 
@@ -163,7 +163,7 @@ export const getSalesStatus = async (
   let res = false;
   const contract = new ContractPromise(api, psp34Abi, tokenAddress);
   const gasLimit: any = api.registry.createType("WeightV2", {
-    refTime: 3219235328,
+    refTime: 6219235328,
     proofSize: 131072,
   });
 

@@ -100,7 +100,7 @@ export const getMintedAmount = async (
   let res = "0";
   const contract = new ContractPromise(api, governanceAbi, tokenAddress);
   const gasLimit: any = api.registry.createType("WeightV2", {
-    refTime: 3219235328,
+    refTime: 6219235328,
     proofSize: 131072,
   });
 
