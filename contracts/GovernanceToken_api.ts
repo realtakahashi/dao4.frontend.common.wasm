@@ -28,8 +28,8 @@ export const deployGonvernanceToken = async (
   const decimaal10 = 10 ** inputData.decimal;
   const decimalInitialSupply = new BN(inputData.initialSupply.toString()).mul(new BN(decimaal10.toString()));
   const gasLimit: any = api.registry.createType("WeightV2", {
-    refTime: new BN("10000000000"),
-    proofSize: new BN("10000000000"),
+    refTime: 6219235328,
+    proofSize: 131072,
   });
 
   const tx = contract.tx.new(
@@ -100,8 +100,8 @@ export const getMintedAmount = async (
   let res = "0";
   const contract = new ContractPromise(api, governanceAbi, tokenAddress);
   const gasLimit: any = api.registry.createType("WeightV2", {
-    refTime: new BN("10000000000"),
-    proofSize: new BN("10000000000"),
+    refTime: 6219235328,
+    proofSize: 131072,
   });
 
   const { output } = await contract.query["psp22::totalSupply"](

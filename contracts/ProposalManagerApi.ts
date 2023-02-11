@@ -22,8 +22,8 @@ export const getProposalList = async (
 ): Promise<Array<ProposalInfo>> => {
   let response: ProposalInfo[] = [];
   const gasLimit: any = api.registry.createType("WeightV2", {
-    refTime: new BN("10000000000"),
-    proofSize: new BN("10000000000"),
+    refTime: 6219235328,
+    proofSize: 131072,
   });
 
   const contract = new ContractPromise(
@@ -75,8 +75,8 @@ export const addProposal = async (
     proposalManagerAddress
   );
   const gasLimit: any = api.registry.createType("WeightV2", {
-    refTime: new BN("10000000000"),
-    proofSize: new BN("10000000000"),
+    refTime: 6219235328,
+    proofSize: 131072,
   });
 
   let isLimitTnure: boolean = false;
@@ -151,8 +151,8 @@ export const doVoteForProposal = async (
     proposalManagerAddress
   );
   const gasLimit: any = api.registry.createType("WeightV2", {
-    refTime: new BN("10000000000"),
-    proofSize: new BN("10000000000"),
+    refTime: 6219235328,
+    proofSize: 131072,
   });
 
   const injector = await web3FromSource(performingAccount.meta.source);
@@ -193,8 +193,8 @@ export const changeProposalStatus = async (
     proposalManagerAddress
   );
   const gasLimit: any = api.registry.createType("WeightV2", {
-    refTime: new BN("10000000000"),
-    proofSize: new BN("10000000000"),
+    refTime: 6219235328,
+    proofSize: 131072,
   });
 
   const injector = await web3FromSource(performingAccount.meta.source);
@@ -235,8 +235,8 @@ export const execute_proposal = async (
     proposalManagerAddress
   );
   const gasLimit: any = api.registry.createType("WeightV2", {
-    refTime: new BN("10000000000"),
-    proofSize: new BN("10000000000"),
+    refTime: 6219235328,
+    proofSize: 131072,
   });
 
   const injector = await web3FromSource(performingAccount.meta.source);

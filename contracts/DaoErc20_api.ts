@@ -31,8 +31,8 @@ export const deployDaoErc20 = async (
   const decimalInitialSupply = new BN(inputData.initialSupply.toString()).mul(new BN(decimaal10.toString()));
   console.log("### decimalInitialSupply:",decimalInitialSupply.toString() );
   const gasLimit: any = api.registry.createType("WeightV2", {
-    refTime: new BN("10000000000"),
-    proofSize: new BN("10000000000"),
+    refTime: 6219235328,
+    proofSize: 131072,
   });
 
   const tx = contract.tx.new(
@@ -75,8 +75,8 @@ export const buy = async (
 
   const priceAmount = new BN(price).mul(amount);
   const gasLimit: any = api.registry.createType("WeightV2", {
-    refTime: new BN("10000000000"),
-    proofSize: new BN("10000000000"),
+    refTime: 6219235328,
+    proofSize: 131072,
   });
 
   const contract = new ContractPromise(api, psp20Abi, tokenAddress);
@@ -156,8 +156,8 @@ export const getMintedAmount = async (
   let res = "0";
   const contract = new ContractPromise(api, psp20Abi, tokenAddress);
   const gasLimit: any = api.registry.createType("WeightV2", {
-    refTime: new BN("10000000000"),
-    proofSize: new BN("10000000000"),
+    refTime: 6219235328,
+    proofSize: 131072,
   });
 
   const { output } = await contract.query["psp22::totalSupply"](
@@ -181,8 +181,8 @@ export const getSalesAmount = async (
   let res = "0";
   const contract = new ContractPromise(api, psp20Abi, tokenAddress);
   const gasLimit: any = api.registry.createType("WeightV2", {
-    refTime: new BN("10000000000"),
-    proofSize: new BN("10000000000"),
+    refTime: 6219235328,
+    proofSize: 131072,
   });
 
   const { output } = await contract.query.getSalesAmount(peformanceAddress, {
@@ -203,8 +203,8 @@ export const getSalesStatus = async (
   let res = false;
   const contract = new ContractPromise(api, psp20Abi, tokenAddress);
   const gasLimit: any = api.registry.createType("WeightV2", {
-    refTime: new BN("10000000000"),
-    proofSize: new BN("10000000000"),
+    refTime: 6219235328,
+    proofSize: 131072,
   });
 
   const { output } = await contract.query.getTokenSalesStatus(
@@ -232,8 +232,8 @@ export const getPrice = async (
   let res = "0";
   const contract = new ContractPromise(api, psp20Abi, tokenAddress);
   const gasLimit: any = api.registry.createType("WeightV2", {
-    refTime: new BN("10000000000"),
-    proofSize: new BN("10000000000"),
+    refTime: 6219235328,
+    proofSize: 131072,
   });
 
   const { output } = await contract.query.getSalesPriceForOneToken(

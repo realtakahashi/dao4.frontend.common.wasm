@@ -24,8 +24,8 @@ export const deployDaoErc721 = async (
   const decimals = api.registry.chainDecimals;
   const decimalPrice:Number = inputData.price * (10 ** decimals[0]);
   const gasLimit: any = api.registry.createType("WeightV2", {
-    refTime: new BN("10000000000"),
-    proofSize: new BN("10000000000"),
+    refTime: 6219235328,
+    proofSize: 131072,
   });
 
   const tx = contract.tx.new(
@@ -66,8 +66,8 @@ export const buy = async (
   const price = await getPrice(api, performingAccount.address, tokenAddress);
   console.log("### psp34 price:",price);
   const gasLimit: any = api.registry.createType("WeightV2", {
-    refTime: new BN("10000000000"),
-    proofSize: new BN("10000000000"),
+    refTime: 6219235328,
+    proofSize: 131072,
   });
 
   const contract = new ContractPromise(api, psp34Abi, tokenAddress);
@@ -111,8 +111,8 @@ export const getPrice = async (
   let res = "0";
   const contract = new ContractPromise(api, psp34Abi, tokenAddress);
   const gasLimit: any = api.registry.createType("WeightV2", {
-    refTime: new BN("10000000000"),
-    proofSize: new BN("10000000000"),
+    refTime: 6219235328,
+    proofSize: 131072,
   });
 
   const { output } = await contract.query.getSalesPrice(
@@ -136,8 +136,8 @@ export const getSalesAmount = async (
   let res = "0";
   const contract = new ContractPromise(api, psp34Abi, tokenAddress);
   const gasLimit: any = api.registry.createType("WeightV2", {
-    refTime: new BN("10000000000"),
-    proofSize: new BN("10000000000"),
+    refTime: 6219235328,
+    proofSize: 131072,
   });
 
   const { output } = await contract.query.getSalesAmount(peformanceAddress, {
@@ -158,8 +158,8 @@ export const getSalesStatus = async (
   let res = false;
   const contract = new ContractPromise(api, psp34Abi, tokenAddress);
   const gasLimit: any = api.registry.createType("WeightV2", {
-    refTime: new BN("10000000000"),
-    proofSize: new BN("10000000000"),
+    refTime: 6219235328,
+    proofSize: 131072,
   });
 
   const { output } = await contract.query.getTokenSalesStatus(

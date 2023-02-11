@@ -48,8 +48,8 @@ export const listDAOAddress = async (
   }
 
   const gasLimit: any = api.registry.createType("WeightV2", {
-    refTime: new BN("10000000000"),
-    proofSize: new BN("10000000000"),
+    refTime: 6219235328,
+    proofSize: 131072,
   });
 
   console.log("### pass listDAOAddress:", api);
@@ -87,8 +87,8 @@ export const listSubDAO = async (
   }
 
   const gasLimit: any = api.registry.createType("WeightV2", {
-    refTime: new BN("10000000000"),
-    proofSize: new BN("10000000000"),
+    refTime: 6219235328,
+    proofSize: 131072,
   });
 
   for (let i = 0; i < daoAddressList.length; i++) {
@@ -127,8 +127,8 @@ export const getDaoListOfAffiliation = async (
   }
 
   const gasLimit: any = api.registry.createType("WeightV2", {
-    refTime: new BN("10000000000"),
-    proofSize: new BN("10000000000"),
+    refTime: 6219235328,
+    proofSize: 131072,
   });
 
   for (const item of subDaoList) {
@@ -178,8 +178,8 @@ export const deploySubDAO = async (
 ) => {
   let subDAOContractAddess = "";
   const gasLimit: any = api.registry.createType("WeightV2", {
-    refTime: new BN("10000000000"),
-    proofSize: new BN("10000000000"),
+    refTime: 6219235328,
+    proofSize: 131072,
   });
   const { web3FromSource } = await import("@polkadot/extension-dapp");
   const contractWasm = daoContractWasm.source.wasm;
@@ -221,8 +221,8 @@ export const registerToDaoManager = async (
   console.log("### performingAccount.address:", performingAccount.address);
   console.log("### daoAddress:", daoAddress);
   const gasLimit: any = api.registry.createType("WeightV2", {
-    refTime: new BN("10000000000"),
-    proofSize: new BN("10000000000"),
+    refTime: 6219235328,
+    proofSize: 131072,
   });
   const { web3FromSource } = await import("@polkadot/extension-dapp");
 
@@ -262,8 +262,8 @@ export const doDonateSubDao = async (
   const decimalAmount: Number = Number(amount) * 10 ** decimals[0];
   console.log("### decimalAmount:", decimalAmount.toString());
   const gasLimit: any = api.registry.createType("WeightV2", {
-    refTime: new BN("10000000000"),
-    proofSize: new BN("10000000000"),
+    refTime: 6219235328,
+    proofSize: 131072,
   });
   const tx = await contract.tx.donateToTheDao({
     value: decimalAmount.toString(),
@@ -292,8 +292,8 @@ export const getDaoBalance = async (
 ): Promise<string> => {
   let response: string = "0";
   const gasLimit: any = api.registry.createType("WeightV2", {
-    refTime: new BN("10000000000"),
-    proofSize: new BN("10000000000"),
+    refTime: 6219235328,
+    proofSize: 131072,
   });
   const daoContract = new ContractPromise(api, daoAbi, daoAddress);
   const { gasConsumed, result, output } =
@@ -318,8 +318,8 @@ export const getDaoName = async (
 ): Promise<string> => {
   let res = "";
   const gasLimit: any = api.registry.createType("WeightV2", {
-    refTime: new BN("10000000000"),
-    proofSize: new BN("10000000000"),
+    refTime: 6219235328,
+    proofSize: 131072,
   });
   const daoContract = new ContractPromise(api, daoAbi, daoAddress);
   const { gasConsumed, result, output } = await daoContract.query.getDaoInfo(
@@ -346,8 +346,8 @@ export const getTokenList = async (
 
   console.log("### dao address:", daoAddress);
   const gasLimit: any = api.registry.createType("WeightV2", {
-    refTime: new BN("10000000000"),
-    proofSize: new BN("10000000000"),
+    refTime: 6219235328,
+    proofSize: 131072,
   });
   const contract = new ContractPromise(api, daoAbi, daoAddress);
   const { gasConsumed, result, output } = await contract.query.getTokenList(
@@ -477,8 +477,8 @@ const getPsp22Value = async (
 ): Promise<string> => {
   let res: string = "";
   const gasLimit: any = api.registry.createType("WeightV2", {
-    refTime: new BN("10000000000"),
-    proofSize: new BN("10000000000"),
+    refTime: 6219235328,
+    proofSize: 131072,
   });
   const contract = new ContractPromise(api, psp22Abi, tokenAddress);
   const { output } = await contract.query[functionName](peformanceAddress, {
@@ -499,8 +499,8 @@ const getGovernanceValue = async (
 ): Promise<string> => {
   let res: string = "";
   const gasLimit: any = api.registry.createType("WeightV2", {
-    refTime: new BN("10000000000"),
-    proofSize: new BN("10000000000"),
+    refTime: 6219235328,
+    proofSize: 131072,
   });
   const contract = new ContractPromise(api, governnanceTokenAbi, tokenAddress);
   const { output } = await contract.query[functionName](peformanceAddress, {
@@ -522,8 +522,8 @@ const getPsp34Value = async (
 ): Promise<string> => {
   let res = "";
   const gasLimit: any = api.registry.createType("WeightV2", {
-    refTime: new BN("10000000000"),
-    proofSize: new BN("10000000000"),
+    refTime: 6219235328,
+    proofSize: 131072,
   });
   const contract = new ContractPromise(api, psp34Abi, tokenAddress);
   const { output } = await contract.query[functionName](

@@ -39,8 +39,8 @@ export const getMemberList = async (
     memberManagerAddress
   );
   const gasLimit: any = api.registry.createType("WeightV2", {
-    refTime: new BN("10000000000"),
-    proofSize: new BN("10000000000"),
+    refTime: 6219235328,
+    proofSize: 131072,
   });
 
   const { gasConsumed, result, output } = await contract.query.getMemberList(
@@ -80,8 +80,8 @@ export const checkElectionComission = async (
     memberManagerAddress
   );
   const gasLimit: any = api.registry.createType("WeightV2", {
-    refTime: new BN("10000000000"),
-    proofSize: new BN("10000000000"),
+    refTime: 6219235328,
+    proofSize: 131072,
   });
 
   const { gasConsumed, result, output } =
@@ -118,8 +118,8 @@ export const addFirstMember = async (
     memberManagerAddress
   );
   const gasLimit: any = api.registry.createType("WeightV2", {
-    refTime: new BN("10000000000"),
-    proofSize: new BN("10000000000"),
+    refTime: 6219235328,
+    proofSize: 131072,
   });
 
   const injector = await web3FromSource(performingAccount.meta.source);
