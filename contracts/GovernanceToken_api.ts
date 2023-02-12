@@ -11,6 +11,7 @@ import type { InjectedAccountWithMeta } from "@polkadot/extension-inject/types";
 import { AddProposalFormData } from "../types/ProposalManagerType";
 import { addProposal } from "./ProposalManagerApi";
 import { BN } from "@polkadot/util";
+import { getGasLimitForNotDeploy } from "./commonFunctions";
 
 // const gasLimit = 100000 * 1000000;
 const storageDepositLimit = null;
@@ -99,10 +100,7 @@ export const getMintedAmount = async (
 ): Promise<string> => {
   let res = "0";
   const contract = new ContractPromise(api, governanceAbi, tokenAddress);
-  const gasLimit: any = api.registry.createType("WeightV2", {
-    refTime: 6219235328,
-    proofSize: 131072,
-  });
+  const gasLimit: any = getGasLimitForNotDeploy(api);
 
   const { output } = await contract.query["psp22::totalSupply"](
     peformanceAddress,

@@ -6,6 +6,7 @@ import psp34ContractWasm from "./construct/Psp34_contract.json";
 import { checkEventsAndInculueError, formatBalances } from "./contract_common_util";
 import type { InjectedAccountWithMeta } from "@polkadot/extension-inject/types";
 import { BN } from "@polkadot/util";
+import { getGasLimitForNotDeploy } from "./commonFunctions";
 
 // const gasLimit = 100000 * 1000000;
 const storageDepositLimit = null;
@@ -65,10 +66,7 @@ export const buy = async (
 
   const price = await getPrice(api, performingAccount.address, tokenAddress);
   console.log("### psp34 price:",price);
-  const gasLimit: any = api.registry.createType("WeightV2", {
-    refTime: 6219235328,
-    proofSize: 131072,
-  });
+  const gasLimit: any = getGasLimitForNotDeploy(api);
 
   const contract = new ContractPromise(api, psp34Abi, tokenAddress);
   const injector = await web3FromSource(performingAccount.meta.source);
@@ -115,10 +113,7 @@ export const getPrice = async (
 ): Promise<string> => {
   let res = "0";
   const contract = new ContractPromise(api, psp34Abi, tokenAddress);
-  const gasLimit: any = api.registry.createType("WeightV2", {
-    refTime: 6219235328,
-    proofSize: 131072,
-  });
+  const gasLimit: any = getGasLimitForNotDeploy(api);
 
   const { output } = await contract.query.getSalesPrice(
     peformanceAddress,
@@ -140,10 +135,7 @@ export const getSalesAmount = async (
 ): Promise<number> => {
   let res = "0";
   const contract = new ContractPromise(api, psp34Abi, tokenAddress);
-  const gasLimit: any = api.registry.createType("WeightV2", {
-    refTime: 6219235328,
-    proofSize: 131072,
-  });
+  const gasLimit: any = getGasLimitForNotDeploy(api);
 
   const { output } = await contract.query.getSalesAmount(peformanceAddress, {
     value: 0,
@@ -162,10 +154,7 @@ export const getSalesStatus = async (
 ): Promise<boolean> => {
   let res = false;
   const contract = new ContractPromise(api, psp34Abi, tokenAddress);
-  const gasLimit: any = api.registry.createType("WeightV2", {
-    refTime: 6219235328,
-    proofSize: 131072,
-  });
+  const gasLimit: any = getGasLimitForNotDeploy(api);
 
   const { output } = await contract.query.getTokenSalesStatus(
     peformanceAddress,

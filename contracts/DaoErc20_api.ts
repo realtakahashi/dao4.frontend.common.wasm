@@ -11,6 +11,7 @@ import psp20Abi from "./construct/Psp22.json";
 import { checkEventsAndInculueError, formatBalances } from "./contract_common_util";
 import psp22ContractWasm from "../contracts/construct/Psp22_contract.json";
 import { BN } from "@polkadot/util"
+import { getGasLimitForNotDeploy } from "./commonFunctions";
 
 // const gasLimit = 100000 * 1000000;
 const storageDepositLimit = null;
@@ -74,10 +75,7 @@ export const buy = async (
   console.log("### buy psp22: amount:",amount.toString());
 
   const priceAmount = new BN(price).mul(amount);
-  const gasLimit: any = api.registry.createType("WeightV2", {
-    refTime: 6219235328,
-    proofSize: 131072,
-  });
+  const gasLimit: any = getGasLimitForNotDeploy(api);
 
   const contract = new ContractPromise(api, psp20Abi, tokenAddress);
   const injector = await web3FromSource(performingAccount.meta.source);
@@ -161,10 +159,7 @@ export const getMintedAmount = async (
 ): Promise<string> => {
   let res = "0";
   const contract = new ContractPromise(api, psp20Abi, tokenAddress);
-  const gasLimit: any = api.registry.createType("WeightV2", {
-    refTime: 6219235328,
-    proofSize: 131072,
-  });
+  const gasLimit: any = getGasLimitForNotDeploy(api);
 
   const { output } = await contract.query["psp22::totalSupply"](
     peformanceAddress,
@@ -186,10 +181,7 @@ export const getSalesAmount = async (
 ): Promise<string> => {
   let res = "0";
   const contract = new ContractPromise(api, psp20Abi, tokenAddress);
-  const gasLimit: any = api.registry.createType("WeightV2", {
-    refTime: 6219235328,
-    proofSize: 131072,
-  });
+  const gasLimit: any = getGasLimitForNotDeploy(api);
 
   const { output } = await contract.query.getSalesAmount(peformanceAddress, {
     value: 0,
@@ -208,10 +200,7 @@ export const getSalesStatus = async (
 ): Promise<boolean> => {
   let res = false;
   const contract = new ContractPromise(api, psp20Abi, tokenAddress);
-  const gasLimit: any = api.registry.createType("WeightV2", {
-    refTime: 6219235328,
-    proofSize: 131072,
-  });
+  const gasLimit: any = getGasLimitForNotDeploy(api);
 
   const { output } = await contract.query.getTokenSalesStatus(
     peformanceAddress,
@@ -237,11 +226,7 @@ export const getPrice = async (
 ): Promise<string> => {
   let res = "0";
   const contract = new ContractPromise(api, psp20Abi, tokenAddress);
-  const gasLimit: any = api.registry.createType("WeightV2", {
-    refTime: 6219235328,
-    proofSize: 131072,
-  });
-
+  const gasLimit: any = getGasLimitForNotDeploy(api);
   const { output } = await contract.query.getSalesPriceForOneToken(
     peformanceAddress,
     {

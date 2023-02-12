@@ -18,6 +18,7 @@ import {
 } from "../types/ProposalManagerType";
 import { checkEventsAndInculueError } from "./contract_common_util";
 import { BN } from "@polkadot/util";
+import { getGasLimitForNotDeploy } from "./commonFunctions";
 
 const memberManagerAddress =
   String(process.env.NEXT_PUBLIC_MEMBER_MANAGER_CONTRACT_ADDRESS) ?? "";
@@ -38,10 +39,7 @@ export const getMemberList = async (
     memberManagerAbi,
     memberManagerAddress
   );
-  const gasLimit: any = api.registry.createType("WeightV2", {
-    refTime: 6219235328,
-    proofSize: 131072,
-  });
+  const gasLimit: any = getGasLimitForNotDeploy(api);
 
   const { gasConsumed, result, output } = await contract.query.getMemberList(
     peformanceAddress,
@@ -79,10 +77,7 @@ export const checkElectionComission = async (
     memberManagerAbi,
     memberManagerAddress
   );
-  const gasLimit: any = api.registry.createType("WeightV2", {
-    refTime: 6219235328,
-    proofSize: 131072,
-  });
+  const gasLimit: any = getGasLimitForNotDeploy(api);
 
   const { gasConsumed, result, output } =
     await memberManagerContract.query.isElectoralCommissioner(
@@ -117,10 +112,7 @@ export const addFirstMember = async (
     memberManagerAbi,
     memberManagerAddress
   );
-  const gasLimit: any = api.registry.createType("WeightV2", {
-    refTime: 6219235328,
-    proofSize: 131072,
-  });
+  const gasLimit: any = getGasLimitForNotDeploy(api);
 
   const injector = await web3FromSource(performingAccount.meta.source);
   const { gasRequired } = await contract.query.addFirstMember(

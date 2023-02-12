@@ -1,8 +1,8 @@
 {
   "source": {
-    "hash": "0x29eb1ca6a6097a28d3ae5c2ce0169d2aae575e034f0670855c06d18fc7d25a31",
+    "hash": "0xb797da88cc76199ab1231eb538ad8f2857f4496c1060826e5d41e08f1beb4646",
     "language": "ink! 3.3.1",
-    "compiler": "rustc 1.63.0-nightly"
+    "compiler": "rustc 1.69.0-nightly"
   },
   "contract": {
     "name": "dao_contract",
